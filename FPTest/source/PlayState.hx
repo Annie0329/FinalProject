@@ -70,9 +70,9 @@ class PlayState extends FlxState
 
 			// 把敵人移到地磚水平中心
 			case "enemy":
-				enemies.add(new Enemy(x + 16, y, REGULAR));
+				enemies.add(new Enemy(x, y, REGULAR));
 			case "boss":
-				enemies.add(new Enemy(x + 16, y, BOSS));
+				enemies.add(new Enemy(x, y, BOSS));
 		}
 	}
 

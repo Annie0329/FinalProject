@@ -1728,7 +1728,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "355";
+	app.meta.h["build"] = "357";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "FPTest";
 	app.meta.h["name"] = "FPTest";
@@ -7101,15 +7101,15 @@ Enemy.prototype = $extend(flixel_FlxSprite.prototype,{
 					this.velocity.set(50.,0);
 				}
 				var tmp = this.velocity;
-				var X1 = 0;
-				var Y1 = 0;
-				if(Y1 == null) {
-					Y1 = 0;
+				var X = 0;
+				var Y = 0;
+				if(Y == null) {
+					Y = 0;
 				}
-				if(X1 == null) {
-					X1 = 0;
+				if(X == null) {
+					X = 0;
 				}
-				var point = flixel_math_FlxPoint._pool.get().set(X1,Y1);
+				var point = flixel_math_FlxPoint._pool.get().set(X,Y);
 				point._inPool = false;
 				var point1 = point;
 				point1._weak = true;
@@ -7349,7 +7349,7 @@ ManifestResources.init = function(config) {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var bundle;
-	var data = "{\"name\":null,\"assets\":\"aoy4:pathy34:assets%2Fdata%2Fdata-goes-here.txty4:sizezy4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2Fdialogue.txtR2i18R3R4R5R7R6tgoR0y27:assets%2Fdata%2FFPTest.ogmoR2i5531R3R4R5R8R6tgoR0y29:assets%2Fdata%2Froom-001.jsonR2i2215R3R4R5R9R6tgoR0y26:assets%2Fimages%2Fboss.pngR2i879R3y5:IMAGER5R10R6tgoR0y26:assets%2Fimages%2Fcoin.pngR2i198R3R11R5R12R6tgoR0y27:assets%2Fimages%2Fenemy.pngR2i877R3R11R5R13R6tgoR0y28:assets%2Fimages%2Fhealth.pngR2i136R3R11R5R14R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R15R6tgoR0y28:assets%2Fimages%2Fplayer.pngR2i25198R3R11R5R16R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i159R3R11R5R17R6tgoR0y27:assets%2Fimages%2Ftiles.pngR2i754R3R11R5R18R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R19R6tgoR2i39300R3y5:SOUNDR5y28:assets%2Fsounds%2Fcombat.wavy9:pathGroupaR21hR6tgoR2i34298R3R20R5y26:assets%2Fsounds%2Ffled.wavR22aR23hR6tgoR2i20012R3R20R5y26:assets%2Fsounds%2Fhurt.wavR22aR24hR6tgoR2i33516R3R20R5y26:assets%2Fsounds%2Flose.wavR22aR25hR6tgoR2i24158R3R20R5y26:assets%2Fsounds%2Fmiss.wavR22aR26hR6tgoR2i10518R3R20R5y28:assets%2Fsounds%2Fselect.wavR22aR27hR6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R28R6tgoR2i54320R3R20R5y25:assets%2Fsounds%2Fwin.wavR22aR29hR6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3R22aR31y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R30R5y28:flixel%2Fsounds%2Fflixel.mp3R22aR33y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3R20R5R32R22aR31R32hgoR2i33629R3R20R5R34R22aR33R34hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R35R36y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R11R5R41R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R11R5R42R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	var data = "{\"name\":null,\"assets\":\"aoy4:pathy34:assets%2Fdata%2Fdata-goes-here.txty4:sizezy4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2Fdialogue.txtR2i18R3R4R5R7R6tgoR0y27:assets%2Fdata%2FFPTest.ogmoR2i5531R3R4R5R8R6tgoR0y29:assets%2Fdata%2Froom-001.jsonR2i2215R3R4R5R9R6tgoR0y26:assets%2Fimages%2Fboss.pngR2i879R3y5:IMAGER5R10R6tgoR0y26:assets%2Fimages%2Fcoin.pngR2i198R3R11R5R12R6tgoR0y27:assets%2Fimages%2Fenemy.pngR2i877R3R11R5R13R6tgoR0y28:assets%2Fimages%2Fhealth.pngR2i136R3R11R5R14R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R15R6tgoR0y28:assets%2Fimages%2Fplayer.pngR2i25198R3R11R5R16R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i159R3R11R5R17R6tgoR0y27:assets%2Fimages%2Ftiles.pngR2i724R3R11R5R18R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R19R6tgoR2i39300R3y5:SOUNDR5y28:assets%2Fsounds%2Fcombat.wavy9:pathGroupaR21hR6tgoR2i34298R3R20R5y26:assets%2Fsounds%2Ffled.wavR22aR23hR6tgoR2i20012R3R20R5y26:assets%2Fsounds%2Fhurt.wavR22aR24hR6tgoR2i33516R3R20R5y26:assets%2Fsounds%2Flose.wavR22aR25hR6tgoR2i24158R3R20R5y26:assets%2Fsounds%2Fmiss.wavR22aR26hR6tgoR2i10518R3R20R5y28:assets%2Fsounds%2Fselect.wavR22aR27hR6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R28R6tgoR2i54320R3R20R5y25:assets%2Fsounds%2Fwin.wavR22aR29hR6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3R22aR31y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R30R5y28:flixel%2Fsounds%2Fflixel.mp3R22aR33y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3R20R5R32R22aR31R32hgoR2i33629R3R20R5R34R22aR33R34hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R35R36y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R11R5R41R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R11R5R42R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	var manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	var library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -7773,13 +7773,13 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		var y = entity.y;
 		switch(entity.name) {
 		case "boss":
-			this.enemies.add(new Enemy(x + 16,y,EnemyType.BOSS));
+			this.enemies.add(new Enemy(x,y,EnemyType.BOSS));
 			break;
 		case "coin":
 			this.coins.add(new Coin(x + 16,y + 16));
 			break;
 		case "enemy":
-			this.enemies.add(new Enemy(x + 16,y,EnemyType.REGULAR));
+			this.enemies.add(new Enemy(x,y,EnemyType.REGULAR));
 			break;
 		case "player":
 			this.player.setPosition(x,y);
@@ -7817,23 +7817,24 @@ var Player = function(x,y) {
 	if(x == null) {
 		x = 0;
 	}
+	this.picsize = 64;
 	flixel_FlxSprite.call(this,x,y);
-	var picsize = 64;
-	this.loadGraphic("assets/images/player.png",true,picsize,picsize);
+	this.loadGraphic("assets/images/player.png",true,this.picsize,this.picsize);
 	this._facingFlip.h[1] = { x : false, y : false};
 	this._facingFlip.h[16] = { x : true, y : false};
 	this.animation.add("lr",[4,3,5,3],6,false);
 	this.animation.add("u",[7,6,8,6],6,false);
 	this.animation.add("d",[1,0,2,0],6,false);
 	this.drag.set_x(this.drag.set_y(1600));
-	this.setSize(picsize / 2,picsize / 2);
-	this.offset.set(picsize / 4,picsize / 4);
+	this.setSize(this.picsize / 2,this.picsize / 2);
+	this.offset.set(this.picsize / 4,this.picsize / 4);
 };
 $hxClasses["Player"] = Player;
 Player.__name__ = "Player";
 Player.__super__ = flixel_FlxSprite;
 Player.prototype = $extend(flixel_FlxSprite.prototype,{
-	updateMovement: function() {
+	picsize: null
+	,updateMovement: function() {
 		var up = false;
 		var down = false;
 		var left = false;
@@ -72178,7 +72179,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 630979;
+	this.version = 216243;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
