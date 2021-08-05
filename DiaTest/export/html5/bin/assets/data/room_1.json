@@ -1,0 +1,53 @@
+{
+  "ogmoVersion": "3.4.0",
+  "width": 960,
+  "height": 720,
+  "offsetX": 0,
+  "offsetY": 0,
+  "layers": [
+    {
+      "name": "entities",
+      "_eid": "00029687",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 80,
+      "gridCellHeight": 80,
+      "gridCellsX": 12,
+      "gridCellsY": 9,
+      "entities": [
+        {"name": "player", "id": 0, "_eid": "00025903", "x": 80, "y": 480, "originX": 0, "originY": 0},
+        {"name": "door", "id": 1, "_eid": "04429949", "x": 0, "y": 480, "originX": 0, "originY": 0},
+        {"name": "guy", "id": 2, "_eid": "00035866", "x": 400, "y": 320, "originX": 0, "originY": 0},
+        {"name": "door", "id": 3, "_eid": "04429949", "x": 640, "y": 0, "originX": 0, "originY": 0}
+      ]
+    },
+    {
+      "name": "wall",
+      "_eid": "00075292",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 80,
+      "gridCellHeight": 80,
+      "gridCellsX": 12,
+      "gridCellsY": 9,
+      "tileset": "New Tileset",
+      "data": [4, 4, 4, 4, 4, 4, 4, 4, -1, 4, 4, 4, 4, -1, -1, -1, 4, -1, -1, -1, -1, -1, -1, 4, 4, -1, -1, 4, -1, -1, -1, -1, -1, 4, -1, 4, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 4, -1, -1, 1, 2, -1, -1, -1, -1, -1, -1, 4, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 4, -1, -1, -1, -1, 4, -1, -1, -1, -1, -1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "exportMode": 0,
+      "arrayMode": 0
+    },
+    {
+      "name": "road",
+      "_eid": "00021293",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 80,
+      "gridCellHeight": 80,
+      "gridCellsX": 12,
+      "gridCellsY": 9,
+      "tileset": "New Tileset",
+      "data": [3, 3, 3, 3, 3, 3, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 7, 7, 3, 3, 3, 3, 3, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 5, 6, 7, 3, 3, 3, 3, 3, 3, 7, 7, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+      "exportMode": 0,
+      "arrayMode": 0
+    }
+  ]
+}

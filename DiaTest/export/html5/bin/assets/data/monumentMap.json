@@ -1,0 +1,53 @@
+{
+  "ogmoVersion": "3.4.0",
+  "width": 960,
+  "height": 720,
+  "offsetX": 0,
+  "offsetY": 0,
+  "layers": [
+    {
+      "name": "entities",
+      "_eid": "12475118",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 80,
+      "gridCellHeight": 80,
+      "gridCellsX": 12,
+      "gridCellsY": 9,
+      "entities": [
+        {"name": "guy", "id": 2, "_eid": "12474454", "x": 400, "y": 400, "originX": 0, "originY": 0},
+        {"name": "door", "id": 4, "_eid": "12473637", "x": 640, "y": 0, "originX": -20, "originY": -20},
+        {"name": "door", "id": 5, "_eid": "12473637", "x": 0, "y": 560, "originX": -20, "originY": -20},
+        {"name": "player", "id": 6, "_eid": "12471509", "x": 80, "y": 560, "originX": -8, "originY": -8}
+      ]
+    },
+    {
+      "name": "wall",
+      "_eid": "12469584",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 80,
+      "gridCellHeight": 80,
+      "gridCellsX": 12,
+      "gridCellsY": 9,
+      "tileset": "monumentTiles",
+      "data": [4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 1, 2, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "exportMode": 0,
+      "arrayMode": 0
+    },
+    {
+      "name": "road",
+      "_eid": "12465810",
+      "offsetX": 0,
+      "offsetY": 0,
+      "gridCellWidth": 80,
+      "gridCellHeight": 80,
+      "gridCellsX": 12,
+      "gridCellsY": 9,
+      "tileset": "monumentTiles",
+      "data": [3, 3, 3, 3, 3, 3, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 7, 7, 7, 3, 3, 3, 3, 3, 7, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 3, 3, 7, 3, 3, 3, 3, 3, 3, 3, 3, 7, 5, 6, 7, 3, 3, 7, 7, 7, 3, 3, 3, 7, 7, 7, 7, 3, 3, 7, 7, 7, 3, 7, 7, 7, 3, 3, 3, 3, 3, 7, 7, 7, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+      "exportMode": 0,
+      "arrayMode": 0
+    }
+  ]
+}
