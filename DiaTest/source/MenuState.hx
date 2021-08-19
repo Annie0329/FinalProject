@@ -8,6 +8,8 @@ import flixel.ui.FlxButton;
 class MenuState extends FlxState
 {
 	var background:FlxSprite;
+	var name:String;
+	var dia:Dia;
 
 	override public function create()
 	{
@@ -19,14 +21,22 @@ class MenuState extends FlxState
 		playButton.screenCenter();
 		add(playButton);
 
+		dia = new Dia();
+		add(dia);
+
 		super.create();
 	}
 
 	function clickPlay()
 	{
-		FlxG.switchState(new PlayState());
+		dia.begin = "1";
+		dia.beginTitle.text = dia.begin;
+		stateSwitch();
 	}
 
+	function stateSwitch()
+		FlxG.switchState(new PlayState());
+	
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);

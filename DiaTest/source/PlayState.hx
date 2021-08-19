@@ -1,13 +1,11 @@
 package;
 
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.system.frontEnds.BitmapFrontEnd;
+import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
-import flixel.util.FlxAxes;
 
 class PlayState extends FlxState
 {
@@ -17,48 +15,56 @@ class PlayState extends FlxState
 	var map:FlxOgmo3Loader;
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
-	var door:FlxTypedGroup<Door>;
+	var banana:FlxTypedGroup<Banana>;
+	var text:FlxText;
+	var bananaTalk:Bool;
+	var bananaCounter:Int = 0;
+
 	var name:String;
+	var i:Int = 0;
 
 	override public function create()
 	{
-		map = new FlxOgmo3Loader(AssetPaths.diaMap__ogmo, AssetPaths.monumentMap__json);
+		map = new FlxOgmo3Loader(AssetPaths.testMap__ogmo, AssetPaths.testMap__json);
 
 		// 地圖
-		road = map.loadTilemap(AssetPaths.monumentTiles__png, "road");
+		road = map.loadTilemap(AssetPaths.mtSmall__png, "road");
 		road.follow();
 		add(road);
 
 		// 牆
-		walls = map.loadTilemap(AssetPaths.monumentTiles__png, "wall");
+		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
 
-		//Doge
-		guy = new Guy(0, 0);
-		guy.screenCenter(FlxAxes.X);
+		// Doge
+		guy = new Guy();
 		guy.immovable = true;
 		add(guy);
 
 		// 玩家
 		player = new Player();
 		add(player);
-
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
-		//任意門
-		door = new FlxTypedGroup<Door>();
-		add(door);
+		// 香蕉
+		banana = new FlxTypedGroup<Banana>();
+		add(banana);
 
-		//對話框
+		// 對話框
 		dia = new Dia();
 		add(dia);
 
+		// 地圖
 		map.loadEntities(placeEntities, "entities");
+
+		name = "assets/data/c1Begining.txt";
+		dia.show(name);
 
 		super.create();
 	}
 
+	// 設位置
 	public function placeEntities(entity:EntityData)
 	{
 		var x = entity.x;
@@ -66,40 +72,62 @@ class PlayState extends FlxState
 
 		switch (entity.name)
 		{
-			// 把玩家的x跟y弄得跟地圖設定的一樣
 			case "player":
-				player.setPosition(x + 8, y + 8);
-
-			case "door":
-				door.add(new Door(entity.x + 20, entity.y + 20));
+				player.setPosition(x + 4, y + 4);
 
 			case "guy":
 				guy.setPosition(x, y);
+
+			case "banana":
+				banana.add(new Banana(entity.x + 10, entity.y + 10));
 		}
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
 		FlxG.collide(player, walls);
-		FlxG.collide(player, guy, callDia);
-		FlxG.overlap(player, door, changeState);
+		FlxG.collide(player, guy, forestMis);
+		FlxG.collide(player, banana, forestQ);
 
 		if (dia.visible)
+		{
 			player.active = false;
+		}
 		else
 			player.active = true;
+
+		// 香蕉終結者2000
+		if (bananaTalk)
+		{
+			if (!dia.visible)
+			{
+				dia.banana.kill(); // 我們把香蕉移到迪亞那邊，殺死迪亞香蕉，然後砰！這裡的香蕉就死了
+				bananaTalk = false;
+				bananaCounter++;
+			}
+		}
 	}
 
-	function callDia(player:Player, guy:Guy)
+	// Doge在紀念碑的對話
+	function forestMis(player:Player, guy:Guy)
 	{
-		name = "assets/data/forestMission.txt";
+		if (bananaCounter == 3)
+			name = "assets/data/forestMissionFinish.txt";
+		else
+			name = "assets/data/forestMission.txt";
 		dia.show(name);
 	}
 
-	function changeState(player:Player, door:Door)
+	// 香蕉問問題
+	function forestQ(player:Player, banana:Banana)
 	{
-		if (player.x < 0)
-			FlxG.switchState(new ForestState());
+		i++;
+		if (i > 3)
+			i = 1;
+		name = "assets/data/bananaQ" + Std.string(i) + ".txt";
+		dia.bananaTalk(name, banana);
+		bananaTalk = true;
 	}
 }

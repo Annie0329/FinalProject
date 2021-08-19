@@ -1,0 +1,160 @@
+{
+  "name": "testMap",
+  "ogmoVersion": "3.4.0",
+  "levelPaths": ["."],
+  "backgroundColor": "#282c34ff",
+  "gridColor": "#3c4049cc",
+  "anglesRadians": false,
+  "directoryDepth": 5,
+  "layerGridDefaultSize": {"x": 40, "y": 40},
+  "levelDefaultSize": {"x": 320, "y": 240},
+  "levelMinSize": {"x": 1440, "y": 1080},
+  "levelMaxSize": {"x": 1440, "y": 1080},
+  "levelValues": [],
+  "defaultExportMode": ".json",
+  "compactExport": false,
+  "externalScript": "",
+  "playCommand": "",
+  "entityTags": [],
+  "layers": [
+    {
+      "definition": "entity",
+      "name": "entities",
+      "gridSize": {"x": 40, "y": 40},
+      "exportID": "23270883",
+      "requiredTags": [],
+      "excludedTags": []
+    },
+    {
+      "definition": "tile",
+      "name": "wall",
+      "gridSize": {"x": 40, "y": 40},
+      "exportID": "23273755",
+      "exportMode": 0,
+      "arrayMode": 0,
+      "defaultTileset": "New Tileset"
+    },
+    {
+      "definition": "tile",
+      "name": "road",
+      "gridSize": {"x": 40, "y": 40},
+      "exportID": "23278955",
+      "exportMode": 0,
+      "arrayMode": 0,
+      "defaultTileset": "New Tileset"
+    }
+  ],
+  "entities": [
+    {
+      "exportID": "23272829",
+      "name": "player",
+      "limit": -1,
+      "size": {"x": 40, "y": 40},
+      "origin": {"x": 0, "y": 0},
+      "originAnchored": true,
+      "shape": {
+        "label": "Rectangle",
+        "points": [
+          {"x": -1, "y": -1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": 1}
+        ]
+      },
+      "color": "#ff0000ff",
+      "tileX": false,
+      "tileY": false,
+      "tileSize": {"x": 40, "y": 40},
+      "resizeableX": false,
+      "resizeableY": false,
+      "rotatable": false,
+      "rotationDegrees": 360,
+      "canFlipX": false,
+      "canFlipY": false,
+      "canSetColor": false,
+      "hasNodes": false,
+      "nodeLimit": 0,
+      "nodeDisplay": 0,
+      "nodeGhost": true,
+      "tags": [],
+      "values": []
+    },
+    {
+      "exportID": "75207174",
+      "name": "guy",
+      "limit": -1,
+      "size": {"x": 40, "y": 40},
+      "origin": {"x": 0, "y": 0},
+      "originAnchored": true,
+      "shape": {
+        "label": "Rectangle",
+        "points": [
+          {"x": -1, "y": -1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": 1}
+        ]
+      },
+      "color": "#0200ffff",
+      "tileX": false,
+      "tileY": false,
+      "tileSize": {"x": 40, "y": 40},
+      "resizeableX": false,
+      "resizeableY": false,
+      "rotatable": false,
+      "rotationDegrees": 360,
+      "canFlipX": false,
+      "canFlipY": false,
+      "canSetColor": false,
+      "hasNodes": false,
+      "nodeLimit": 0,
+      "nodeDisplay": 0,
+      "nodeGhost": true,
+      "tags": [],
+      "values": []
+    },
+    {
+      "exportID": "75219327",
+      "name": "banana",
+      "limit": -1,
+      "size": {"x": 40, "y": 40},
+      "origin": {"x": 0, "y": 0},
+      "originAnchored": true,
+      "shape": {
+        "label": "Rectangle",
+        "points": [
+          {"x": -1, "y": -1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": 1}
+        ]
+      },
+      "color": "#ffe500ff",
+      "tileX": false,
+      "tileY": false,
+      "tileSize": {"x": 40, "y": 40},
+      "resizeableX": false,
+      "resizeableY": false,
+      "rotatable": false,
+      "rotationDegrees": 360,
+      "canFlipX": false,
+      "canFlipY": false,
+      "canSetColor": false,
+      "hasNodes": false,
+      "nodeLimit": 0,
+      "nodeDisplay": 0,
+      "nodeGhost": true,
+      "tags": [],
+      "values": []
+    }
+  ],
+  "tilesets": [
+    {"label": "New Tileset", "path": "../images/mtSmall.png", "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAABQCAYAAACeXX40AAAACXBIWXMAADXUAAA11AFeZeUIAAADxElEQVR4nO3cPWtTURjA8aehaEAHlW7dFAe1CCoWKuiggzaDn8DBRUqpuLhLESfBRXAoLg5+AodUBx0KWlBUEK2TDkI2Xwo6RJc63D4x95ib3JOcm+e+/H9QkkDsPerT/z23IZkQlNrtzaUt6zX0U7NeAKqNAYQpBhCmGECYYgBhigGEKQYQphhAmGIAYYoBhCkGEKYmrRdQFLsPzXu9pvrr4+pEVmspEwoIU5UroG/JVPNF0+v5jVONoY5TtXJSQJiqTAG1fI/vLHv9ufn3UyIistJK9/yF6ej250ZUzOerL72Od+G6bIlUp4QUEKZKX8BRyzfIwyPR7aUP0a1bytPzsyKSvoS6zqqUkALCVGl/ukKV72Jjv4iIPGp+jj3W8rm0hEr3hKq27rsnXBaR4UvIe0KAPkq/BxyVWz6lpXP3gC7dE7olRIQCwhQFHCBpD6iSypd0dbwYfIXFRgFhigIO4JYvqYSuxKvhL0GXV3gUEKYooMMtnRq2hIo9YG8UEKYooKdBJUx6rBZnxrLMwqCAMEUBHbP3H0R3rlwWkf8LpnzLd6u1Ft2ZORxwtcVHAWGKAm57/WQj9ti3hEmPO+VzjnPiPCUUoYAwRgEHcEuokoqo3PKhNwoIUxRwm+7J3L2g6pRQH494HEQoIEylLuDZV2eCvrfg2cm1VO9xGPY9DTfn+u/Rkgwq4bBGLd+w/w5Xv+0a6bhZ6zmAoYct7THSDiXKIzaA4xi8fvT4eRhE9mrj0dkDDjt8v7/+iX2FYP2DgPHhIgSmaiKjFWfn1I7YVz8+laSC1UABYSrx1zBuqQbVLY0Q3wPlkptXQnTgQw/pp+Z3ERE50NgX9PtmTddddrU877XyvDaEkVjAcZ8usz5eUUpYlfIpLkJgKpM9YPcFTN4uPKpWmLyjgDDFAMJUJqfgvJ12kV8UEKa8CpjFqyOoNrNXQhhmiHgOIEOC0HLzWnBoN9ajz2hZmrsrIiL3zl2zXI63pafRuvXvUVZmA0hNIVLiAqqilbAq5VOTP95sdh7sPb7HcCn/dK9JDtqtA9mLFdByGGNDlwG3hHlVlfKpxFOwOxChBzLrgUMxpN4DlmVgqlaYvOOlOJhiAGGq5ym43Wp37ten62NbTPexx31c2AhawHarHRteYJDa24V35h8E1K0+Xe/UL29rQ3g9T8HDnv44bcIXFyEwxQDCVE3Eb6+lFxo+Fxy+z/ddE4qLAsJUZwDTFkevUruvVkOjftURuwrW//hjK0eDfihQ2kFl8Kqn569heg1C6KFk2CAi8hdFjlo7S0PpoQAAAABJRU5ErkJggg==", "tileWidth": 40, "tileHeight": 40, "tileSeparationX": 0, "tileSeparationY": 0, "tileMarginX": 0, "tileMarginY": 0}
+  ]
+}
