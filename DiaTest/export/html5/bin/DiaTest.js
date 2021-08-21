@@ -913,7 +913,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "249";
+	app.meta.h["build"] = "255";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "DiaTest";
 	app.meta.h["name"] = "DiaTest";
@@ -6783,10 +6783,10 @@ var Dia = function() {
 	this.background.setPosition(0,10);
 	this.background.screenCenter(flixel_util_FlxAxes.X);
 	this.add(this.background);
-	this.text = new flixel_text_FlxText(10,10,flixel_FlxG.width - 20,"",20);
+	this.text = new flixel_text_FlxText(10,this.background.y,flixel_FlxG.width - 20,"",20);
 	this.add(this.text);
 	this.pointer = new flixel_FlxSprite().makeGraphic(10,10,-256);
-	this.pointer.setPosition(0,10);
+	this.pointer.setPosition(0,this.background.y);
 	this.pointer.screenCenter(flixel_util_FlxAxes.X);
 	this.add(this.pointer);
 	this.set_visible(false);
@@ -6805,22 +6805,33 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	,name: null
 	,pointer: null
 	,banana: null
-	,show: function(name) {
+	,show: function(name,diaUpDown) {
 		this.dilog_boxes = openfl_utils_Assets.getText(name).split(":");
 		this.i = 1;
 		this.text.set_text(this.dilog_boxes[this.i]);
+		this.diaPosition(diaUpDown);
 		this.set_visible(true);
 		this.set_active(true);
 		this.pointer.set_visible(false);
 	}
-	,bananaTalk: function(name,banana) {
+	,bananaTalk: function(name,banana,diaUpDown) {
 		this.dilog_boxes = openfl_utils_Assets.getText(name).split(":");
 		this.i = 1;
 		this.text.set_text(this.dilog_boxes[this.i]);
+		this.diaPosition(diaUpDown);
 		this.set_visible(true);
 		this.set_active(true);
 		this.pointer.set_visible(true);
 		this.banana = banana;
+	}
+	,diaPosition: function(diaUpDown) {
+		if(diaUpDown == "up") {
+			this.background.set_y(0);
+		} else {
+			this.background.set_y(flixel_FlxG.width / 2);
+		}
+		this.text.set_y(this.background.y);
+		this.pointer.set_y(this.background.y);
 	}
 	,update: function(elapsed) {
 		this.updateEnter();
@@ -7063,7 +7074,7 @@ ManifestResources.init = function(config) {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var bundle;
-	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaQ1.txty4:sizei86y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i77R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i78R3R4R5R8R6tgoR0y30:assets%2Fdata%2Fc1Begining.txtR2i34R3R4R5R9R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R10R6tgoR0y27:assets%2Fdata%2FdiaMap.ogmoR2i9405R3R4R5R11R6tgoR0y30:assets%2Fdata%2FforestMap.jsonR2i2107R3R4R5R12R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i94R3R4R5R13R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i49R3R4R5R14R6tgoR0y32:assets%2Fdata%2FmonumentMap.jsonR2i2005R3R4R5R15R6tgoR0y28:assets%2Fdata%2FtestMap.jsonR2i4447R3R4R5R16R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i5405R3R4R5R17R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i271R3y5:IMAGER5R18R6tgoR0y33:assets%2Fimages%2FforestTiles.pngR2i1749R3R19R5R20R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R21R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R19R5R22R6tgoR0y35:assets%2Fimages%2FmonumentTiles.pngR2i1466R3R19R5R23R6tgoR0y24:assets%2Fimages%2Fmt.pngR2i1477R3R19R5R24R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i1042R3R19R5R25R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R26R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R27R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR29y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R28R5y28:flixel%2Fsounds%2Fflixel.mp3R30aR32y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R31R30aR29R31hgoR2i33629R3R34R5R33R30aR32R33hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R35R36y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R19R5R41R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R19R5R42R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaQ1.txty4:sizei86y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i77R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i78R3R4R5R8R6tgoR0y30:assets%2Fdata%2Fc1Begining.txtR2i34R3R4R5R9R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R10R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i11303R3R4R5R11R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i94R3R4R5R12R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i49R3R4R5R13R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i10081R3R4R5R14R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i271R3y5:IMAGER5R15R6tgoR0y33:assets%2Fimages%2FforestTiles.pngR2i1749R3R16R5R17R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R18R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R16R5R19R6tgoR0y35:assets%2Fimages%2FmonumentTiles.pngR2i1466R3R16R5R20R6tgoR0y24:assets%2Fimages%2Fmt.pngR2i1477R3R16R5R21R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i4550R3R16R5R22R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R23R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R24R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR26y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R25R5y28:flixel%2Fsounds%2Fflixel.mp3R27aR29y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R28R27aR26R28hgoR2i33629R3R31R5R30R27aR29R30hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R32R33y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R16R5R38R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R16R5R39R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	var manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	var library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -7540,10 +7551,11 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	,text: null
 	,bananaTalk: null
 	,bananaCounter: null
+	,diaUpDown: null
 	,name: null
 	,i: null
 	,create: function() {
-		this.map = new flixel_addons_editors_ogmo_FlxOgmo3Loader("assets/data/testMap.ogmo","assets/data/testMap.json");
+		this.map = new flixel_addons_editors_ogmo_FlxOgmo3Loader("assets/data/testMap.ogmo","assets/data/diaMap.json");
 		this.road = this.map.loadTilemap("assets/images/mtSmall.png","road");
 		this.road.follow();
 		this.add(this.road);
@@ -7562,7 +7574,8 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.add(this.dia);
 		this.map.loadEntities($bind(this,this.placeEntities),"entities");
 		this.name = "assets/data/c1Begining.txt";
-		this.dia.show(this.name);
+		this.diaUpDown = "up";
+		this.dia.show(this.name,this.diaUpDown);
 		flixel_FlxState.prototype.create.call(this);
 	}
 	,placeEntities: function(entity) {
@@ -7604,16 +7617,25 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		} else {
 			this.name = "assets/data/forestMission.txt";
 		}
-		this.dia.show(this.name);
+		this.playerUpDown();
+		this.dia.show(this.name,this.diaUpDown);
 	}
 	,forestQ: function(player,banana) {
 		this.i++;
 		if(this.i > 3) {
 			this.i = 1;
 		}
+		this.playerUpDown();
 		this.name = "assets/data/bananaQ" + Std.string(this.i) + ".txt";
-		this.dia.bananaTalk(this.name,banana);
+		this.dia.bananaTalk(this.name,banana,this.diaUpDown);
 		this.bananaTalk = true;
+	}
+	,playerUpDown: function() {
+		if(this.player.y < flixel_FlxG.height / 2) {
+			this.diaUpDown = "down";
+		} else {
+			this.diaUpDown = "up";
+		}
 	}
 	,__class__: PlayState
 });
@@ -71198,7 +71220,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 395271;
+	this.version = 566803;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -117916,11 +117938,9 @@ AssetPaths.bananaQ2__txt = "assets/data/bananaQ2.txt";
 AssetPaths.bananaQ3__txt = "assets/data/bananaQ3.txt";
 AssetPaths.c1Begining__txt = "assets/data/c1Begining.txt";
 AssetPaths.data_goes_here__txt = "assets/data/data-goes-here.txt";
-AssetPaths.diaMap__ogmo = "assets/data/diaMap.ogmo";
-AssetPaths.forestMap__json = "assets/data/forestMap.json";
+AssetPaths.diaMap__json = "assets/data/diaMap.json";
 AssetPaths.forestMission__txt = "assets/data/forestMission.txt";
-AssetPaths.monumentMap__json = "assets/data/monumentMap.json";
-AssetPaths.testMap__json = "assets/data/testMap.json";
+AssetPaths.forestMissionFinish__txt = "assets/data/forestMissionFinish.txt";
 AssetPaths.testMap__ogmo = "assets/data/testMap.ogmo";
 AssetPaths.banana__png = "assets/images/banana.png";
 AssetPaths.forestTiles__png = "assets/images/forestTiles.png";

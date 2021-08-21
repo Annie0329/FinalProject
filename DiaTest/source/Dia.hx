@@ -29,11 +29,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 字
-		text = new FlxText(10, 10, FlxG.width - 20, "", 20);
+		text = new FlxText(10, background.y, FlxG.width - 20, "", 20);
 		add(text);
 
 		pointer = new FlxSprite().makeGraphic(10, 10, FlxColor.YELLOW);
-		pointer.setPosition(0, 10);
+		pointer.setPosition(0, background.y);
 		pointer.screenCenter(FlxAxes.X);
 		add(pointer);
 
@@ -44,26 +44,44 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	}
 
 	// 講話
-	public function show(name)
+	public function show(name, diaUpDown)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
 		i = 1;
 		text.text = dilog_boxes[i];
+		diaPosition(diaUpDown);
+
 		visible = true;
 		active = true;
 		pointer.visible = false;
 	}
 
-	public function bananaTalk(name, banana)
+	// 香蕉對話
+	public function bananaTalk(name, banana, diaUpDown)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
 		i = 1;
 		text.text = dilog_boxes[i];
+
+		diaPosition(diaUpDown);
+
 		visible = true;
 		active = true;
 		pointer.visible = true;
 
 		this.banana = banana; // 我們告訴迪亞這隻香蕉(迪亞香蕉)是那隻香蕉(PlayState香蕉)(邏輯100)
+	}
+
+	// 如果玩家在上方，對話框就放到下方
+	function diaPosition(diaUpDown)
+	{
+		if (diaUpDown == "up")
+			background.y = 0;
+		else
+			background.y = FlxG.width / 2;
+
+		text.y = background.y;
+		pointer.y = background.y;
 	}
 
 	override public function update(elapsed:Float)
@@ -98,6 +116,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
+	// 按x鍵可以直接跳過整串對話
 	function updateSkip()
 	{
 		var xKey:Bool = false;

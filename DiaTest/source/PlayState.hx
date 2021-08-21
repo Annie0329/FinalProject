@@ -20,12 +20,13 @@ class PlayState extends FlxState
 	var bananaTalk:Bool;
 	var bananaCounter:Int = 0;
 
+	var diaUpDown:String;
 	var name:String;
 	var i:Int = 0;
 
 	override public function create()
 	{
-		map = new FlxOgmo3Loader(AssetPaths.testMap__ogmo, AssetPaths.testMap__json);
+		map = new FlxOgmo3Loader(AssetPaths.testMap__ogmo, AssetPaths.diaMap__json);
 
 		// 地圖
 		road = map.loadTilemap(AssetPaths.mtSmall__png, "road");
@@ -59,7 +60,8 @@ class PlayState extends FlxState
 		map.loadEntities(placeEntities, "entities");
 
 		name = "assets/data/c1Begining.txt";
-		dia.show(name);
+		diaUpDown = "up";
+		dia.show(name, diaUpDown);
 
 		super.create();
 	}
@@ -117,7 +119,8 @@ class PlayState extends FlxState
 			name = "assets/data/forestMissionFinish.txt";
 		else
 			name = "assets/data/forestMission.txt";
-		dia.show(name);
+		playerUpDown();
+		dia.show(name, diaUpDown);
 	}
 
 	// 香蕉問問題
@@ -126,8 +129,20 @@ class PlayState extends FlxState
 		i++;
 		if (i > 3)
 			i = 1;
+		playerUpDown();
+
 		name = "assets/data/bananaQ" + Std.string(i) + ".txt";
-		dia.bananaTalk(name, banana);
+		dia.bananaTalk(name, banana, diaUpDown);
+
 		bananaTalk = true;
+	}
+
+	// 如果玩家在螢幕上方，對話框就放到下方
+	function playerUpDown()
+	{
+		if (player.y < FlxG.height / 2)
+			diaUpDown = "down";
+		else
+			diaUpDown = "up";
 	}
 }
