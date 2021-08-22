@@ -9,12 +9,15 @@ import flixel.util.FlxColor;
 
 class Dia extends FlxTypedGroup<FlxSprite>
 {
-	var i:Int = 1;
+	var i:Int = 2;
+	var profile:Int = 1;
+
 	var dilog_boxes:Array<String>;
 	var text:FlxText;
 	var background:FlxSprite;
 	var name:String;
 	var pointer:FlxSprite;
+	var enter:Bool = false;
 
 	public var banana:Banana; // 我們把香蕉召喚到這裡
 
@@ -23,13 +26,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		super();
 
 		// 背景
-		background = new FlxSprite().makeGraphic(FlxG.width, 100, FlxColor.BLACK);
-		background.setPosition(0, 10);
+		background = new FlxSprite(10, 10, AssetPaths.diaDoge__png);
 		background.screenCenter(FlxAxes.X);
 		add(background);
 
 		// 字
-		text = new FlxText(10, background.y, FlxG.width - 20, "", 20);
+		text = new FlxText(120, background.y + 10, FlxG.width / 3 * 2, "", 20);
+		text.color = FlxColor.BLACK;
 		add(text);
 
 		pointer = new FlxSprite().makeGraphic(10, 10, FlxColor.YELLOW);
@@ -47,7 +50,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public function show(name, diaUpDown)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
-		i = 1;
+		i = 2;
+
+		profile = 1;
+		changeProfile();
+
 		text.text = dilog_boxes[i];
 		diaPosition(diaUpDown);
 
@@ -60,27 +67,44 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public function bananaTalk(name, banana, diaUpDown)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
-		i = 1;
-		text.text = dilog_boxes[i];
+		i = 2;
 
+		profile = 1;
+		changeProfile();
+
+		text.text = dilog_boxes[i];
 		diaPosition(diaUpDown);
 
 		visible = true;
 		active = true;
+
 		pointer.visible = true;
 
 		this.banana = banana; // 我們告訴迪亞這隻香蕉(迪亞香蕉)是那隻香蕉(PlayState香蕉)(邏輯100)
 	}
 
+	// 換對話框
+	function changeProfile()
+	{
+		switch (dilog_boxes[profile])
+		{
+			case "B":
+				background.loadGraphic(AssetPaths.diaBanana__png);
+			case "D":
+				background.loadGraphic(AssetPaths.diaDoge__png);
+			case "A":
+		}
+	}
+
 	// 如果玩家在上方，對話框就放到下方
-	function diaPosition(diaUpDown)
+	public function diaPosition(diaUpDown)
 	{
 		if (diaUpDown == "up")
-			background.y = 0;
+			background.y = 10;
 		else
 			background.y = FlxG.width / 2;
 
-		text.y = background.y;
+		text.y = background.y + 10;
 		pointer.y = background.y;
 	}
 
@@ -91,32 +115,34 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		super.update(elapsed);
 	}
 
-	// 按Enter換行
+	// 按Enter或空白鍵換行
 	function updateEnter()
 	{
-		var enter:Bool = false;
 		enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (enter == true)
 		{
 			if (pointer.visible)
 			{
-				i = 2;
+				i = 4;
 				pointer.visible = false;
 			}
 
-			i++;
+			profile += 2;
+			changeProfile();
 
-			if (i != dilog_boxes.length)
-				text.text = dilog_boxes[i];
-			else
+			i += 2;
+
+			if (i > dilog_boxes.length)
 			{
 				visible = false;
 				active = false;
 			}
+			else
+				text.text = dilog_boxes[i];
 		}
 	}
 
-	// 按x鍵可以直接跳過整串對話
+	// 按x鍵直接跳過整串對話
 	function updateSkip()
 	{
 		var xKey:Bool = false;

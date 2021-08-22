@@ -16,7 +16,7 @@ class PlayState extends FlxState
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var banana:FlxTypedGroup<Banana>;
-	var text:FlxText;
+	var ufo:FlxText;
 	var bananaTalk:Bool;
 	var bananaCounter:Int = 0;
 
@@ -46,6 +46,13 @@ class PlayState extends FlxState
 		// 玩家
 		player = new Player();
 		add(player);
+
+		ufo = new FlxText(240, (FlxG.height - 40) / 2, FlxG.width / 4, "ddd", 20);
+		// text.screenCenter();
+		ufo.scrollFactor.set(0, 0);
+		add(ufo);
+		ufo.visible = false;
+
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
 		// 香蕉
@@ -75,19 +82,21 @@ class PlayState extends FlxState
 		switch (entity.name)
 		{
 			case "player":
-				player.setPosition(x + 4, y + 4);
+				player.setPosition(x + 8, y + 8);
 
 			case "guy":
 				guy.setPosition(x, y);
 
 			case "banana":
-				banana.add(new Banana(entity.x + 10, entity.y + 10));
+				banana.add(new Banana(entity.x + 20, entity.y + 20));
 		}
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		ufo.text = Std.string(player.y % (FlxG.height * 2));
 
 		FlxG.collide(player, walls);
 		FlxG.collide(player, guy, forestMis);
@@ -140,9 +149,9 @@ class PlayState extends FlxState
 	// 如果玩家在螢幕上方，對話框就放到下方
 	function playerUpDown()
 	{
-		if (player.y < FlxG.height / 2)
-			diaUpDown = "down";
-		else
+		if (player.y % (FlxG.height * 2) > FlxG.height)
 			diaUpDown = "up";
+		else
+			diaUpDown = "down";
 	}
 }
