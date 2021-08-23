@@ -913,7 +913,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "341";
+	app.meta.h["build"] = "380";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "DiaTest";
 	app.meta.h["name"] = "DiaTest";
@@ -6227,7 +6227,7 @@ flixel_FlxSprite.prototype = $extend(flixel_FlxObject.prototype,{
 });
 var Banana = function(x,y) {
 	flixel_FlxSprite.call(this,x,y);
-	this.makeGraphic(40,40,-256);
+	this.loadGraphic("assets/images/banana.png");
 	this.set_immovable(true);
 };
 $hxClasses["Banana"] = Banana;
@@ -6813,7 +6813,7 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		this.dilog_boxes = openfl_utils_Assets.getText(name).split(":");
 		this.i = 2;
 		this.profile = 1;
-		this.updateProfile();
+		this.changeProfile();
 		this.text.set_text(this.dilog_boxes[this.i]);
 		this.diaPosition(diaUpDown);
 		this.set_visible(true);
@@ -6824,13 +6824,29 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		this.dilog_boxes = openfl_utils_Assets.getText(name).split(":");
 		this.i = 2;
 		this.profile = 1;
-		this.updateProfile();
+		this.changeProfile();
 		this.text.set_text(this.dilog_boxes[this.i]);
 		this.diaPosition(diaUpDown);
 		this.set_visible(true);
 		this.set_active(true);
 		this.pointer.set_visible(true);
 		this.banana = banana;
+	}
+	,changeProfile: function() {
+		switch(this.dilog_boxes[this.profile]) {
+		case "A":
+			this.background.loadGraphic("assets/images/diaApe.png");
+			break;
+		case "B":
+			this.background.loadGraphic("assets/images/diaBanana.png");
+			break;
+		case "D":
+			this.background.loadGraphic("assets/images/diaDoge.png");
+			break;
+		case "S":
+			this.background.loadGraphic("assets/images/diaSpartan.png");
+			break;
+		}
 	}
 	,diaPosition: function(diaUpDown) {
 		if(diaUpDown == "up") {
@@ -6854,7 +6870,7 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 				this.pointer.set_visible(false);
 			}
 			this.profile += 2;
-			this.updateProfile();
+			this.changeProfile();
 			this.i += 2;
 			if(this.i > this.dilog_boxes.length) {
 				this.set_visible(false);
@@ -6862,18 +6878,6 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 			} else {
 				this.text.set_text(this.dilog_boxes[this.i]);
 			}
-		}
-	}
-	,updateProfile: function() {
-		switch(this.dilog_boxes[this.profile]) {
-		case "A":
-			break;
-		case "B":
-			this.background.loadGraphic("assets/images/diaBanana.png");
-			break;
-		case "D":
-			this.background.loadGraphic("assets/images/diaDoge.png");
-			break;
 		}
 	}
 	,updateSkip: function() {
@@ -6984,7 +6988,7 @@ var Guy = function(x,y) {
 		x = 0;
 	}
 	flixel_FlxSprite.call(this,x,y);
-	this.makeGraphic(80,80,-7650029);
+	this.loadGraphic("assets/images/doge.png");
 };
 $hxClasses["Guy"] = Guy;
 Guy.__name__ = "Guy";
@@ -7095,7 +7099,7 @@ ManifestResources.init = function(config) {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var bundle;
-	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaQ1.txty4:sizei92y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i83R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i84R3R4R5R8R6tgoR0y30:assets%2Fdata%2Fc1Begining.txtR2i38R3R4R5R9R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R10R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i11745R3R4R5R11R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i100R3R4R5R12R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i53R3R4R5R13R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i13953R3R4R5R14R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i271R3y5:IMAGER5R15R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R16R5R17R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R16R5R18R6tgoR0y33:assets%2Fimages%2FforestTiles.pngR2i1749R3R16R5R19R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R20R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R16R5R21R6tgoR0y35:assets%2Fimages%2FmonumentTiles.pngR2i1466R3R16R5R22R6tgoR0y24:assets%2Fimages%2Fmt.pngR2i1477R3R16R5R23R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i7453R3R16R5R24R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R25R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R26R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR28y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R27R5y28:flixel%2Fsounds%2Fflixel.mp3R29aR31y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R30R29aR28R30hgoR2i33629R3R33R5R32R29aR31R32hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R34R35y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R16R5R40R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R16R5R41R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaQ1.txty4:sizei92y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i83R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i84R3R4R5R8R6tgoR0y30:assets%2Fdata%2Fc1Begining.txtR2i3051R3R4R5R9R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R10R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i22322R3R4R5R11R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i100R3R4R5R12R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i53R3R4R5R13R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i19276R3y6:BINARYR5R14R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i16834R3R4R5R16R6tgoR0y33:assets%2Fdata%2F%7E%24script.docxR2i162R3R15R5R17R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3y5:IMAGER5R18R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R19R5R20R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R19R5R21R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R19R5R22R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R19R5R23R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R19R5R24R6tgoR0y33:assets%2Fimages%2FforestTiles.pngR2i1749R3R19R5R25R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R26R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R19R5R27R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10480R3R19R5R28R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R19R5R29R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R30R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R31R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR33y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R32R5y28:flixel%2Fsounds%2Fflixel.mp3R34aR36y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R35R34aR33R35hgoR2i33629R3R38R5R37R34aR36R37hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R39R40y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R19R5R45R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R19R5R46R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	var manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	var library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -7566,10 +7570,11 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	,guy: null
 	,dia: null
 	,map: null
+	,through: null
 	,walls: null
 	,road: null
+	,ground: null
 	,banana: null
-	,ufo: null
 	,bananaTalk: null
 	,bananaCounter: null
 	,diaUpDown: null
@@ -7577,6 +7582,9 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	,i: null
 	,create: function() {
 		this.map = new flixel_addons_editors_ogmo_FlxOgmo3Loader("assets/data/testMap.ogmo","assets/data/diaMap.json");
+		this.ground = this.map.loadTilemap("assets/images/mtSmall.png","ground");
+		this.ground.follow();
+		this.add(this.ground);
 		this.road = this.map.loadTilemap("assets/images/mtSmall.png","road");
 		this.road.follow();
 		this.add(this.road);
@@ -7588,10 +7596,9 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.add(this.guy);
 		this.player = new Player();
 		this.add(this.player);
-		this.ufo = new flixel_text_FlxText(240,(flixel_FlxG.height - 40) / 2,flixel_FlxG.width / 4,"ddd",20);
-		this.ufo.scrollFactor.set(0,0);
-		this.add(this.ufo);
-		this.ufo.set_visible(false);
+		this.through = this.map.loadTilemap("assets/images/mtSmall.png","through");
+		this.through.follow();
+		this.add(this.through);
 		flixel_FlxG.camera.follow(this.player,flixel_FlxCameraFollowStyle.TOPDOWN,1);
 		this.banana = new flixel_group_FlxTypedGroup();
 		this.add(this.banana);
@@ -7620,8 +7627,8 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	}
 	,update: function(elapsed) {
 		flixel_FlxState.prototype.update.call(this,elapsed);
-		this.ufo.set_text(Std.string(this.player.y % (flixel_FlxG.height * 2)));
 		flixel_FlxG.overlap(this.player,this.walls,null,flixel_FlxObject.separate);
+		flixel_FlxG.overlap(this.player,this.road);
 		flixel_FlxG.overlap(this.player,this.guy,$bind(this,this.forestMis),flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.player,this.banana,$bind(this,this.forestQ),flixel_FlxObject.separate);
 		if(this.dia.visible) {
@@ -71246,7 +71253,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 409543;
+	this.version = 112634;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -117967,16 +117974,19 @@ AssetPaths.data_goes_here__txt = "assets/data/data-goes-here.txt";
 AssetPaths.diaMap__json = "assets/data/diaMap.json";
 AssetPaths.forestMission__txt = "assets/data/forestMission.txt";
 AssetPaths.forestMissionFinish__txt = "assets/data/forestMissionFinish.txt";
+AssetPaths.script__docx = "assets/data/script.docx";
 AssetPaths.testMap__ogmo = "assets/data/testMap.ogmo";
 AssetPaths.banana__png = "assets/images/banana.png";
+AssetPaths.diaApe__png = "assets/images/diaApe.png";
 AssetPaths.diaBanana__png = "assets/images/diaBanana.png";
 AssetPaths.diaDoge__png = "assets/images/diaDoge.png";
+AssetPaths.diaSpartan__png = "assets/images/diaSpartan.png";
+AssetPaths.doge__png = "assets/images/doge.png";
 AssetPaths.forestTiles__png = "assets/images/forestTiles.png";
 AssetPaths.images_go_here__txt = "assets/images/images-go-here.txt";
 AssetPaths.mainMenu__png = "assets/images/mainMenu.png";
-AssetPaths.monumentTiles__png = "assets/images/monumentTiles.png";
-AssetPaths.mt__png = "assets/images/mt.png";
 AssetPaths.mtSmall__png = "assets/images/mtSmall.png";
+AssetPaths.spartan__png = "assets/images/spartan.png";
 AssetPaths.music_goes_here__txt = "assets/music/music-goes-here.txt";
 AssetPaths.sounds_go_here__txt = "assets/sounds/sounds-go-here.txt";
 flixel_FlxBasic.idEnumerator = 0;

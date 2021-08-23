@@ -8,7 +8,7 @@ class Banana extends FlxSprite
 	public function new(x:Float, y:Float)
 	{
 		super(x, y);
-		makeGraphic(40, 40, FlxColor.YELLOW);
+		loadGraphic(AssetPaths.banana__png);
 		immovable = true;
 	}
 }

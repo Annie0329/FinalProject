@@ -93,6 +93,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case "D":
 				background.loadGraphic(AssetPaths.diaDoge__png);
 			case "A":
+				background.loadGraphic(AssetPaths.diaApe__png);
+			case "S":
+				background.loadGraphic(AssetPaths.diaSpartan__png);
 		}
 	}
 

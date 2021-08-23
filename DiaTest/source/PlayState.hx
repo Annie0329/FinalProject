@@ -12,11 +12,15 @@ class PlayState extends FlxState
 	var player:Player;
 	var guy:Guy;
 	var dia:Dia;
+
 	var map:FlxOgmo3Loader;
+	var through:FlxTilemap;
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
+	var ground:FlxTilemap;
+
 	var banana:FlxTypedGroup<Banana>;
-	var ufo:FlxText;
+	// var ufo:FlxText;
 	var bananaTalk:Bool;
 	var bananaCounter:Int = 0;
 
@@ -28,7 +32,12 @@ class PlayState extends FlxState
 	{
 		map = new FlxOgmo3Loader(AssetPaths.testMap__ogmo, AssetPaths.diaMap__json);
 
-		// 地圖
+		// 地面
+		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
+		ground.follow();
+		add(ground);
+
+		// 路
 		road = map.loadTilemap(AssetPaths.mtSmall__png, "road");
 		road.follow();
 		add(road);
@@ -47,11 +56,18 @@ class PlayState extends FlxState
 		player = new Player();
 		add(player);
 
-		ufo = new FlxText(240, (FlxG.height - 40) / 2, FlxG.width / 4, "ddd", 20);
-		// text.screenCenter();
-		ufo.scrollFactor.set(0, 0);
-		add(ufo);
-		ufo.visible = false;
+		// 牆
+		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
+		through.follow();
+		add(through);
+
+		/*
+			ufo = new FlxText(240, (FlxG.height - 40) / 2, FlxG.width / 4, "ddd", 20);
+			ufo.screenCenter();
+			ufo.scrollFactor.set(0, 0);
+			add(ufo);
+			ufo.visible = false;
+		 */
 
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
@@ -96,9 +112,10 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 
-		ufo.text = Std.string(player.y % (FlxG.height * 2));
+		// ufo.text = Std.string(player.y % (FlxG.height * 2));
 
 		FlxG.collide(player, walls);
+		FlxG.overlap(player, road);
 		FlxG.collide(player, guy, forestMis);
 		FlxG.collide(player, banana, forestQ);
 
