@@ -50,7 +50,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 	}
 
-	// 講話
+	// 一般對話
 	public function show(name, diaUpDown)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
@@ -71,7 +71,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public function bananaTalk(name, banana, diaUpDown, bqNumber)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
-		i = 2;
+		i = bqNumber * 2;
 
 		profile = 1;
 		changeProfile();
@@ -88,7 +88,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		this.banana = banana; // 我們告訴迪亞這隻香蕉(迪亞香蕉)是那隻香蕉(PlayState香蕉)(邏輯100)
 	}
 
-	// 換對話框
+	// 換對話框頭像
 	function changeProfile()
 	{
 		switch (dilog_boxes[profile])
@@ -118,7 +118,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		pointer.y = background.y + 38;
 	}
 
-	// 香蕉問題題答案
+	// 香蕉問題答案
 	function bananaAnswer(bqNumber)
 	{
 		if (bqNumber == 2 || bqNumber == 3 || bqNumber == 6)
@@ -144,6 +144,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (enter)
 		{
+			// 香蕉問題回答的對錯
 			if (pointer.visible)
 			{
 				if (pointer.y == answer)
@@ -177,6 +178,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
+	// 移動箭頭
 	function movePointer()
 	{
 		var up = FlxG.keys.anyJustReleased([UP]);

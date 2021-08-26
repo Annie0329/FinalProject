@@ -913,7 +913,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "435";
+	app.meta.h["build"] = "447";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "DiaTest";
 	app.meta.h["name"] = "DiaTest";
@@ -6825,7 +6825,7 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	}
 	,bananaTalk: function(name,banana,diaUpDown,bqNumber) {
 		this.dilog_boxes = openfl_utils_Assets.getText(name).split(":");
-		this.i = 2;
+		this.i = bqNumber * 2;
 		this.profile = 1;
 		this.changeProfile();
 		this.text.set_text(this.dilog_boxes[this.i]);
@@ -7121,7 +7121,7 @@ ManifestResources.init = function(config) {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var bundle;
-	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaNo.txty4:sizei33y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ1.txtR2i198R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i194R3R4R5R8R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i204R3R4R5R9R6tgoR0y28:assets%2Fdata%2FbananaQ4.txtR2zR3R4R5R10R6tgoR0y28:assets%2Fdata%2FbananaQ5.txtR2zR3R4R5R11R6tgoR0y28:assets%2Fdata%2FbananaQ6.txtR2zR3R4R5R12R6tgoR0y28:assets%2Fdata%2FbananaQ7.txtR2zR3R4R5R13R6tgoR0y29:assets%2Fdata%2FbananaYes.txtR2i15R3R4R5R14R6tgoR0y29:assets%2Fdata%2Fc1Opening.txtR2i3051R3R4R5R15R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R16R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i22748R3R4R5R17R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i100R3R4R5R18R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i53R3R4R5R19R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i19559R3y6:BINARYR5R20R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i19299R3R4R5R22R6tgoR0y33:assets%2Fdata%2F%7E%24script.docxR2i162R3R21R5R23R6tgoR0y30:assets%2Fdata%2F%7EWRL0005.tmpR2i19719R3R21R5R24R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3y5:IMAGER5R25R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R26R5R27R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R26R5R28R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R26R5R29R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R26R5R30R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R26R5R31R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R32R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R26R5R33R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10480R3R26R5R34R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i182R3R26R5R35R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R26R5R36R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R37R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R38R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR40y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R39R5y28:flixel%2Fsounds%2Fflixel.mp3R41aR43y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R42R41aR40R42hgoR2i33629R3R45R5R44R41aR43R44hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R46R47y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R26R5R52R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R26R5R53R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaNo.txty4:sizei33y4:typey4:TEXTy2:idR1y7:preloadtgoR0y34:assets%2Fdata%2FbananaQuestion.txtR2i1219R3R4R5R7R6tgoR0y29:assets%2Fdata%2FbananaYes.txtR2i15R3R4R5R8R6tgoR0y29:assets%2Fdata%2Fc1Opening.txtR2i3051R3R4R5R9R6tgoR0y29:assets%2Fdata%2Fc2Opening.txtR2i1633R3R4R5R10R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R11R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i23195R3R4R5R12R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i196R3R4R5R13R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i1041R3R4R5R14R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i20518R3y6:BINARYR5R15R6tgoR0y32:assets%2Fdata%2FstoneExplain.txtR2i238R3R4R5R17R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i22821R3R4R5R18R6tgoR0y33:assets%2Fdata%2F%7E%24script.docxR2i162R3R16R5R19R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3y5:IMAGER5R20R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R21R5R22R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R21R5R23R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R21R5R24R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R21R5R25R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R21R5R26R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R27R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R21R5R28R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10480R3R21R5R29R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i182R3R21R5R30R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R21R5R31R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R32R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R33R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR35y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R34R5y28:flixel%2Fsounds%2Fflixel.mp3R36aR38y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R37R36aR35R37hgoR2i33629R3R40R5R39R36aR38R39hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R41R42y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R21R5R47R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R21R5R48R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	var manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	var library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -7580,6 +7580,8 @@ flixel_FlxState.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	,__properties__: $extend(flixel_group_FlxTypedGroup.prototype.__properties__,{get_subStateClosed:"get_subStateClosed",get_subStateOpened:"get_subStateOpened",set_bgColor:"set_bgColor",get_bgColor:"get_bgColor"})
 });
 var PlayState = function(MaxSize) {
+	this.flyToStone = false;
+	this.flyToMiner = false;
 	this.bqNumber = 1;
 	this.bananaCounter = 0;
 	flixel_FlxState.call(this,MaxSize);
@@ -7603,6 +7605,8 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	,walls: null
 	,road: null
 	,ground: null
+	,flyToMiner: null
+	,flyToStone: null
 	,ufo: null
 	,create: function() {
 		this.map = new flixel_addons_editors_ogmo_FlxOgmo3Loader("assets/data/testMap.ogmo","assets/data/diaMap.json");
@@ -7659,9 +7663,43 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 			break;
 		}
 	}
+	,placeMinerEntities: function(entity) {
+		var x = entity.x;
+		var y = entity.y;
+		switch(entity.name) {
+		case "guyMiner":
+			this.doge.setPosition(x,y);
+			break;
+		case "playerMiner":
+			this.player.setPosition(x + 8,y + 8);
+			break;
+		}
+	}
+	,placeStoneEntities: function(entity) {
+		var x = entity.x;
+		var y = entity.y;
+		switch(entity.name) {
+		case "playerStone":
+			this.player.setPosition(x + 8,y + 8);
+			break;
+		case "spartanStone":
+			this.spartan.setPosition(x,y);
+			break;
+		}
+	}
 	,update: function(elapsed) {
 		flixel_FlxState.prototype.update.call(this,elapsed);
 		this.ufo.set_text(Std.string(flixel_FlxG.mouse.screenX) + ", " + Std.string(flixel_FlxG.mouse.screenY));
+		var d = flixel_FlxG.keys.checkKeyArrayState([68],-1);
+		if(d) {
+			flixel_FlxG.camera.fade(-16777216,0.5,true);
+			this.map.loadEntities($bind(this,this.placeMinerEntities),"entities");
+			this.flyToMiner = false;
+			this.name = "assets/data/c2Opening.txt";
+			this.playerUpDown();
+			this.dia.show(this.name,this.diaUpDown);
+			this.flyToStone = true;
+		}
 		flixel_FlxG.overlap(this.player,this.walls,null,flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.player,this.road);
 		flixel_FlxG.overlap(this.player,this.doge,$bind(this,this.forestMis),flixel_FlxObject.separate);
@@ -7672,8 +7710,8 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		} else {
 			this.player.set_active(true);
 		}
-		if(this.bananaTalk) {
-			if(!this.dia.visible) {
+		if(!this.dia.visible) {
+			if(this.bananaTalk) {
 				if(this.dia.bananaQ) {
 					this.dia.banana.kill();
 					this.bqNumber++;
@@ -7681,11 +7719,28 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 				}
 				this.bananaTalk = false;
 			}
+			if(this.flyToMiner) {
+				flixel_FlxG.camera.fade(-16777216,0.5,true);
+				this.map.loadEntities($bind(this,this.placeMinerEntities),"entities");
+				this.flyToMiner = false;
+				this.name = "assets/data/c2Opening.txt";
+				this.playerUpDown();
+				this.dia.show(this.name,this.diaUpDown);
+			}
+			if(this.flyToStone) {
+				flixel_FlxG.camera.fade(-16777216,0.5,true);
+				this.map.loadEntities($bind(this,this.placeStoneEntities),"entities");
+				this.flyToStone = false;
+				this.name = "assets/data/stoneExplain.txt";
+				this.playerUpDown();
+				this.dia.show(this.name,this.diaUpDown);
+			}
 		}
 	}
 	,forestMis: function(player,doge) {
-		if(this.bananaCounter == 3) {
+		if(this.bananaCounter == 6) {
 			this.name = "assets/data/forestMissionFinish.txt";
+			this.flyToMiner = true;
 		} else {
 			this.name = "assets/data/forestMission.txt";
 		}
@@ -7693,11 +7748,8 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.dia.show(this.name,this.diaUpDown);
 	}
 	,forestQ: function(player,banana) {
-		if(this.bqNumber > 7) {
-			this.bqNumber = 1;
-		}
 		this.playerUpDown();
-		this.name = "assets/data/bananaQ" + Std.string(this.bqNumber) + ".txt";
+		this.name = "assets/data/bananaQuestion.txt";
 		this.dia.bananaTalk(this.name,banana,this.diaUpDown,this.bqNumber);
 		this.bananaTalk = true;
 	}
@@ -71291,7 +71343,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 940007;
+	this.version = 213185;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -118005,20 +118057,16 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 	stack.set_length(0);
 });
 AssetPaths.bananaNo__txt = "assets/data/bananaNo.txt";
-AssetPaths.bananaQ1__txt = "assets/data/bananaQ1.txt";
-AssetPaths.bananaQ2__txt = "assets/data/bananaQ2.txt";
-AssetPaths.bananaQ3__txt = "assets/data/bananaQ3.txt";
-AssetPaths.bananaQ4__txt = "assets/data/bananaQ4.txt";
-AssetPaths.bananaQ5__txt = "assets/data/bananaQ5.txt";
-AssetPaths.bananaQ6__txt = "assets/data/bananaQ6.txt";
-AssetPaths.bananaQ7__txt = "assets/data/bananaQ7.txt";
+AssetPaths.bananaQuestion__txt = "assets/data/bananaQuestion.txt";
 AssetPaths.bananaYes__txt = "assets/data/bananaYes.txt";
 AssetPaths.c1Opening__txt = "assets/data/c1Opening.txt";
+AssetPaths.c2Opening__txt = "assets/data/c2Opening.txt";
 AssetPaths.data_goes_here__txt = "assets/data/data-goes-here.txt";
 AssetPaths.diaMap__json = "assets/data/diaMap.json";
 AssetPaths.forestMission__txt = "assets/data/forestMission.txt";
 AssetPaths.forestMissionFinish__txt = "assets/data/forestMissionFinish.txt";
 AssetPaths.script__docx = "assets/data/script.docx";
+AssetPaths.stoneExplain__txt = "assets/data/stoneExplain.txt";
 AssetPaths.testMap__ogmo = "assets/data/testMap.ogmo";
 AssetPaths.banana__png = "assets/images/banana.png";
 AssetPaths.diaApe__png = "assets/images/diaApe.png";

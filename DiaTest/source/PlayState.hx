@@ -36,6 +36,9 @@ class PlayState extends FlxState
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 
+	var flyToMiner:Bool = false;
+	var flyToStone:Bool = false;
+
 	// 除錯ufo
 	var ufo:FlxText;
 
@@ -126,11 +129,55 @@ class PlayState extends FlxState
 		}
 	}
 
+	// 礦場位置
+	public function placeMinerEntities(entity:EntityData)
+	{
+		var x = entity.x;
+		var y = entity.y;
+
+		switch (entity.name)
+		{
+			case "playerMiner":
+				player.setPosition(x + 8, y + 8);
+
+			case "guyMiner":
+				doge.setPosition(x, y);
+		}
+	}
+
+	public function placeStoneEntities(entity:EntityData)
+	{
+		var x = entity.x;
+		var y = entity.y;
+
+		switch (entity.name)
+		{
+			case "playerStone":
+				player.setPosition(x + 8, y + 8);
+
+			case "spartanStone":
+				spartan.setPosition(x, y);
+		}
+	}
+
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
 		ufo.text = Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
+
+		var d = FlxG.keys.anyJustReleased([D]);
+		if (d)
+		{
+			FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+			map.loadEntities(placeMinerEntities, "entities");
+			flyToMiner = false;
+
+			name = AssetPaths.c2Opening__txt;
+			playerUpDown();
+			dia.show(name, diaUpDown);
+			flyToStone = true;
+		}
 
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, road);
@@ -144,9 +191,9 @@ class PlayState extends FlxState
 			player.active = true;
 
 		// 香蕉終結者2000
-		if (bananaTalk)
+		if (!dia.visible)
 		{
-			if (!dia.visible)
+			if (bananaTalk)
 			{
 				if (dia.bananaQ)
 				{
@@ -156,14 +203,39 @@ class PlayState extends FlxState
 				}
 				bananaTalk = false;
 			}
+			// 到礦場
+			if (flyToMiner)
+			{
+				FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+				map.loadEntities(placeMinerEntities, "entities");
+				flyToMiner = false;
+
+				name = AssetPaths.c2Opening__txt;
+				playerUpDown();
+				dia.show(name, diaUpDown);
+			}
+			// 到關卡地圖
+			if (flyToStone)
+			{
+				FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+				map.loadEntities(placeStoneEntities, "entities");
+				flyToStone = false;
+
+				name = AssetPaths.stoneExplain__txt;
+				playerUpDown();
+				dia.show(name, diaUpDown);
+			}
 		}
 	}
 
 	// Doge在紀念碑的對話
 	function forestMis(player:Player, doge:FlxSprite)
 	{
-		if (bananaCounter == 3)
+		if (bananaCounter == 6)
+		{
 			name = AssetPaths.forestMissionFinish__txt;
+			flyToMiner = true;
+		}
 		else
 			name = AssetPaths.forestMission__txt;
 		playerUpDown();
@@ -173,11 +245,9 @@ class PlayState extends FlxState
 	// 香蕉問問題
 	function forestQ(player:Player, banana:Banana)
 	{
-		if (bqNumber > 7)
-			bqNumber = 1;
 		playerUpDown();
 
-		name = "assets/data/bananaQ" + Std.string(bqNumber) + ".txt";
+		name = AssetPaths.bananaQuestion__txt;
 		dia.bananaTalk(name, banana, diaUpDown, bqNumber);
 
 		bananaTalk = true;

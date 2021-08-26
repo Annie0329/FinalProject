@@ -68,7 +68,7 @@ import sys.FileSystem;
 
 		#else
 
-		data = '{"name":null,"assets":"aoy4:pathy28:assets%2Fdata%2FbananaNo.txty4:sizei33y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ1.txtR2i198R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i194R3R4R5R8R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i204R3R4R5R9R6tgoR0y28:assets%2Fdata%2FbananaQ4.txtR2zR3R4R5R10R6tgoR0y28:assets%2Fdata%2FbananaQ5.txtR2zR3R4R5R11R6tgoR0y28:assets%2Fdata%2FbananaQ6.txtR2zR3R4R5R12R6tgoR0y28:assets%2Fdata%2FbananaQ7.txtR2zR3R4R5R13R6tgoR0y29:assets%2Fdata%2FbananaYes.txtR2i15R3R4R5R14R6tgoR0y29:assets%2Fdata%2Fc1Opening.txtR2i3051R3R4R5R15R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R16R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i22748R3R4R5R17R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i100R3R4R5R18R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i53R3R4R5R19R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i19559R3y6:BINARYR5R20R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i19299R3R4R5R22R6tgoR0y33:assets%2Fdata%2F%7E%24script.docxR2i162R3R21R5R23R6tgoR0y30:assets%2Fdata%2F%7EWRL0005.tmpR2i19719R3R21R5R24R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3y5:IMAGER5R25R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R26R5R27R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R26R5R28R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R26R5R29R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R26R5R30R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R26R5R31R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R32R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R26R5R33R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10480R3R26R5R34R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i182R3R26R5R35R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R26R5R36R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R37R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R38R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR40y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R39R5y28:flixel%2Fsounds%2Fflixel.mp3R41aR43y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R42R41aR40R42hgoR2i33629R3R45R5R44R41aR43R44hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R46R47y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R26R5R52R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R26R5R53R6tgh","rootPath":null,"version":2,"libraryArgs":[],"libraryType":null}';
+		data = '{"name":null,"assets":"aoy4:pathy28:assets%2Fdata%2FbananaNo.txty4:sizei33y4:typey4:TEXTy2:idR1y7:preloadtgoR0y34:assets%2Fdata%2FbananaQuestion.txtR2i1219R3R4R5R7R6tgoR0y29:assets%2Fdata%2FbananaYes.txtR2i15R3R4R5R8R6tgoR0y29:assets%2Fdata%2Fc1Opening.txtR2i3051R3R4R5R9R6tgoR0y29:assets%2Fdata%2Fc2Opening.txtR2i1633R3R4R5R10R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R11R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i23195R3R4R5R12R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i196R3R4R5R13R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i1041R3R4R5R14R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i20518R3y6:BINARYR5R15R6tgoR0y32:assets%2Fdata%2FstoneExplain.txtR2i238R3R4R5R17R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i22821R3R4R5R18R6tgoR0y33:assets%2Fdata%2F%7E%24script.docxR2i162R3R16R5R19R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3y5:IMAGER5R20R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R21R5R22R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R21R5R23R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R21R5R24R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R21R5R25R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R21R5R26R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R27R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R21R5R28R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10480R3R21R5R29R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i182R3R21R5R30R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R21R5R31R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R32R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R33R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR35y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R34R5y28:flixel%2Fsounds%2Fflixel.mp3R36aR38y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R37R36aR35R37hgoR2i33629R3R40R5R39R36aR38R39hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R41R42y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R21R5R47R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R21R5R48R6tgh","rootPath":null,"version":2,"libraryArgs":[],"libraryType":null}';
 		manifest = AssetManifest.parse (data, rootPath);
 		library = AssetLibrary.fromManifest (manifest);
 		Assets.registerLibrary ("default", library);
@@ -97,23 +97,18 @@ null
 #if flash
 
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananano_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaq1_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaq2_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaq3_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaq4_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaq5_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaq6_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaq7_txt extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananaquestion_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_bananayes_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_c1opening_txt extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_c2opening_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_data_goes_here_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_diamap_json extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_forestmission_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_forestmissionfinish_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_script_docx extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_stoneexplain_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_testmap_ogmo extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data___script_docx extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data__wrl0005_tmp extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_banana_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_diaape_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_diabanana_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
@@ -141,23 +136,18 @@ null
 #elseif (desktop || cpp)
 
 @:keep @:file("assets/data/bananaNo.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananano_txt extends haxe.io.Bytes {}
-@:keep @:file("assets/data/bananaQ1.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaq1_txt extends haxe.io.Bytes {}
-@:keep @:file("assets/data/bananaQ2.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaq2_txt extends haxe.io.Bytes {}
-@:keep @:file("assets/data/bananaQ3.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaq3_txt extends haxe.io.Bytes {}
-@:keep @:file("assets/data/bananaQ4.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaq4_txt extends haxe.io.Bytes {}
-@:keep @:file("assets/data/bananaQ5.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaq5_txt extends haxe.io.Bytes {}
-@:keep @:file("assets/data/bananaQ6.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaq6_txt extends haxe.io.Bytes {}
-@:keep @:file("assets/data/bananaQ7.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaq7_txt extends haxe.io.Bytes {}
+@:keep @:file("assets/data/bananaQuestion.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananaquestion_txt extends haxe.io.Bytes {}
 @:keep @:file("assets/data/bananaYes.txt") @:noCompletion #if display private #end class __ASSET__assets_data_bananayes_txt extends haxe.io.Bytes {}
 @:keep @:file("assets/data/c1Opening.txt") @:noCompletion #if display private #end class __ASSET__assets_data_c1opening_txt extends haxe.io.Bytes {}
+@:keep @:file("assets/data/c2Opening.txt") @:noCompletion #if display private #end class __ASSET__assets_data_c2opening_txt extends haxe.io.Bytes {}
 @:keep @:file("assets/data/data-goes-here.txt") @:noCompletion #if display private #end class __ASSET__assets_data_data_goes_here_txt extends haxe.io.Bytes {}
 @:keep @:file("assets/data/diaMap.json") @:noCompletion #if display private #end class __ASSET__assets_data_diamap_json extends haxe.io.Bytes {}
 @:keep @:file("assets/data/forestMission.txt") @:noCompletion #if display private #end class __ASSET__assets_data_forestmission_txt extends haxe.io.Bytes {}
 @:keep @:file("assets/data/forestMissionFinish.txt") @:noCompletion #if display private #end class __ASSET__assets_data_forestmissionfinish_txt extends haxe.io.Bytes {}
 @:keep @:file("assets/data/script.docx") @:noCompletion #if display private #end class __ASSET__assets_data_script_docx extends haxe.io.Bytes {}
+@:keep @:file("assets/data/stoneExplain.txt") @:noCompletion #if display private #end class __ASSET__assets_data_stoneexplain_txt extends haxe.io.Bytes {}
 @:keep @:file("assets/data/testMap.ogmo") @:noCompletion #if display private #end class __ASSET__assets_data_testmap_ogmo extends haxe.io.Bytes {}
 @:keep @:file("assets/data/~$script.docx") @:noCompletion #if display private #end class __ASSET__assets_data___script_docx extends haxe.io.Bytes {}
-@:keep @:file("assets/data/~WRL0005.tmp") @:noCompletion #if display private #end class __ASSET__assets_data__wrl0005_tmp extends haxe.io.Bytes {}
 @:keep @:image("assets/images/banana.png") @:noCompletion #if display private #end class __ASSET__assets_images_banana_png extends lime.graphics.Image {}
 @:keep @:image("assets/images/diaApe.png") @:noCompletion #if display private #end class __ASSET__assets_images_diaape_png extends lime.graphics.Image {}
 @:keep @:image("assets/images/diaBanana.png") @:noCompletion #if display private #end class __ASSET__assets_images_diabanana_png extends lime.graphics.Image {}
