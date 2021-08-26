@@ -913,7 +913,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "380";
+	app.meta.h["build"] = "435";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "DiaTest";
 	app.meta.h["name"] = "DiaTest";
@@ -6777,6 +6777,7 @@ flixel_group_FlxTypedGroup.prototype = $extend(flixel_FlxBasic.prototype,{
 	,__properties__: $extend(flixel_FlxBasic.prototype.__properties__,{get_memberRemoved:"get_memberRemoved",get_memberAdded:"get_memberAdded",set_maxSize:"set_maxSize"})
 });
 var Dia = function() {
+	this.answer = 0;
 	this.enter = false;
 	this.profile = 1;
 	this.i = 2;
@@ -6784,12 +6785,10 @@ var Dia = function() {
 	this.background = new flixel_FlxSprite(10,10,"assets/images/diaDoge.png");
 	this.background.screenCenter(flixel_util_FlxAxes.X);
 	this.add(this.background);
-	this.text = new flixel_text_FlxText(120,this.background.y + 10,flixel_FlxG.width / 3 * 2,"",20);
+	this.text = new flixel_text_FlxText(120,this.background.y + 10,350,"",18);
 	this.text.set_color(-16777216);
 	this.add(this.text);
-	this.pointer = new flixel_FlxSprite().makeGraphic(10,10,-256);
-	this.pointer.setPosition(0,this.background.y);
-	this.pointer.screenCenter(flixel_util_FlxAxes.X);
+	this.pointer = new flixel_FlxSprite(this.text.x + 5,this.background.y + 38,"assets/images/pointer.png");
 	this.add(this.pointer);
 	this.set_visible(false);
 	this.forEach(function(sprite) {
@@ -6808,6 +6807,10 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	,name: null
 	,pointer: null
 	,enter: null
+	,diaUpDown: null
+	,profilePic: null
+	,answer: null
+	,bananaQ: null
 	,banana: null
 	,show: function(name,diaUpDown) {
 		this.dilog_boxes = openfl_utils_Assets.getText(name).split(":");
@@ -6820,13 +6823,14 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		this.set_active(true);
 		this.pointer.set_visible(false);
 	}
-	,bananaTalk: function(name,banana,diaUpDown) {
+	,bananaTalk: function(name,banana,diaUpDown,bqNumber) {
 		this.dilog_boxes = openfl_utils_Assets.getText(name).split(":");
 		this.i = 2;
 		this.profile = 1;
 		this.changeProfile();
 		this.text.set_text(this.dilog_boxes[this.i]);
 		this.diaPosition(diaUpDown);
+		this.bananaAnswer(bqNumber);
 		this.set_visible(true);
 		this.set_active(true);
 		this.pointer.set_visible(true);
@@ -6835,48 +6839,82 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	,changeProfile: function() {
 		switch(this.dilog_boxes[this.profile]) {
 		case "A":
-			this.background.loadGraphic("assets/images/diaApe.png");
+			this.profilePic = "assets/images/diaApe.png";
 			break;
 		case "B":
-			this.background.loadGraphic("assets/images/diaBanana.png");
+			this.profilePic = "assets/images/diaBanana.png";
 			break;
 		case "D":
-			this.background.loadGraphic("assets/images/diaDoge.png");
+			this.profilePic = "assets/images/diaDoge.png";
 			break;
 		case "S":
-			this.background.loadGraphic("assets/images/diaSpartan.png");
+			this.profilePic = "assets/images/diaSpartan.png";
 			break;
 		}
+		this.background.loadGraphic(this.profilePic);
 	}
 	,diaPosition: function(diaUpDown) {
+		this.diaUpDown = diaUpDown;
 		if(diaUpDown == "up") {
 			this.background.set_y(10);
 		} else {
-			this.background.set_y(flixel_FlxG.width / 2);
+			this.background.set_y(flixel_FlxG.height - this.background.get_height() - 10);
 		}
 		this.text.set_y(this.background.y + 10);
-		this.pointer.set_y(this.background.y);
+		this.pointer.set_y(this.background.y + 38);
+	}
+	,bananaAnswer: function(bqNumber) {
+		if(bqNumber == 2 || bqNumber == 3 || bqNumber == 6) {
+			this.answer = this.background.y + 38;
+		} else if(bqNumber == 1 || bqNumber == 4) {
+			this.answer = this.background.y + 62;
+		} else {
+			this.answer = this.background.y + 86;
+		}
 	}
 	,update: function(elapsed) {
 		this.updateEnter();
 		this.updateSkip();
+		this.movePointer();
 		flixel_group_FlxTypedGroup.prototype.update.call(this,elapsed);
 	}
 	,updateEnter: function() {
 		this.enter = flixel_FlxG.keys.checkKeyArrayState([13,32],-1);
-		if(this.enter == true) {
+		if(this.enter) {
 			if(this.pointer.visible) {
-				this.i = 4;
+				if(this.pointer.y == this.answer) {
+					this.bananaQ = true;
+					this.name = "assets/data/bananaYes.txt";
+				} else {
+					this.bananaQ = false;
+					this.name = "assets/data/bananaNo.txt";
+				}
 				this.pointer.set_visible(false);
-			}
-			this.profile += 2;
-			this.changeProfile();
-			this.i += 2;
-			if(this.i > this.dilog_boxes.length) {
-				this.set_visible(false);
-				this.set_active(false);
+				this.show(this.name,this.diaUpDown);
 			} else {
-				this.text.set_text(this.dilog_boxes[this.i]);
+				this.profile += 2;
+				this.changeProfile();
+				this.i += 2;
+				if(this.i > this.dilog_boxes.length) {
+					this.set_visible(false);
+					this.set_active(false);
+				} else {
+					this.text.set_text(this.dilog_boxes[this.i]);
+				}
+			}
+		}
+	}
+	,movePointer: function() {
+		var up = flixel_FlxG.keys.checkKeyArrayState([38],-1);
+		var down = flixel_FlxG.keys.checkKeyArrayState([40],-1);
+		if(this.pointer.visible) {
+			if(up && this.pointer.y != this.background.y + 38) {
+				var fh = this.pointer;
+				fh.set_y(fh.y - 24);
+			}
+			if(down && this.pointer.y != this.background.y + 86) {
+				var fh = this.pointer;
+				fh.set_y(fh.y + 24);
 			}
 		}
 	}
@@ -6980,22 +7018,6 @@ EReg.prototype = {
 	}
 	,__class__: EReg
 };
-var Guy = function(x,y) {
-	if(y == null) {
-		y = 0;
-	}
-	if(x == null) {
-		x = 0;
-	}
-	flixel_FlxSprite.call(this,x,y);
-	this.loadGraphic("assets/images/doge.png");
-};
-$hxClasses["Guy"] = Guy;
-Guy.__name__ = "Guy";
-Guy.__super__ = flixel_FlxSprite;
-Guy.prototype = $extend(flixel_FlxSprite.prototype,{
-	__class__: Guy
-});
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = "HxOverrides";
@@ -7099,7 +7121,7 @@ ManifestResources.init = function(config) {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var bundle;
-	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaQ1.txty4:sizei92y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i83R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i84R3R4R5R8R6tgoR0y30:assets%2Fdata%2Fc1Begining.txtR2i3051R3R4R5R9R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R10R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i22322R3R4R5R11R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i100R3R4R5R12R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i53R3R4R5R13R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i19276R3y6:BINARYR5R14R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i16834R3R4R5R16R6tgoR0y33:assets%2Fdata%2F%7E%24script.docxR2i162R3R15R5R17R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3y5:IMAGER5R18R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R19R5R20R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R19R5R21R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R19R5R22R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R19R5R23R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R19R5R24R6tgoR0y33:assets%2Fimages%2FforestTiles.pngR2i1749R3R19R5R25R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R26R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R19R5R27R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10480R3R19R5R28R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R19R5R29R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R30R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R31R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR33y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R32R5y28:flixel%2Fsounds%2Fflixel.mp3R34aR36y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R35R34aR33R35hgoR2i33629R3R38R5R37R34aR36R37hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R39R40y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R19R5R45R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R19R5R46R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaNo.txty4:sizei33y4:typey4:TEXTy2:idR1y7:preloadtgoR0y28:assets%2Fdata%2FbananaQ1.txtR2i198R3R4R5R7R6tgoR0y28:assets%2Fdata%2FbananaQ2.txtR2i194R3R4R5R8R6tgoR0y28:assets%2Fdata%2FbananaQ3.txtR2i204R3R4R5R9R6tgoR0y28:assets%2Fdata%2FbananaQ4.txtR2zR3R4R5R10R6tgoR0y28:assets%2Fdata%2FbananaQ5.txtR2zR3R4R5R11R6tgoR0y28:assets%2Fdata%2FbananaQ6.txtR2zR3R4R5R12R6tgoR0y28:assets%2Fdata%2FbananaQ7.txtR2zR3R4R5R13R6tgoR0y29:assets%2Fdata%2FbananaYes.txtR2i15R3R4R5R14R6tgoR0y29:assets%2Fdata%2Fc1Opening.txtR2i3051R3R4R5R15R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R16R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i22748R3R4R5R17R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i100R3R4R5R18R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i53R3R4R5R19R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i19559R3y6:BINARYR5R20R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i19299R3R4R5R22R6tgoR0y33:assets%2Fdata%2F%7E%24script.docxR2i162R3R21R5R23R6tgoR0y30:assets%2Fdata%2F%7EWRL0005.tmpR2i19719R3R21R5R24R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3y5:IMAGER5R25R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R26R5R27R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R26R5R28R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R26R5R29R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R26R5R30R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R26R5R31R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R32R6tgoR0y30:assets%2Fimages%2FmainMenu.pngR2i11738R3R26R5R33R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10480R3R26R5R34R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i182R3R26R5R35R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R26R5R36R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R37R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R38R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR40y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R39R5y28:flixel%2Fsounds%2Fflixel.mp3R41aR43y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R42R41aR40R42hgoR2i33629R3R45R5R44R41aR43R44hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R46R47y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R26R5R52R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R26R5R53R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	var manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	var library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -7558,7 +7580,7 @@ flixel_FlxState.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	,__properties__: $extend(flixel_group_FlxTypedGroup.prototype.__properties__,{get_subStateClosed:"get_subStateClosed",get_subStateOpened:"get_subStateOpened",set_bgColor:"set_bgColor",get_bgColor:"get_bgColor"})
 });
 var PlayState = function(MaxSize) {
-	this.i = 0;
+	this.bqNumber = 1;
 	this.bananaCounter = 0;
 	flixel_FlxState.call(this,MaxSize);
 };
@@ -7567,19 +7589,21 @@ PlayState.__name__ = "PlayState";
 PlayState.__super__ = flixel_FlxState;
 PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	player: null
-	,guy: null
 	,dia: null
+	,diaUpDown: null
+	,name: null
+	,banana: null
+	,bananaTalk: null
+	,bananaCounter: null
+	,bqNumber: null
+	,doge: null
+	,spartan: null
 	,map: null
 	,through: null
 	,walls: null
 	,road: null
 	,ground: null
-	,banana: null
-	,bananaTalk: null
-	,bananaCounter: null
-	,diaUpDown: null
-	,name: null
-	,i: null
+	,ufo: null
 	,create: function() {
 		this.map = new flixel_addons_editors_ogmo_FlxOgmo3Loader("assets/data/testMap.ogmo","assets/data/diaMap.json");
 		this.ground = this.map.loadTilemap("assets/images/mtSmall.png","ground");
@@ -7591,21 +7615,28 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.walls = this.map.loadTilemap("assets/images/mtSmall.png","wall");
 		this.walls.follow();
 		this.add(this.walls);
-		this.guy = new Guy();
-		this.guy.set_immovable(true);
-		this.add(this.guy);
 		this.player = new Player();
 		this.add(this.player);
-		this.through = this.map.loadTilemap("assets/images/mtSmall.png","through");
-		this.through.follow();
-		this.add(this.through);
 		flixel_FlxG.camera.follow(this.player,flixel_FlxCameraFollowStyle.TOPDOWN,1);
 		this.banana = new flixel_group_FlxTypedGroup();
 		this.add(this.banana);
+		this.doge = new flixel_FlxSprite(null,null,"assets/images/doge.png");
+		this.doge.set_immovable(true);
+		this.add(this.doge);
+		this.spartan = new flixel_FlxSprite(null,null,"assets/images/spartan.png");
+		this.spartan.set_immovable(true);
+		this.add(this.spartan);
+		this.through = this.map.loadTilemap("assets/images/mtSmall.png","through");
+		this.through.follow();
+		this.add(this.through);
 		this.dia = new Dia();
 		this.add(this.dia);
 		this.map.loadEntities($bind(this,this.placeEntities),"entities");
-		this.name = "assets/data/c1Begining.txt";
+		this.ufo = new flixel_text_FlxText(0,0,null,"ddd",20);
+		this.ufo.set_borderColor(-16777216);
+		this.ufo.scrollFactor.set(0,0);
+		this.add(this.ufo);
+		this.name = "assets/data/c1Opening.txt";
 		this.diaUpDown = "up";
 		this.dia.show(this.name,this.diaUpDown);
 		flixel_FlxState.prototype.create.call(this);
@@ -7618,18 +7649,23 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 			this.banana.add(new Banana(entity.x + 20,entity.y + 20));
 			break;
 		case "guy":
-			this.guy.setPosition(x,y);
+			this.doge.setPosition(x,y);
 			break;
 		case "player":
 			this.player.setPosition(x + 8,y + 8);
+			break;
+		case "spartan":
+			this.spartan.setPosition(x,y);
 			break;
 		}
 	}
 	,update: function(elapsed) {
 		flixel_FlxState.prototype.update.call(this,elapsed);
+		this.ufo.set_text(Std.string(flixel_FlxG.mouse.screenX) + ", " + Std.string(flixel_FlxG.mouse.screenY));
 		flixel_FlxG.overlap(this.player,this.walls,null,flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.player,this.road);
-		flixel_FlxG.overlap(this.player,this.guy,$bind(this,this.forestMis),flixel_FlxObject.separate);
+		flixel_FlxG.overlap(this.player,this.doge,$bind(this,this.forestMis),flixel_FlxObject.separate);
+		flixel_FlxG.overlap(this.player,this.spartan,null,flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.player,this.banana,$bind(this,this.forestQ),flixel_FlxObject.separate);
 		if(this.dia.visible) {
 			this.player.set_active(false);
@@ -7638,13 +7674,16 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		}
 		if(this.bananaTalk) {
 			if(!this.dia.visible) {
-				this.dia.banana.kill();
+				if(this.dia.bananaQ) {
+					this.dia.banana.kill();
+					this.bqNumber++;
+					this.bananaCounter++;
+				}
 				this.bananaTalk = false;
-				this.bananaCounter++;
 			}
 		}
 	}
-	,forestMis: function(player,guy) {
+	,forestMis: function(player,doge) {
 		if(this.bananaCounter == 3) {
 			this.name = "assets/data/forestMissionFinish.txt";
 		} else {
@@ -7654,13 +7693,12 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.dia.show(this.name,this.diaUpDown);
 	}
 	,forestQ: function(player,banana) {
-		this.i++;
-		if(this.i > 3) {
-			this.i = 1;
+		if(this.bqNumber > 7) {
+			this.bqNumber = 1;
 		}
 		this.playerUpDown();
-		this.name = "assets/data/bananaQ" + Std.string(this.i) + ".txt";
-		this.dia.bananaTalk(this.name,banana,this.diaUpDown);
+		this.name = "assets/data/bananaQ" + Std.string(this.bqNumber) + ".txt";
+		this.dia.bananaTalk(this.name,banana,this.diaUpDown,this.bqNumber);
 		this.bananaTalk = true;
 	}
 	,playerUpDown: function() {
@@ -71253,7 +71291,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 112634;
+	this.version = 940007;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -117966,10 +118004,16 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 },function(stack) {
 	stack.set_length(0);
 });
+AssetPaths.bananaNo__txt = "assets/data/bananaNo.txt";
 AssetPaths.bananaQ1__txt = "assets/data/bananaQ1.txt";
 AssetPaths.bananaQ2__txt = "assets/data/bananaQ2.txt";
 AssetPaths.bananaQ3__txt = "assets/data/bananaQ3.txt";
-AssetPaths.c1Begining__txt = "assets/data/c1Begining.txt";
+AssetPaths.bananaQ4__txt = "assets/data/bananaQ4.txt";
+AssetPaths.bananaQ5__txt = "assets/data/bananaQ5.txt";
+AssetPaths.bananaQ6__txt = "assets/data/bananaQ6.txt";
+AssetPaths.bananaQ7__txt = "assets/data/bananaQ7.txt";
+AssetPaths.bananaYes__txt = "assets/data/bananaYes.txt";
+AssetPaths.c1Opening__txt = "assets/data/c1Opening.txt";
 AssetPaths.data_goes_here__txt = "assets/data/data-goes-here.txt";
 AssetPaths.diaMap__json = "assets/data/diaMap.json";
 AssetPaths.forestMission__txt = "assets/data/forestMission.txt";
@@ -117982,10 +118026,10 @@ AssetPaths.diaBanana__png = "assets/images/diaBanana.png";
 AssetPaths.diaDoge__png = "assets/images/diaDoge.png";
 AssetPaths.diaSpartan__png = "assets/images/diaSpartan.png";
 AssetPaths.doge__png = "assets/images/doge.png";
-AssetPaths.forestTiles__png = "assets/images/forestTiles.png";
 AssetPaths.images_go_here__txt = "assets/images/images-go-here.txt";
 AssetPaths.mainMenu__png = "assets/images/mainMenu.png";
 AssetPaths.mtSmall__png = "assets/images/mtSmall.png";
+AssetPaths.pointer__png = "assets/images/pointer.png";
 AssetPaths.spartan__png = "assets/images/spartan.png";
 AssetPaths.music_goes_here__txt = "assets/music/music-goes-here.txt";
 AssetPaths.sounds_go_here__txt = "assets/sounds/sounds-go-here.txt";

@@ -18,7 +18,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var name:String;
 	var pointer:FlxSprite;
 	var enter:Bool = false;
+	var diaUpDown:String;
+	var profilePic:String;
 
+	public var answer:Float = 0;
+
+	public var bananaQ:Bool;
 	public var banana:Banana; // 我們把香蕉召喚到這裡
 
 	public function new()
@@ -31,13 +36,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 字
-		text = new FlxText(120, background.y + 10, FlxG.width / 3 * 2, "", 20);
+		text = new FlxText(120, background.y + 10, 350, "", 18);
 		text.color = FlxColor.BLACK;
 		add(text);
 
-		pointer = new FlxSprite().makeGraphic(10, 10, FlxColor.YELLOW);
-		pointer.setPosition(0, background.y);
-		pointer.screenCenter(FlxAxes.X);
+		// 箭頭
+		pointer = new FlxSprite(text.x + 5, background.y + 38, AssetPaths.pointer__png);
 		add(pointer);
 
 		visible = false;
@@ -64,7 +68,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	}
 
 	// 香蕉對話
-	public function bananaTalk(name, banana, diaUpDown)
+	public function bananaTalk(name, banana, diaUpDown, bqNumber)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
 		i = 2;
@@ -75,9 +79,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.text = dilog_boxes[i];
 		diaPosition(diaUpDown);
 
+		bananaAnswer(bqNumber);
+
 		visible = true;
 		active = true;
-
 		pointer.visible = true;
 
 		this.banana = banana; // 我們告訴迪亞這隻香蕉(迪亞香蕉)是那隻香蕉(PlayState香蕉)(邏輯100)
@@ -89,32 +94,47 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		switch (dilog_boxes[profile])
 		{
 			case "B":
-				background.loadGraphic(AssetPaths.diaBanana__png);
+				profilePic = AssetPaths.diaBanana__png;
 			case "D":
-				background.loadGraphic(AssetPaths.diaDoge__png);
+				profilePic = AssetPaths.diaDoge__png;
 			case "A":
-				background.loadGraphic(AssetPaths.diaApe__png);
+				profilePic = AssetPaths.diaApe__png;
 			case "S":
-				background.loadGraphic(AssetPaths.diaSpartan__png);
+				profilePic = AssetPaths.diaSpartan__png;
 		}
+		background.loadGraphic(profilePic);
 	}
 
-	// 如果玩家在上方，對話框就放到下方
+	// 對話框位置
 	public function diaPosition(diaUpDown)
 	{
+		this.diaUpDown = diaUpDown;
 		if (diaUpDown == "up")
 			background.y = 10;
 		else
-			background.y = FlxG.width / 2;
+			background.y = FlxG.height - background.height - 10;
 
 		text.y = background.y + 10;
-		pointer.y = background.y;
+		pointer.y = background.y + 38;
 	}
 
+	// 香蕉問題題答案
+	function bananaAnswer(bqNumber)
+	{
+		if (bqNumber == 2 || bqNumber == 3 || bqNumber == 6)
+			answer = background.y + 38;
+		else if (bqNumber == 1 || bqNumber == 4)
+			answer = background.y + 62;
+		else
+			answer = background.y + 86;
+	}
+
+	// 更新啦
 	override public function update(elapsed:Float)
 	{
 		updateEnter();
 		updateSkip();
+		movePointer();
 		super.update(elapsed);
 	}
 
@@ -122,26 +142,55 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	function updateEnter()
 	{
 		enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-		if (enter == true)
+		if (enter)
 		{
 			if (pointer.visible)
 			{
-				i = 4;
+				if (pointer.y == answer)
+				{
+					bananaQ = true;
+					name = AssetPaths.bananaYes__txt;
+				}
+				else
+				{
+					bananaQ = false;
+					name = AssetPaths.bananaNo__txt;
+				}
 				pointer.visible = false;
-			}
-
-			profile += 2;
-			changeProfile();
-
-			i += 2;
-
-			if (i > dilog_boxes.length)
-			{
-				visible = false;
-				active = false;
+				show(name, diaUpDown);
 			}
 			else
-				text.text = dilog_boxes[i];
+			{
+				profile += 2;
+				changeProfile();
+
+				i += 2;
+
+				if (i > dilog_boxes.length)
+				{
+					visible = false;
+					active = false;
+				}
+				else
+					text.text = dilog_boxes[i];
+			}
+		}
+	}
+
+	function movePointer()
+	{
+		var up = FlxG.keys.anyJustReleased([UP]);
+		var down = FlxG.keys.anyJustReleased([DOWN]);
+		if (pointer.visible)
+		{
+			if (up && pointer.y != background.y + 38)
+			{
+				pointer.y -= 24;
+			}
+			if (down && pointer.y != background.y + 86)
+			{
+				pointer.y += 24;
+			}
 		}
 	}
 

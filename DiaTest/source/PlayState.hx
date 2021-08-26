@@ -1,32 +1,43 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
+import flixel.util.FlxColor;
 
 class PlayState extends FlxState
 {
+	// 玩家
 	var player:Player;
-	var guy:Guy;
-	var dia:Dia;
 
+	// 對話框和他的變數
+	var dia:Dia;
+	var diaUpDown:String;
+	var name:String;
+
+	// 香蕉和他的變數
+	var banana:FlxTypedGroup<Banana>;
+	var bananaTalk:Bool;
+	var bananaCounter:Int = 0;
+	var bqNumber:Int = 1;
+
+	// 其他角色
+	var doge:FlxSprite;
+	var spartan:FlxSprite;
+
+	// 地圖組
 	var map:FlxOgmo3Loader;
 	var through:FlxTilemap;
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 
-	var banana:FlxTypedGroup<Banana>;
-	// var ufo:FlxText;
-	var bananaTalk:Bool;
-	var bananaCounter:Int = 0;
-
-	var diaUpDown:String;
-	var name:String;
-	var i:Int = 0;
+	// 除錯ufo
+	var ufo:FlxText;
 
 	override public function create()
 	{
@@ -47,42 +58,46 @@ class PlayState extends FlxState
 		walls.follow();
 		add(walls);
 
-		// Doge
-		guy = new Guy();
-		guy.immovable = true;
-		add(guy);
-
 		// 玩家
 		player = new Player();
 		add(player);
-
-		// 牆
-		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
-		through.follow();
-		add(through);
-
-		/*
-			ufo = new FlxText(240, (FlxG.height - 40) / 2, FlxG.width / 4, "ddd", 20);
-			ufo.screenCenter();
-			ufo.scrollFactor.set(0, 0);
-			add(ufo);
-			ufo.visible = false;
-		 */
-
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
 		// 香蕉
 		banana = new FlxTypedGroup<Banana>();
 		add(banana);
 
+		// Doge
+		doge = new FlxSprite(AssetPaths.doge__png);
+		doge.immovable = true;
+		add(doge);
+
+		// 布布
+		spartan = new FlxSprite(AssetPaths.spartan__png);
+		spartan.immovable = true;
+		add(spartan);
+
+		// 在前面的物件
+		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
+		through.follow();
+		add(through);
+
 		// 對話框
 		dia = new Dia();
 		add(dia);
 
-		// 地圖
+		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
 
-		name = "assets/data/c1Begining.txt";
+		// 除錯ufo
+		ufo = new FlxText(0, 0, "ddd", 20);
+		ufo.borderColor = FlxColor.BLACK;
+		ufo.scrollFactor.set(0, 0);
+		add(ufo);
+		// ufo.visible = false;
+
+		// 呼叫開場白
+		name = AssetPaths.c1Opening__txt;
 		diaUpDown = "up";
 		dia.show(name, diaUpDown);
 
@@ -101,10 +116,13 @@ class PlayState extends FlxState
 				player.setPosition(x + 8, y + 8);
 
 			case "guy":
-				guy.setPosition(x, y);
+				doge.setPosition(x, y);
 
 			case "banana":
 				banana.add(new Banana(entity.x + 20, entity.y + 20));
+
+			case "spartan":
+				spartan.setPosition(x, y);
 		}
 	}
 
@@ -112,17 +130,16 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 
-		// ufo.text = Std.string(player.y % (FlxG.height * 2));
+		ufo.text = Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
 
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, road);
-		FlxG.collide(player, guy, forestMis);
+		FlxG.collide(player, doge, forestMis);
+		FlxG.collide(player, spartan);
 		FlxG.collide(player, banana, forestQ);
 
 		if (dia.visible)
-		{
 			player.active = false;
-		}
 		else
 			player.active = true;
 
@@ -131,20 +148,24 @@ class PlayState extends FlxState
 		{
 			if (!dia.visible)
 			{
-				dia.banana.kill(); // 我們把香蕉移到迪亞那邊，殺死迪亞香蕉，然後砰！這裡的香蕉就死了
+				if (dia.bananaQ)
+				{
+					dia.banana.kill(); // 我們把香蕉移到迪亞那邊，殺死迪亞香蕉，然後砰！這裡的香蕉就死了
+					bqNumber++;
+					bananaCounter++;
+				}
 				bananaTalk = false;
-				bananaCounter++;
 			}
 		}
 	}
 
 	// Doge在紀念碑的對話
-	function forestMis(player:Player, guy:Guy)
+	function forestMis(player:Player, doge:FlxSprite)
 	{
 		if (bananaCounter == 3)
-			name = "assets/data/forestMissionFinish.txt";
+			name = AssetPaths.forestMissionFinish__txt;
 		else
-			name = "assets/data/forestMission.txt";
+			name = AssetPaths.forestMission__txt;
 		playerUpDown();
 		dia.show(name, diaUpDown);
 	}
@@ -152,13 +173,12 @@ class PlayState extends FlxState
 	// 香蕉問問題
 	function forestQ(player:Player, banana:Banana)
 	{
-		i++;
-		if (i > 3)
-			i = 1;
+		if (bqNumber > 7)
+			bqNumber = 1;
 		playerUpDown();
 
-		name = "assets/data/bananaQ" + Std.string(i) + ".txt";
-		dia.bananaTalk(name, banana, diaUpDown);
+		name = "assets/data/bananaQ" + Std.string(bqNumber) + ".txt";
+		dia.bananaTalk(name, banana, diaUpDown, bqNumber);
 
 		bananaTalk = true;
 	}
