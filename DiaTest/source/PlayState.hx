@@ -36,8 +36,7 @@ class PlayState extends FlxState
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 
-	var flyToMiner:Bool = false;
-	var flyToStone:Bool = false;
+	var place:String = "monumentDone";
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -104,6 +103,8 @@ class PlayState extends FlxState
 		diaUpDown = "up";
 		dia.show(name, diaUpDown);
 
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+
 		super.create();
 	}
 
@@ -113,50 +114,41 @@ class PlayState extends FlxState
 		var x = entity.x;
 		var y = entity.y;
 
-		switch (entity.name)
+		switch (place)
 		{
-			case "player":
-				player.setPosition(x + 8, y + 8);
+			case "monumentDone":
+				switch (entity.name)
+				{
+					case "player":
+						player.setPosition(x + 8, y + 8);
 
-			case "guy":
-				doge.setPosition(x, y);
+					case "guy":
+						doge.setPosition(x, y);
 
-			case "banana":
-				banana.add(new Banana(entity.x + 20, entity.y + 20));
+					case "banana":
+						banana.add(new Banana(entity.x + 20, entity.y + 20));
 
-			case "spartan":
-				spartan.setPosition(x, y);
-		}
-	}
+					case "spartan":
+						spartan.setPosition(x, y);
+				}
+			case "miner":
+				switch (entity.name)
+				{
+					case "playerMiner":
+						player.setPosition(x + 8, y + 8);
 
-	// 礦場位置
-	public function placeMinerEntities(entity:EntityData)
-	{
-		var x = entity.x;
-		var y = entity.y;
+					case "guyMiner":
+						doge.setPosition(x, y);
+				}
+			case "stone":
+				switch (entity.name)
+				{
+					case "playerStone":
+						player.setPosition(x + 8, y + 8);
 
-		switch (entity.name)
-		{
-			case "playerMiner":
-				player.setPosition(x + 8, y + 8);
-
-			case "guyMiner":
-				doge.setPosition(x, y);
-		}
-	}
-
-	public function placeStoneEntities(entity:EntityData)
-	{
-		var x = entity.x;
-		var y = entity.y;
-
-		switch (entity.name)
-		{
-			case "playerStone":
-				player.setPosition(x + 8, y + 8);
-
-			case "spartanStone":
-				spartan.setPosition(x, y);
+					case "spartanStone":
+						spartan.setPosition(x, y);
+				}
 		}
 	}
 
@@ -164,35 +156,32 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 
-		ufo.text = Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
+		// 除錯大隊
+		ufo.text = place; // Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
 
 		var d = FlxG.keys.anyJustReleased([D]);
 		if (d)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
-			map.loadEntities(placeMinerEntities, "entities");
-			flyToMiner = false;
-
-			name = AssetPaths.c2Opening__txt;
-			playerUpDown();
-			dia.show(name, diaUpDown);
-			flyToStone = true;
 		}
 
+		// 碰撞爆
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, road);
-		FlxG.collide(player, doge, forestMis);
-		FlxG.collide(player, spartan);
+		FlxG.collide(player, doge, dogeTalk);
+		FlxG.collide(player, spartan, spartanTalk);
 		FlxG.collide(player, banana, forestQ);
 
+		// 對話框顯示時玩家就不能動
 		if (dia.visible)
 			player.active = false;
 		else
 			player.active = true;
 
-		// 香蕉終結者2000
+		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
+			// 香蕉終結者2000
 			if (bananaTalk)
 			{
 				if (dia.bananaQ)
@@ -203,41 +192,58 @@ class PlayState extends FlxState
 				}
 				bananaTalk = false;
 			}
-			// 到礦場
-			if (flyToMiner)
-			{
-				FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
-				map.loadEntities(placeMinerEntities, "entities");
-				flyToMiner = false;
 
-				name = AssetPaths.c2Opening__txt;
-				playerUpDown();
-				dia.show(name, diaUpDown);
-			}
-			// 到關卡地圖
-			if (flyToStone)
+			// 換地圖
+			switch (place)
 			{
-				FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
-				map.loadEntities(placeStoneEntities, "entities");
-				flyToStone = false;
+				case "miner":
+					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+					map.loadEntities(placeEntities, "entities");
+					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
 
-				name = AssetPaths.stoneExplain__txt;
-				playerUpDown();
-				dia.show(name, diaUpDown);
+					banana.kill();
+
+					place = "stone";
+					name = AssetPaths.c2Opening__txt;
+
+					playerUpDown();
+					dia.show(name, diaUpDown);
+
+				case "stone":
+					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+					map.loadEntities(placeEntities, "entities");
+					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+
+					name = AssetPaths.stoneExplain__txt;
+					place = "minerDone";
+
+					playerUpDown();
+					dia.show(name, diaUpDown);
 			}
 		}
 	}
 
-	// Doge在紀念碑的對話
-	function forestMis(player:Player, doge:FlxSprite)
+	// Doge對話
+	function dogeTalk(player:Player, doge:FlxSprite)
 	{
-		if (bananaCounter == 6)
+		// 紀念碑對話
+		if (place == "monumentDone")
 		{
-			name = AssetPaths.forestMissionFinish__txt;
-			flyToMiner = true;
+			if (bananaCounter == 0)
+			{
+				name = AssetPaths.forestMissionFinish__txt;
+				place = "miner";
+			}
+			else
+				name = AssetPaths.forestMission__txt;
 		}
-		else
-			name = AssetPaths.forestMission__txt;
+
+		// 礦場對話
+		else if (place == "minerDone")
+		{
+			name = AssetPaths.minerDoge__txt;
+		}
+
 		playerUpDown();
 		dia.show(name, diaUpDown);
 	}
@@ -251,6 +257,15 @@ class PlayState extends FlxState
 		dia.bananaTalk(name, banana, diaUpDown, bqNumber);
 
 		bananaTalk = true;
+	}
+
+	// 斯巴達對話
+	function spartanTalk(player:Player, spartan:FlxSprite)
+	{
+		name = AssetPaths.minerSpartan__txt;
+
+		playerUpDown();
+		dia.show(name, diaUpDown);
 	}
 
 	// 如果玩家在螢幕上方，對話框就放到下方
