@@ -24,7 +24,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var answer:Float = 0;
 
 	public var bananaQ:Bool;
-	public var banana:Banana; // 我們把香蕉召喚到這裡
+	public var banana:FlxSprite; // 我們把香蕉召喚到這裡
 
 	public function new()
 	{
@@ -185,13 +185,19 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var down = FlxG.keys.anyJustReleased([DOWN]);
 		if (pointer.visible)
 		{
-			if (up && pointer.y != background.y + 38)
+			if (up)
 			{
-				pointer.y -= 24;
+				if (pointer.y == background.y + 38)
+					pointer.y = background.y + 86;
+				else
+					pointer.y -= 24;
 			}
-			if (down && pointer.y != background.y + 86)
+			if (down)
 			{
-				pointer.y += 24;
+				if (pointer.y == background.y + 86)
+					pointer.y = background.y + 38;
+				else
+					pointer.y += 24;
 			}
 		}
 	}

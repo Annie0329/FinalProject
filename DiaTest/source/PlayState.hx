@@ -7,6 +7,7 @@ import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 
 class PlayState extends FlxState
@@ -20,7 +21,7 @@ class PlayState extends FlxState
 	var name:String;
 
 	// 香蕉和他的變數
-	var banana:FlxTypedGroup<Banana>;
+	var banana:FlxTypedGroup<FlxSprite> = null;
 	var bananaTalk:Bool;
 	var bananaCounter:Int = 0;
 	var bqNumber:Int = 1;
@@ -29,14 +30,22 @@ class PlayState extends FlxState
 	var doge:FlxSprite;
 	var spartan:FlxSprite;
 
+	var box:FlxSprite;
+	var boxCounter:Int = 0;
+	var stone:FlxTypedGroup<FlxSprite> = null;
+	var stoneCounter:Int = 0;
+	var target:FlxSprite;
+
 	// 地圖組
 	var map:FlxOgmo3Loader;
 	var through:FlxTilemap;
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
-
 	var place:String = "monumentDone";
+
+	// 章節
+	var chapter:Int = 1;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -60,14 +69,26 @@ class PlayState extends FlxState
 		walls.follow();
 		add(walls);
 
+		// 箱子目標
+		target = new FlxSprite(AssetPaths.target__png);
+		add(target);
+
 		// 玩家
 		player = new Player();
 		add(player);
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
 		// 香蕉
-		banana = new FlxTypedGroup<Banana>();
+		banana = new FlxTypedGroup<FlxSprite>();
 		add(banana);
+
+		// 石頭
+		stone = new FlxTypedGroup<FlxSprite>();
+		add(stone);
+
+		// 箱子
+		box = new FlxSprite(AssetPaths.boxEmpty__png);
+		add(box);
 
 		// Doge
 		doge = new FlxSprite(AssetPaths.doge__png);
@@ -79,7 +100,7 @@ class PlayState extends FlxState
 		spartan.immovable = true;
 		add(spartan);
 
-		// 在前面的物件
+		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
 		through.follow();
 		add(through);
@@ -92,7 +113,7 @@ class PlayState extends FlxState
 		map.loadEntities(placeEntities, "entities");
 
 		// 除錯ufo
-		ufo = new FlxText(0, 0, "ddd", 20);
+		ufo = new FlxText(0, 0, "ufo", 20);
 		ufo.borderColor = FlxColor.BLACK;
 		ufo.scrollFactor.set(0, 0);
 		add(ufo);
@@ -116,6 +137,7 @@ class PlayState extends FlxState
 
 		switch (place)
 		{
+			// 紀念碑
 			case "monumentDone":
 				switch (entity.name)
 				{
@@ -126,11 +148,12 @@ class PlayState extends FlxState
 						doge.setPosition(x, y);
 
 					case "banana":
-						banana.add(new Banana(entity.x + 20, entity.y + 20));
-
-					case "spartan":
-						spartan.setPosition(x, y);
+						var b = new FlxSprite(entity.x + 20, entity.y + 20, AssetPaths.banana__png);
+						b.immovable = true;
+						banana.add(b);
 				}
+
+			// 礦場
 			case "miner":
 				switch (entity.name)
 				{
@@ -139,7 +162,12 @@ class PlayState extends FlxState
 
 					case "guyMiner":
 						doge.setPosition(x, y);
+
+					case "spartan":
+						spartan.setPosition(x, y);
 				}
+
+			// 石頭關卡
 			case "stone":
 				switch (entity.name)
 				{
@@ -148,6 +176,36 @@ class PlayState extends FlxState
 
 					case "spartanStone":
 						spartan.setPosition(x, y);
+
+					case "stone":
+						var s = new FlxSprite(entity.x + 20, entity.y + 20, AssetPaths.stone__png);
+						stone.add(s);
+
+					case "box":
+						box.setPosition(x + 4, y + 4);
+
+					case "target":
+						target.setPosition(x + 4, y + 4);
+				}
+
+			// 斯巴達跑回去
+			case "minerDone":
+				switch (entity.name)
+				{
+					case "spartan":
+						spartan.setPosition(x, y);
+				}
+
+			// 重設關卡
+			case "boxRestart":
+				switch (entity.name)
+				{
+					case "stone":
+						var s = new FlxSprite(entity.x + 20, entity.y + 20, AssetPaths.stone__png);
+						stone.add(s);
+
+					case "box":
+						box.setPosition(x + 4, y + 4);
 				}
 		}
 	}
@@ -155,6 +213,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		updateWhenDiaInvisible();
 
 		// 除錯大隊
 		ufo.text = place; // Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
@@ -162,7 +221,7 @@ class PlayState extends FlxState
 		var d = FlxG.keys.anyJustReleased([D]);
 		if (d)
 		{
-			FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+			place = "stone";
 		}
 
 		// 碰撞爆
@@ -171,7 +230,85 @@ class PlayState extends FlxState
 		FlxG.collide(player, doge, dogeTalk);
 		FlxG.collide(player, spartan, spartanTalk);
 		FlxG.collide(player, banana, forestQ);
+		FlxG.collide(player, stone, stoneStop);
+		FlxG.collide(player, box, boxStop);
 
+		FlxG.collide(stone, walls);
+		FlxG.collide(stone, box, stoneInsideBox);
+
+		FlxG.collide(box, walls);
+		FlxG.overlap(box, target);
+	}
+
+	// Doge對話
+	function dogeTalk(player:Player, doge:FlxSprite)
+	{
+		// 紀念碑對話
+		if (place == "monumentDone")
+		{
+			if (bananaCounter == 0)
+			{
+				name = AssetPaths.forestMissionFinish__txt;
+				place = "miner";
+			}
+			else
+				name = AssetPaths.forestMission__txt;
+		}
+
+		// 礦場對話
+		else if (place == "minerDone")
+			name = AssetPaths.minerDoge__txt;
+
+		playerUpDown();
+		dia.show(name, diaUpDown);
+	}
+
+	// 斯巴達對話
+	function spartanTalk(player:Player, spartan:FlxSprite)
+	{
+		name = AssetPaths.minerSpartan__txt;
+
+		playerUpDown();
+		dia.show(name, diaUpDown);
+	}
+
+	// 香蕉問問題
+	function forestQ(player:Player, banana:FlxSprite)
+	{
+		name = AssetPaths.bananaQuestion__txt;
+
+		playerUpDown();
+		dia.bananaTalk(name, banana, diaUpDown, bqNumber);
+
+		bananaTalk = true;
+	}
+
+	// 石頭別動
+	function stoneStop(player:Player, stone:FlxSprite)
+	{
+		stone.velocity.set(0, 0);
+	}
+
+	// 箱子別動
+	function boxStop(player:Player, box:FlxSprite)
+	{
+		box.velocity.set(0, 0);
+	}
+
+	// 石頭放到箱子裡了
+	function stoneInsideBox(stone:FlxSprite, box:FlxSprite)
+	{
+		stone.kill();
+		stoneCounter++;
+		if (stoneCounter > 0)
+		{
+			box.loadGraphic(AssetPaths.boxFull__png);
+		}
+	}
+
+	// 對話看不看得見的問題
+	function updateWhenDiaInvisible()
+	{
 		// 對話框顯示時玩家就不能動
 		if (dia.visible)
 			player.active = false;
@@ -193,79 +330,47 @@ class PlayState extends FlxState
 				bananaTalk = false;
 			}
 
-			// 換地圖
+			// 談笑間切換地圖
 			switch (place)
 			{
+				// 前往礦場
 				case "miner":
-					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
-					map.loadEntities(placeEntities, "entities");
-					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+					{
+						map.loadEntities(placeEntities, "entities");
+						FlxG.camera.fade(FlxColor.BLACK, .33, true);
+						banana.kill();
+						place = "stone";
 
-					banana.kill();
+						name = AssetPaths.c2Opening__txt;
+						playerUpDown();
+						dia.show(name, diaUpDown);
+					});
 
-					place = "stone";
-					name = AssetPaths.c2Opening__txt;
-
-					playerUpDown();
-					dia.show(name, diaUpDown);
-
+				// 參觀關卡
 				case "stone":
-					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
-					map.loadEntities(placeEntities, "entities");
-					FlxG.camera.fade(FlxColor.BLACK, 0.5, true);
+					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+					{
+						map.loadEntities(placeEntities, "entities");
+						FlxG.camera.fade(FlxColor.BLACK, .33, true);
+						place = "spartanOut";
 
-					name = AssetPaths.stoneExplain__txt;
-					place = "minerDone";
+						name = AssetPaths.stoneExplain__txt;
+						playerUpDown();
+						dia.show(name, diaUpDown);
+					});
 
-					playerUpDown();
-					dia.show(name, diaUpDown);
+				// 斯巴達離開
+				case "spartanOut":
+					FlxTween.tween(spartan, {x: 3000}, 1, {
+						onComplete: function(_)
+						{
+							map.loadEntities(placeEntities, "entities");
+							place = "minerDone";
+						}
+					});
 			}
 		}
-	}
-
-	// Doge對話
-	function dogeTalk(player:Player, doge:FlxSprite)
-	{
-		// 紀念碑對話
-		if (place == "monumentDone")
-		{
-			if (bananaCounter == 0)
-			{
-				name = AssetPaths.forestMissionFinish__txt;
-				place = "miner";
-			}
-			else
-				name = AssetPaths.forestMission__txt;
-		}
-
-		// 礦場對話
-		else if (place == "minerDone")
-		{
-			name = AssetPaths.minerDoge__txt;
-		}
-
-		playerUpDown();
-		dia.show(name, diaUpDown);
-	}
-
-	// 香蕉問問題
-	function forestQ(player:Player, banana:Banana)
-	{
-		playerUpDown();
-
-		name = AssetPaths.bananaQuestion__txt;
-		dia.bananaTalk(name, banana, diaUpDown, bqNumber);
-
-		bananaTalk = true;
-	}
-
-	// 斯巴達對話
-	function spartanTalk(player:Player, spartan:FlxSprite)
-	{
-		name = AssetPaths.minerSpartan__txt;
-
-		playerUpDown();
-		dia.show(name, diaUpDown);
 	}
 
 	// 如果玩家在螢幕上方，對話框就放到下方
