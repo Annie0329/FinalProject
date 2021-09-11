@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 
@@ -11,12 +12,17 @@ class Dia extends FlxTypedGroup<FlxSprite>
 {
 	var i:Int = 2;
 	var profile:Int = 1;
+	var explainNum:Int = 1;
+	var explainPic:String;
 
 	var dilog_boxes:Array<String>;
+
 	var text:FlxText;
 	var background:FlxSprite;
-	var name:String;
+	var explain:FlxSprite;
 	var pointer:FlxSprite;
+
+	var name:String;
 	var enter:Bool = false;
 	var diaUpDown:String;
 	var profilePic:String;
@@ -29,6 +35,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public function new()
 	{
 		super();
+
+		// 解釋畫面
+		explain = new FlxSprite(0, 0, AssetPaths.explain1__png);
+		explain.scrollFactor.set(0, 0);
+		add(explain);
 
 		// 背景
 		background = new FlxSprite(10, 10, AssetPaths.diaDoge__png);
@@ -102,6 +113,19 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case "S":
 				profilePic = AssetPaths.diaSpartan__png;
 		}
+
+		// 召喚解釋畫面
+		if (dilog_boxes[profile] == "DE")
+		{
+			profilePic = AssetPaths.diaDoge__png;
+			explainPic = "assets/images/explain" + Std.string(explainNum) + ".png";
+			explain.loadGraphic(explainPic);
+			explain.visible = true;
+			explainNum++;
+		}
+		else
+			explain.visible = false;
+
 		background.loadGraphic(profilePic);
 	}
 
@@ -135,6 +159,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		updateEnter();
 		updateSkip();
 		movePointer();
+
+		var e = FlxG.keys.anyJustReleased([E]);
+		if (e) {}
 		super.update(elapsed);
 	}
 

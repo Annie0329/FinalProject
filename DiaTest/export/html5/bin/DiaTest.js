@@ -913,7 +913,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "131";
+	app.meta.h["build"] = "202";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "DiaTest";
 	app.meta.h["name"] = "DiaTest";
@@ -4344,9 +4344,13 @@ flixel_group_FlxTypedGroup.prototype = $extend(flixel_FlxBasic.prototype,{
 var Dia = function() {
 	this.answer = 0;
 	this.enter = false;
+	this.explainNum = 1;
 	this.profile = 1;
 	this.i = 2;
 	flixel_group_FlxTypedGroup.call(this);
+	this.explain = new flixel_FlxSprite(0,0,"assets/images/explain1.png");
+	this.explain.scrollFactor.set(0,0);
+	this.add(this.explain);
 	this.background = new flixel_FlxSprite(10,10,"assets/images/diaDoge.png");
 	this.background.screenCenter(flixel_util_FlxAxes.X);
 	this.add(this.background);
@@ -4366,11 +4370,14 @@ Dia.__super__ = flixel_group_FlxTypedGroup;
 Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 	i: null
 	,profile: null
+	,explainNum: null
+	,explainPic: null
 	,dilog_boxes: null
 	,text: null
 	,background: null
-	,name: null
+	,explain: null
 	,pointer: null
+	,name: null
 	,enter: null
 	,diaUpDown: null
 	,profilePic: null
@@ -4416,6 +4423,15 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 			this.profilePic = "assets/images/diaSpartan.png";
 			break;
 		}
+		if(this.dilog_boxes[this.profile] == "DE") {
+			this.profilePic = "assets/images/diaDoge.png";
+			this.explainPic = "assets/images/explain" + Std.string(this.explainNum) + ".png";
+			this.explain.loadGraphic(this.explainPic);
+			this.explain.set_visible(true);
+			this.explainNum++;
+		} else {
+			this.explain.set_visible(false);
+		}
 		this.background.loadGraphic(this.profilePic);
 	}
 	,diaPosition: function(diaUpDown) {
@@ -4441,6 +4457,8 @@ Dia.prototype = $extend(flixel_group_FlxTypedGroup.prototype,{
 		this.updateEnter();
 		this.updateSkip();
 		this.movePointer();
+		var e = flixel_FlxG.keys.checkKeyArrayState([69],-1);
+		var e1 = e;
 		flixel_group_FlxTypedGroup.prototype.update.call(this,elapsed);
 	}
 	,updateEnter: function() {
@@ -4694,7 +4712,7 @@ ManifestResources.init = function(config) {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var bundle;
-	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaNo.txty4:sizei33y4:typey4:TEXTy2:idR1y7:preloadtgoR0y34:assets%2Fdata%2FbananaQuestion.txtR2i1219R3R4R5R7R6tgoR0y29:assets%2Fdata%2FbananaYes.txtR2i15R3R4R5R8R6tgoR0y29:assets%2Fdata%2Fc1Opening.txtR2i3051R3R4R5R9R6tgoR0y29:assets%2Fdata%2Fc2Opening.txtR2i1633R3R4R5R10R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R11R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i23882R3R4R5R12R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i196R3R4R5R13R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i1041R3R4R5R14R6tgoR0y29:assets%2Fdata%2FminerDoge.txtR2i12R3R4R5R15R6tgoR0y32:assets%2Fdata%2FminerSpartan.txtR2i28R3R4R5R16R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i20573R3y6:BINARYR5R17R6tgoR0y32:assets%2Fdata%2FstoneExplain.txtR2i238R3R4R5R19R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i25953R3R4R5R20R6tgoR0y25:assets%2Fimages%2Fape.pngR2i6804R3y5:IMAGER5R21R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3R22R5R23R6tgoR0y30:assets%2Fimages%2FboxEmpty.pngR2i458R3R22R5R24R6tgoR0y29:assets%2Fimages%2FboxFull.pngR2i1140R3R22R5R25R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R22R5R26R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R22R5R27R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R22R5R28R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R22R5R29R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R22R5R30R6tgoR0y30:assets%2Fimages%2Fexplain1.pngR2i10835R3R22R5R31R6tgoR0y30:assets%2Fimages%2Fexplain2.pngR2i30630R3R22R5R32R6tgoR0y30:assets%2Fimages%2Fexplain3.pngR2i10755R3R22R5R33R6tgoR0y30:assets%2Fimages%2Fexplain4.pngR2i31128R3R22R5R34R6tgoR0y30:assets%2Fimages%2Fexplain5.pngR2i10572R3R22R5R35R6tgoR0y30:assets%2Fimages%2Fexplain6.pngR2i32697R3R22R5R36R6tgoR0y30:assets%2Fimages%2Fexplain7.pngR2i12168R3R22R5R37R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R38R6tgoR0y31:assets%2Fimages%2FmenuAbout.pngR2i8924R3R22R5R39R6tgoR0y39:assets%2Fimages%2FmenuChapterSelect.pngR2i6417R3R22R5R40R6tgoR0y30:assets%2Fimages%2FmenuMain.pngR2i11738R3R22R5R41R6tgoR0y33:assets%2Fimages%2FmenuPointer.pngR2i173R3R22R5R42R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10862R3R22R5R43R6tgoR0y38:assets%2Fimages%2FopeningAnimation.pngR2i725469R3R22R5R44R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i182R3R22R5R45R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R22R5R46R6tgoR0y27:assets%2Fimages%2Fstone.pngR2i351R3R22R5R47R6tgoR0y28:assets%2Fimages%2Ftarget.pngR2i383R3R22R5R48R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R49R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R50R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR52y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R51R5y28:flixel%2Fsounds%2Fflixel.mp3R53aR55y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R54R53aR52R54hgoR2i33629R3R57R5R56R53aR55R56hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R58R59y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R22R5R64R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R22R5R65R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	var data = "{\"name\":null,\"assets\":\"aoy4:pathy28:assets%2Fdata%2FbananaNo.txty4:sizei33y4:typey4:TEXTy2:idR1y7:preloadtgoR0y34:assets%2Fdata%2FbananaQuestion.txtR2i1219R3R4R5R7R6tgoR0y29:assets%2Fdata%2FbananaYes.txtR2i15R3R4R5R8R6tgoR0y29:assets%2Fdata%2Fc1Opening.txtR2i3053R3R4R5R9R6tgoR0y29:assets%2Fdata%2Fc2Opening.txtR2i1633R3R4R5R10R6tgoR0y34:assets%2Fdata%2Fdata-goes-here.txtR2zR3R4R5R11R6tgoR0y27:assets%2Fdata%2FdiaMap.jsonR2i23987R3R4R5R12R6tgoR0y33:assets%2Fdata%2FforestMission.txtR2i196R3R4R5R13R6tgoR0y39:assets%2Fdata%2FforestMissionFinish.txtR2i1041R3R4R5R14R6tgoR0y29:assets%2Fdata%2FminerDoge.txtR2i12R3R4R5R15R6tgoR0y32:assets%2Fdata%2FminerSpartan.txtR2i28R3R4R5R16R6tgoR0y27:assets%2Fdata%2Fscript.docxR2i26931R3y6:BINARYR5R17R6tgoR0y32:assets%2Fdata%2FstoneExplain.txtR2i238R3R4R5R19R6tgoR0y38:assets%2Fdata%2FstoneMissionFinish.txtR2i495R3R4R5R20R6tgoR0y28:assets%2Fdata%2FtestMap.ogmoR2i25953R3R4R5R21R6tgoR0y25:assets%2Fimages%2Fape.pngR2i6438R3y5:IMAGER5R22R6tgoR0y28:assets%2Fimages%2Fbanana.pngR2i332R3R23R5R24R6tgoR0y30:assets%2Fimages%2FboxEmpty.pngR2i458R3R23R5R25R6tgoR0y29:assets%2Fimages%2FboxFull.pngR2i1140R3R23R5R26R6tgoR0y28:assets%2Fimages%2FdiaApe.pngR2i2816R3R23R5R27R6tgoR0y31:assets%2Fimages%2FdiaBanana.pngR2i2286R3R23R5R28R6tgoR0y29:assets%2Fimages%2FdiaDoge.pngR2i3037R3R23R5R29R6tgoR0y32:assets%2Fimages%2FdiaSpartan.pngR2i3368R3R23R5R30R6tgoR0y26:assets%2Fimages%2Fdoge.pngR2i702R3R23R5R31R6tgoR0y30:assets%2Fimages%2Fexplain1.pngR2i10835R3R23R5R32R6tgoR0y30:assets%2Fimages%2Fexplain2.pngR2i30630R3R23R5R33R6tgoR0y30:assets%2Fimages%2Fexplain3.pngR2i10755R3R23R5R34R6tgoR0y30:assets%2Fimages%2Fexplain4.pngR2i31128R3R23R5R35R6tgoR0y30:assets%2Fimages%2Fexplain5.pngR2i10572R3R23R5R36R6tgoR0y30:assets%2Fimages%2Fexplain6.pngR2i32697R3R23R5R37R6tgoR0y30:assets%2Fimages%2Fexplain7.pngR2i12168R3R23R5R38R6tgoR0y36:assets%2Fimages%2Fimages-go-here.txtR2zR3R4R5R39R6tgoR0y31:assets%2Fimages%2FmenuAbout.pngR2i8924R3R23R5R40R6tgoR0y39:assets%2Fimages%2FmenuChapterSelect.pngR2i6417R3R23R5R41R6tgoR0y30:assets%2Fimages%2FmenuMain.pngR2i11738R3R23R5R42R6tgoR0y33:assets%2Fimages%2FmenuPointer.pngR2i173R3R23R5R43R6tgoR0y29:assets%2Fimages%2FmtSmall.pngR2i10862R3R23R5R44R6tgoR0y38:assets%2Fimages%2FopeningAnimation.pngR2i725469R3R23R5R45R6tgoR0y29:assets%2Fimages%2Fpointer.pngR2i182R3R23R5R46R6tgoR0y29:assets%2Fimages%2Fspartan.pngR2i902R3R23R5R47R6tgoR0y27:assets%2Fimages%2Fstone.pngR2i351R3R23R5R48R6tgoR0y28:assets%2Fimages%2Ftarget.pngR2i383R3R23R5R49R6tgoR0y36:assets%2Fmusic%2Fmusic-goes-here.txtR2zR3R4R5R50R6tgoR0y36:assets%2Fsounds%2Fsounds-go-here.txtR2zR3R4R5R51R6tgoR2i2114R3y5:MUSICR5y26:flixel%2Fsounds%2Fbeep.mp3y9:pathGroupaR53y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i39706R3R52R5y28:flixel%2Fsounds%2Fflixel.mp3R54aR56y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i5794R3y5:SOUNDR5R55R54aR53R55hgoR2i33629R3R58R5R57R54aR56R57hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R59R60y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3R23R5R65R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R23R5R66R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	var manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	var library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -5211,6 +5229,7 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.stone = new flixel_group_FlxTypedGroup();
 		this.add(this.stone);
 		this.box = new flixel_FlxSprite(null,null,"assets/images/boxEmpty.png");
+		this.box.set_immovable(true);
 		this.add(this.box);
 		this.doge = new flixel_FlxSprite(null,null,"assets/images/doge.png");
 		this.doge.set_immovable(true);
@@ -5244,7 +5263,7 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 				this.box.setPosition(x + 4,y + 4);
 				break;
 			case "stone":
-				var s = new flixel_FlxSprite(entity.x + 20,entity.y + 20,"assets/images/stone.png");
+				var s = new flixel_FlxSprite(x + 20,y + 20,"assets/images/stone.png");
 				this.stone.add(s);
 				break;
 			}
@@ -5294,7 +5313,7 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 				this.spartan.setPosition(x,y);
 				break;
 			case "stone":
-				var s = new flixel_FlxSprite(entity.x + 20,entity.y + 20,"assets/images/stone.png");
+				var s = new flixel_FlxSprite(x + 20,y + 20,"assets/images/stone.png");
 				this.stone.add(s);
 				break;
 			case "target":
@@ -5309,11 +5328,15 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.updateWhenDiaInvisible();
 		this.ufo.set_text(this.place);
 		var d = flixel_FlxG.keys.checkKeyArrayState([68],-1);
-		if(d) {
-			this.place = "stone";
+		var d1 = d;
+		var r = flixel_FlxG.keys.checkKeyArrayState([82],-1);
+		if(r && this.place == "minerDone") {
+			this.restartStone();
 		}
-		flixel_FlxG.overlap(this.player,this.walls,null,flixel_FlxObject.separate);
+		flixel_FlxG.overlap(this.player,this.ground);
 		flixel_FlxG.overlap(this.player,this.road);
+		flixel_FlxG.overlap(this.player,this.walls,null,flixel_FlxObject.separate);
+		flixel_FlxG.overlap(this.player,this.through);
 		flixel_FlxG.overlap(this.player,this.doge,$bind(this,this.dogeTalk),flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.player,this.spartan,$bind(this,this.spartanTalk),flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.player,this.banana,$bind(this,this.forestQ),flixel_FlxObject.separate);
@@ -5322,7 +5345,7 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		flixel_FlxG.overlap(this.stone,this.walls,null,flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.stone,this.box,$bind(this,this.stoneInsideBox),flixel_FlxObject.separate);
 		flixel_FlxG.overlap(this.box,this.walls,null,flixel_FlxObject.separate);
-		flixel_FlxG.overlap(this.box,this.target);
+		flixel_FlxG.overlap(this.box,this.target,$bind(this,this.boxOnTarget));
 	}
 	,dogeTalk: function(player,doge) {
 		if(this.place == "monumentDone") {
@@ -5339,7 +5362,11 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.dia.show(this.name,this.diaUpDown);
 	}
 	,spartanTalk: function(player,spartan) {
-		this.name = "assets/data/minerSpartan.txt";
+		if(this.boxCounter > 0) {
+			this.name = "assets/data/stoneMissionFinish.txt";
+		} else {
+			this.name = "assets/data/minerSpartan.txt";
+		}
 		this.playerUpDown();
 		this.dia.show(this.name,this.diaUpDown);
 	}
@@ -5360,7 +5387,31 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		this.stoneCounter++;
 		if(this.stoneCounter > 0) {
 			box.loadGraphic("assets/images/boxFull.png");
+			box.set_immovable(false);
 		}
+	}
+	,boxOnTarget: function(box,target) {
+		var _gthis = this;
+		if(this.stoneCounter > 0) {
+			flixel_tweens_FlxTween.tween(box,{ x : target.x, y : target.y},0.5,{ onComplete : function(_) {
+				_gthis.restartStone();
+			}});
+		}
+	}
+	,restartStone: function() {
+		var _gthis = this;
+		flixel_tweens_FlxTween.tween(this.player,{ x : 3520, y : 1280},0.5,{ onComplete : function(_) {
+			_gthis.stoneCounter = 0;
+			_gthis.box.set_immovable(true);
+			_gthis.box.loadGraphic("assets/images/boxEmpty.png");
+			_gthis.stone.forEach(function(sprite) {
+				sprite.kill();
+			});
+			_gthis.place = "boxRestart";
+			_gthis.map.loadEntities($bind(_gthis,_gthis.placeEntities),"entities");
+			_gthis.place = "minerDone";
+			_gthis.boxCounter++;
+		}});
 	}
 	,updateWhenDiaInvisible: function() {
 		var _gthis = this;
@@ -7850,7 +7901,12 @@ var Player = function(x,y) {
 		x = 0;
 	}
 	flixel_FlxSprite.call(this,x,y);
-	this.makeGraphic(64,64,-16776961);
+	this.loadGraphic("assets/images/ape.png",true,46,64);
+	this._facingFlip.h[1] = { x : false, y : false};
+	this._facingFlip.h[16] = { x : true, y : false};
+	this.animation.add("lr",[3,4,5,6,7],6,false);
+	this.animation.add("u",[9,8,10,8],6,false);
+	this.animation.add("d",[1,0,2,0],6,false);
 };
 $hxClasses["Player"] = Player;
 Player.__name__ = "Player";
@@ -7890,10 +7946,13 @@ Player.prototype = $extend(flixel_FlxSprite.prototype,{
 				} else if(right) {
 					newAngle -= 45;
 				}
+				this.set_facing(4096);
 			} else if(left) {
 				newAngle = 180;
+				this.set_facing(1);
 			} else if(right) {
 				newAngle = 0;
+				this.set_facing(16);
 			}
 			this.velocity.set(200,0);
 			var tmp = this.velocity;
@@ -7918,6 +7977,19 @@ Player.prototype = $extend(flixel_FlxSprite.prototype,{
 			var point1 = point;
 			point1._weak = true;
 			tmp.rotate(point1,newAngle);
+			if(this.velocity.x != 0 || this.velocity.y != 0) {
+				switch(this.facing) {
+				case 1:case 16:
+					this.animation.play("lr");
+					break;
+				case 256:
+					this.animation.play("u");
+					break;
+				case 4096:
+					this.animation.play("d");
+					break;
+				}
+			}
 		} else {
 			this.velocity.set(0,0);
 		}
@@ -71423,7 +71495,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 777784;
+	this.version = 512584;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -118149,6 +118221,7 @@ AssetPaths.minerDoge__txt = "assets/data/minerDoge.txt";
 AssetPaths.minerSpartan__txt = "assets/data/minerSpartan.txt";
 AssetPaths.script__docx = "assets/data/script.docx";
 AssetPaths.stoneExplain__txt = "assets/data/stoneExplain.txt";
+AssetPaths.stoneMissionFinish__txt = "assets/data/stoneMissionFinish.txt";
 AssetPaths.testMap__ogmo = "assets/data/testMap.ogmo";
 AssetPaths.ape__png = "assets/images/ape.png";
 AssetPaths.banana__png = "assets/images/banana.png";

@@ -88,6 +88,7 @@ class PlayState extends FlxState
 
 		// 箱子
 		box = new FlxSprite(AssetPaths.boxEmpty__png);
+		box.immovable = true;
 		add(box);
 
 		// Doge
@@ -178,7 +179,7 @@ class PlayState extends FlxState
 						spartan.setPosition(x, y);
 
 					case "stone":
-						var s = new FlxSprite(entity.x + 20, entity.y + 20, AssetPaths.stone__png);
+						var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
 						stone.add(s);
 
 					case "box":
@@ -201,7 +202,7 @@ class PlayState extends FlxState
 				switch (entity.name)
 				{
 					case "stone":
-						var s = new FlxSprite(entity.x + 20, entity.y + 20, AssetPaths.stone__png);
+						var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
 						stone.add(s);
 
 					case "box":
@@ -219,14 +220,20 @@ class PlayState extends FlxState
 		ufo.text = place; // Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
 
 		var d = FlxG.keys.anyJustReleased([D]);
-		if (d)
-		{
-			place = "stone";
-		}
+
+		if (d) {}
+
+		// 按r重新開始推石頭遊戲
+		var r = FlxG.keys.anyJustReleased([R]);
+		if (r && place == "minerDone")
+			restartStone();
 
 		// 碰撞爆
-		FlxG.collide(player, walls);
+		FlxG.overlap(player, ground);
 		FlxG.overlap(player, road);
+		FlxG.collide(player, walls);
+		FlxG.overlap(player, through);
+
 		FlxG.collide(player, doge, dogeTalk);
 		FlxG.collide(player, spartan, spartanTalk);
 		FlxG.collide(player, banana, forestQ);
@@ -237,7 +244,7 @@ class PlayState extends FlxState
 		FlxG.collide(stone, box, stoneInsideBox);
 
 		FlxG.collide(box, walls);
-		FlxG.overlap(box, target);
+		FlxG.overlap(box, target, boxOnTarget);
 	}
 
 	// Doge對話
@@ -266,7 +273,10 @@ class PlayState extends FlxState
 	// 斯巴達對話
 	function spartanTalk(player:Player, spartan:FlxSprite)
 	{
-		name = AssetPaths.minerSpartan__txt;
+		if (boxCounter > 0)
+			name = AssetPaths.stoneMissionFinish__txt;
+		else
+			name = AssetPaths.minerSpartan__txt;
 
 		playerUpDown();
 		dia.show(name, diaUpDown);
@@ -303,10 +313,48 @@ class PlayState extends FlxState
 		if (stoneCounter > 0)
 		{
 			box.loadGraphic(AssetPaths.boxFull__png);
+			box.immovable = false;
 		}
 	}
 
-	// 對話看不看得見的問題
+	// 箱子碰到目標了
+	function boxOnTarget(box:FlxSprite, target:FlxSprite)
+	{
+		if (stoneCounter > 0)
+		{
+			// 把箱子移到原位
+			FlxTween.tween(box, {x: target.x, y: target.y}, 0.5, {
+				onComplete: function(_)
+				{
+					restartStone();
+				}
+			});
+		}
+	}
+
+	// 重新開始推石頭遊戲
+	function restartStone()
+	{
+		// 先把玩家移到原位
+		FlxTween.tween(player, {x: 3520, y: 1280}, 0.5, {
+			onComplete: function(_)
+			{
+				stoneCounter = 0;
+				box.immovable = true;
+				box.loadGraphic(AssetPaths.boxEmpty__png);
+				stone.forEach(function(sprite)
+				{
+					sprite.kill();
+				});
+				place = "boxRestart";
+				map.loadEntities(placeEntities, "entities");
+				place = "minerDone";
+				boxCounter++;
+			}
+		});
+	}
+
+	// 對話結束時要做的事
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動

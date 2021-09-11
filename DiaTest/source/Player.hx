@@ -14,7 +14,16 @@ class Player extends FlxSprite
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
-		makeGraphic(64, 64, FlxColor.BLUE);
+		loadGraphic(AssetPaths.ape__png, true, 46, 64);
+
+		// 面向右邊時使用鏡像的左邊圖片
+		setFacingFlip(FlxObject.LEFT, false, false);
+		setFacingFlip(FlxObject.RIGHT, true, false);
+
+		// 走路動畫
+		animation.add("lr", [3, 4, 5, 6, 7], 6, false);
+		animation.add("u", [9, 8, 10, 8], 6, false);
+		animation.add("d", [1, 0, 2, 0], 6, false);
 	}
 
 	public function updateMovement()
@@ -57,19 +66,36 @@ class Player extends FlxSprite
 					newAngle += 45;
 				else if (right)
 					newAngle -= 45;
+				facing = FlxObject.DOWN;
 			}
 			else if (left)
 			{
 				newAngle = 180;
+				facing = FlxObject.LEFT;
 			}
 			else if (right)
 			{
 				newAngle = 0;
+				facing = FlxObject.RIGHT;
 			}
 
 			// 設定玩家的速度和方向。玩家永遠都往前進，只是角度一直改
 			velocity.set(SPEED, 0);
 			velocity.rotate(FlxPoint.weak(0, 0), newAngle);
+
+			if (velocity.x != 0 || velocity.y != 0)
+			{
+				// 什麼時候臉該面向哪邊
+				switch (facing)
+				{
+					case FlxObject.LEFT, FlxObject.RIGHT:
+						animation.play("lr");
+					case FlxObject.UP:
+						animation.play("u");
+					case FlxObject.DOWN:
+						animation.play("d");
+				}
+			}
 		}
 		else
 			velocity.set(0, 0);
