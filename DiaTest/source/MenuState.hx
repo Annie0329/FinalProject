@@ -4,7 +4,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
-import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 
 class MenuState extends FlxState
@@ -16,6 +15,7 @@ class MenuState extends FlxState
 	var pointerStart:Int = 215;
 
 	var menu:String = "main";
+	var place:String = "monument";
 
 	var ufo:FlxText;
 
@@ -68,7 +68,7 @@ class MenuState extends FlxState
 			else
 				menuPointer.y += pointerBar;
 		}
-		//確認
+		// 確認
 		if (enter)
 		{
 			// 主選單功能
@@ -88,14 +88,15 @@ class MenuState extends FlxState
 				else if (menuPointer.y == pointerStart + pointerBar)
 					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 					{
-						FlxG.switchState(new PlayState());
+						place = "monument";
+						FlxG.switchState(new PlayState(place));
 					});
 
 				// 關於
 				else
 				{
+					menuPointer.visible = false;
 					menuBackground.loadGraphic(AssetPaths.menuAbout__png);
-					menuPointer.visible == false;
 					menu = "about";
 				}
 			}
@@ -105,23 +106,32 @@ class MenuState extends FlxState
 			{
 				// 第一章
 				if (menuPointer.y == pointerStart)
-					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
-					{
-						FlxG.switchState(new PlayState());
-					});
+					place = "monument";
+
+				// 第二章
+				else if (menuPointer.y == pointerStart + pointerBar)
+					place = "miner";
+				FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+				{
+					FlxG.switchState(new PlayState(place));
+				});
 			}
 		}
 
 		// 回主選單
 		if (x)
-			if (menu != "main")
-			{
-				menuBackground.loadGraphic(AssetPaths.menuMain__png);
-				menuPointer.visible = true;
-				menu = "main";
-				pointerBar = 50;
-				pointerStart = 215;
+		{
+			menuBackground.loadGraphic(AssetPaths.menuMain__png);
+			menuPointer.visible = true;
+			pointerBar = 50;
+			pointerStart = 215;
+
+			if (menu == "chapterSelect")
 				menuPointer.y = pointerStart;
-			}
+			else
+				menuPointer.y = pointerStart + pointerBar * 2;
+
+			menu = "main";
+		}
 	}
 }

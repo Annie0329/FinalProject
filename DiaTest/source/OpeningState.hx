@@ -3,6 +3,7 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 
 class OpeningState extends FlxState
@@ -13,9 +14,9 @@ class OpeningState extends FlxState
 	{
 		// 開場動畫
 		openingAnimation = new FlxSprite();
+		openingAnimation.loadGraphic(AssetPaths.oa1__png);
 		openingAnimation.loadGraphic(AssetPaths.openingAnimation__png, true, 480, 360);
 		openingAnimation.animation.add("oa", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 1, false);
-
 		add(openingAnimation);
 
 		openingAnimation.animation.play("oa");

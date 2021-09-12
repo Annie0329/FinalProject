@@ -22,10 +22,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var explain:FlxSprite;
 	var pointer:FlxSprite;
 
-	var name:String;
-	var enter:Bool = false;
+	public var name:String;
+
 	var diaUpDown:String;
 	var profilePic:String;
+
+	public var touchBanana:Bool = false;
 
 	public var answer:Float = 0;
 
@@ -92,11 +94,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 		bananaAnswer(bqNumber);
 
-		visible = true;
-		active = true;
-		pointer.visible = true;
-
 		this.banana = banana; // 我們告訴迪亞這隻香蕉(迪亞香蕉)是那隻香蕉(PlayState香蕉)(邏輯100)
+		active = true;
+		touchBanana = true;
+		// active = true;
+		// visible = true;
+		// pointer.visible = true;
 	}
 
 	// 換對話框頭像
@@ -159,17 +162,36 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		updateEnter();
 		updateSkip();
 		movePointer();
+		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
+		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]) && !visible)
+		{
+			active = false;
+			touchBanana = false;
+		}
+		if (touchBanana)
+		{
+			if (enter)
+			{
+				visible = true;
+				pointer.visible = true;
+				touchBanana = false;
+			}
+		}
 
 		var e = FlxG.keys.anyJustReleased([E]);
-		if (e) {}
+		if (e)
+		{
+			visible = true;
+			active = true;
+		}
 		super.update(elapsed);
 	}
 
 	// 按Enter或空白鍵換行
 	function updateEnter()
 	{
-		enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-		if (enter)
+		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
+		if (enter && visible)
 		{
 			// 香蕉問題回答的對錯
 			if (pointer.visible)
