@@ -263,6 +263,16 @@ class PlayState extends FlxState
 		// 除錯大隊
 		ufo.text = Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
 
+		// 如果按esc鍵就回選單
+		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
+		if (esc && !dia.visible)
+		{
+			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+			{
+				FlxG.switchState(new MenuState());
+			});
+		}
+
 		var d = FlxG.keys.anyJustReleased([D]);
 		if (d) {}
 
@@ -290,12 +300,15 @@ class PlayState extends FlxState
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 
+		// 如果玩家離開就不能跟其他人對話
 		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]))
 			bubble.visible = false;
 
+		// 如果有對話泡泡又按enter就對話
 		if (bubble.visible && enter)
 		{
 			bubble.visible = false;
+
 			switch (talk)
 			{
 				// doge
@@ -303,7 +316,7 @@ class PlayState extends FlxState
 					// 紀念碑對話
 					if (place == "monumentDone")
 					{
-						if (bananaCounter == bananaGoal)
+						if (bananaCounter >= bananaGoal)
 						{
 							name = AssetPaths.forestMissionFinish__txt;
 							place = "miner";
@@ -316,20 +329,24 @@ class PlayState extends FlxState
 					// 礦場對話
 					else if (place == "minerDone")
 						name = AssetPaths.minerDoge__txt;
-
 					playerUpDown();
 					dia.show(name, diaUpDown);
 
 				// 斯巴達
 				case "spartan":
-					if (boxCounter == boxGoal)
+					if (boxCounter >= boxGoal)
 						name = AssetPaths.stoneMissionFinish__txt;
 					else
 						name = AssetPaths.minerSpartan__txt;
-
 					playerUpDown();
 					dia.show(name, diaUpDown);
+
+				// 香蕉
+				case "banana":
+					if (dia.touchBanana)
+						dia.startTalkToBanana();
 			}
+
 			talk = "none";
 		}
 	}
@@ -359,6 +376,7 @@ class PlayState extends FlxState
 	function forestQ(player:Player, banana:FlxSprite)
 	{
 		bubblePosition(banana.x, banana.y, banana.width);
+		talk = "banana";
 
 		name = AssetPaths.bananaQuestion__txt;
 		playerUpDown();
@@ -442,6 +460,7 @@ class PlayState extends FlxState
 			// 香蕉終結者2000
 			if (talkToBanana)
 			{
+				// 如果答對香蕉的問題就殺香蕉換題目
 				if (dia.bananaQ)
 				{
 					dia.banana.kill(); // 我們把香蕉移到迪亞那邊，殺死迪亞香蕉，然後砰！這裡的香蕉就死了

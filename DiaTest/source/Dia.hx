@@ -2,6 +2,7 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
@@ -12,6 +13,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 {
 	var i:Int = 2;
 	var profile:Int = 1;
+
 	var explainNum:Int = 1;
 	var explainPic:String;
 
@@ -78,6 +80,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		visible = true;
 		active = true;
 		pointer.visible = false;
+
+		// text.start(0.02, false, false, null);
 	}
 
 	// 香蕉對話
@@ -95,11 +99,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		bananaAnswer(bqNumber);
 
 		this.banana = banana; // 我們告訴迪亞這隻香蕉(迪亞香蕉)是那隻香蕉(PlayState香蕉)(邏輯100)
-		active = true;
 		touchBanana = true;
-		// active = true;
-		// visible = true;
-		// pointer.visible = true;
 	}
 
 	// 換對話框頭像
@@ -156,34 +156,30 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			answer = background.y + 86;
 	}
 
+	// 開始跟香蕉說話，因為香蕉是群組呼叫比較麻煩
+	public function startTalkToBanana()
+	{
+		visible = true;
+		active = true;
+		pointer.visible = true;
+		touchBanana = false;
+	}
+
 	// 更新啦
 	override public function update(elapsed:Float)
 	{
 		updateEnter();
 		updateSkip();
 		movePointer();
+
+		// 如果玩家離開香蕉就不能跟香蕉說話
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]) && !visible)
 		{
 			active = false;
 			touchBanana = false;
 		}
-		if (touchBanana)
-		{
-			if (enter)
-			{
-				visible = true;
-				pointer.visible = true;
-				touchBanana = false;
-			}
-		}
 
-		var e = FlxG.keys.anyJustReleased([E]);
-		if (e)
-		{
-			visible = true;
-			active = true;
-		}
 		super.update(elapsed);
 	}
 
@@ -191,7 +187,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	function updateEnter()
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-		if (enter && visible)
+		if (enter)
 		{
 			// 香蕉問題回答的對錯
 			if (pointer.visible)
@@ -216,6 +212,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 				i += 2;
 
+				// 對話結束就離開
 				if (i > dilog_boxes.length)
 				{
 					visible = false;

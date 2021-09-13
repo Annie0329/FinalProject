@@ -30,7 +30,7 @@ class OpeningState extends FlxState
 	{
 		super.update(elapsed);
 
-		var x = FlxG.keys.anyJustReleased([X]);
+		var x = FlxG.keys.anyJustReleased([ANY]);
 		if (x || openingAnimation.animation.finished)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()

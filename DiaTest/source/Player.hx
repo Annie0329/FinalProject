@@ -16,8 +16,8 @@ class Player extends FlxSprite
 		loadGraphic(AssetPaths.ape__png, true, 46, 64);
 
 		// 面向右邊時使用鏡像的左邊圖片
-		setFacingFlip(FlxObject.LEFT, false, false);
-		setFacingFlip(FlxObject.RIGHT, true, false);
+		setFacingFlip(LEFT, false, false);
+		setFacingFlip(RIGHT, true, false);
 
 		// 走路動畫
 		animation.add("lr", [3, 4, 5, 6, 7], 6, false);
@@ -49,6 +49,7 @@ class Player extends FlxSprite
 			var newAngle:Float = 0;
 
 			// 指定各種情況的角度
+			// 他們改圖書館了！！facing寫法改了(FlxObject.UP->UP)！！大笨蛋！！
 			if (up)
 			{
 				newAngle = -90;
@@ -56,7 +57,7 @@ class Player extends FlxSprite
 					newAngle -= 45;
 				else if (right)
 					newAngle += 45;
-				facing = FlxObject.UP;
+				facing = UP;
 			}
 			else if (down)
 			{
@@ -65,17 +66,17 @@ class Player extends FlxSprite
 					newAngle += 45;
 				else if (right)
 					newAngle -= 45;
-				facing = FlxObject.DOWN;
+				facing = DOWN;
 			}
 			else if (left)
 			{
 				newAngle = 180;
-				facing = FlxObject.LEFT;
+				facing = LEFT;
 			}
 			else if (right)
 			{
 				newAngle = 0;
-				facing = FlxObject.RIGHT;
+				facing = RIGHT;
 			}
 
 			// 設定玩家的速度和方向。玩家永遠都往前進，只是角度一直改
@@ -87,12 +88,13 @@ class Player extends FlxSprite
 				// 什麼時候臉該面向哪邊
 				switch (facing)
 				{
-					case FlxObject.LEFT, FlxObject.RIGHT:
+					case LEFT, RIGHT:
 						animation.play("lr");
-					case FlxObject.UP:
+					case UP:
 						animation.play("u");
-					case FlxObject.DOWN:
+					case DOWN:
 						animation.play("d");
+					case _:
 				}
 			}
 		}
