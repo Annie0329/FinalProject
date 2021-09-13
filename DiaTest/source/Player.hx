@@ -1,7 +1,6 @@
 package;
 
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 
@@ -13,7 +12,7 @@ class Player extends FlxSprite
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
-		loadGraphic(AssetPaths.ape__png, true, 46, 64);
+		loadGraphic(AssetPaths.ape__png, true, 50, 64);
 
 		// 面向右邊時使用鏡像的左邊圖片
 		setFacingFlip(LEFT, false, false);
@@ -107,5 +106,18 @@ class Player extends FlxSprite
 	{
 		updateMovement();
 		super.update(elapsed);
+		var e = FlxG.keys.anyJustReleased([E]);
+		if (e)
+		{
+			loadGraphic(AssetPaths.apeNew__png, true, 46, 64);
+			// 面向右邊時使用鏡像的左邊圖片
+			setFacingFlip(LEFT, false, false);
+			setFacingFlip(RIGHT, true, false);
+
+			// 走路動畫
+			animation.add("lr", [3, 4, 5, 6, 7], 6, false);
+			animation.add("u", [9, 8, 10, 8], 6, false);
+			animation.add("d", [1, 0, 2, 0], 6, false);
+		}
 	}
 }

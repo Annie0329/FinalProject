@@ -2,8 +2,9 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-
+import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
@@ -19,7 +20,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	var dilog_boxes:Array<String>;
 
-	var text:FlxText;
+	var text:FlxTypeText;
 	var background:FlxSprite;
 	var explain:FlxSprite;
 	var pointer:FlxSprite;
@@ -51,7 +52,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 字
-		text = new FlxText(120, background.y + 10, 350, "", 18);
+		text = new FlxTypeText(120, background.y + 10, 350, "text", 18);
 		text.color = FlxColor.BLACK;
 		add(text);
 
@@ -68,20 +69,22 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	// 一般對話
 	public function show(name, diaUpDown)
 	{
+		var xKey:Bool = false;
+		xKey = FlxG.keys.anyJustReleased([X]);
 		dilog_boxes = openfl.Assets.getText(name).split(":");
 		i = 2;
+		text.resetText(dilog_boxes[i]);
 
 		profile = 1;
 		changeProfile();
 
-		text.text = dilog_boxes[i];
 		diaPosition(diaUpDown);
 
 		visible = true;
 		active = true;
 		pointer.visible = false;
 
-		// text.start(0.02, false, false, null);
+		text.start(0.02, true, false, [FlxKey.X]);
 	}
 
 	// 香蕉對話
@@ -89,11 +92,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
 		i = bqNumber * 2;
+		text.resetText(dilog_boxes[i]);
 
 		profile = 1;
 		changeProfile();
 
-		text.text = dilog_boxes[i];
 		diaPosition(diaUpDown);
 
 		bananaAnswer(bqNumber);
@@ -163,6 +166,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		active = true;
 		pointer.visible = true;
 		touchBanana = false;
+		text.start(0.02, true, false, [FlxKey.X]);
 	}
 
 	// 更新啦
@@ -219,7 +223,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					active = false;
 				}
 				else
-					text.text = dilog_boxes[i];
+				{
+					text.resetText(dilog_boxes[i]);
+					text.start(0.02, true, false, [FlxKey.X]);
+				}
 			}
 		}
 	}
@@ -251,9 +258,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	// 按x鍵直接跳過整串對話
 	function updateSkip()
 	{
-		var xKey:Bool = false;
-		xKey = FlxG.keys.anyJustReleased([X]);
-		if (xKey && !pointer.visible)
+		var vKey:Bool = false;
+		vKey = FlxG.keys.anyJustReleased([V]);
+		if (vKey && !pointer.visible)
 		{
 			visible = false;
 			active = false;

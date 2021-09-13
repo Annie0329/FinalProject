@@ -34,8 +34,9 @@ class MenuState extends FlxState
 		ufo.borderColor = FlxColor.BLACK;
 		ufo.borderSize = 1;
 		ufo.scrollFactor.set(0, 0);
-		// ufo.color = FlxColor.BLACK;
+		ufo.color = FlxColor.BLACK;
 		add(ufo);
+		ufo.visible = false;
 
 		// 淡入效果，true是淡入
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);

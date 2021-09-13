@@ -140,7 +140,7 @@ class PlayState extends FlxState
 		ufo.color = FlxColor.BLACK;
 		ufo.scrollFactor.set(0, 0);
 		add(ufo);
-		// ufo.visible = false;
+		ufo.visible = false;
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
@@ -274,7 +274,10 @@ class PlayState extends FlxState
 		}
 
 		var d = FlxG.keys.anyJustReleased([D]);
-		if (d) {}
+		if (d)
+		{
+			
+		}
 
 		// 碰撞爆
 		FlxG.overlap(player, ground);
