@@ -93,6 +93,9 @@ class PlayState extends FlxState
 		add(player);
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
+		if(place=="miner")
+			playerBagPic();
+
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
 		add(banana);
@@ -163,6 +166,7 @@ class PlayState extends FlxState
 			case "miner":
 				place = "stone";
 
+				// 記得殺香蕉
 				banana.kill();
 				bananaCounter = bananaGoal;
 
@@ -273,10 +277,18 @@ class PlayState extends FlxState
 			});
 		}
 
-		var d = FlxG.keys.anyJustReleased([D]);
-		if (d)
+		var e = FlxG.keys.anyJustReleased([E]);
+		if (e)
 		{
-			
+			player.loadGraphic(AssetPaths.apeNew__png, true, 46, 64);
+			// 面向右邊時使用鏡像的左邊圖片
+			player.setFacingFlip(LEFT, false, false);
+			player.setFacingFlip(RIGHT, true, false);
+
+			// 走路動畫
+			player.animation.add("lr", [3, 4, 5, 6, 7], 6, false);
+			player.animation.add("u", [9, 8, 10, 8], 6, false);
+			player.animation.add("d", [1, 0, 2, 0], 6, false);
 		}
 
 		// 碰撞爆
@@ -324,6 +336,9 @@ class PlayState extends FlxState
 							name = AssetPaths.forestMissionFinish__txt;
 							place = "miner";
 							talkToBanana = false;
+
+							playerBagPic();
+							
 						}
 						else
 							name = AssetPaths.forestMission__txt;
@@ -352,6 +367,19 @@ class PlayState extends FlxState
 
 			talk = "none";
 		}
+	}
+
+	function playerBagPic()
+	{
+		player.loadGraphic(AssetPaths.apeNew__png, true, 46, 64);
+		// 面向右邊時使用鏡像的左邊圖片
+		player.setFacingFlip(LEFT, false, false);
+		player.setFacingFlip(RIGHT, true, false);
+
+		// 走路動畫
+		player.animation.add("lr", [3, 4, 5, 6, 7], 6, false);
+		player.animation.add("u", [9, 8, 10, 8], 6, false);
+		player.animation.add("d", [1, 0, 2, 0], 6, false);
 	}
 
 	// 泡泡位置

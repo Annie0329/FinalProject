@@ -56,6 +56,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.color = FlxColor.BLACK;
 		add(text);
 
+		text.delay = 0.04;
+		text.skipKeys = ["X"];
+
 		// 箭頭
 		pointer = new FlxSprite(text.x + 5, background.y + 38, AssetPaths.pointer__png);
 		add(pointer);
@@ -69,8 +72,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	// 一般對話
 	public function show(name, diaUpDown)
 	{
-		var xKey:Bool = false;
-		xKey = FlxG.keys.anyJustReleased([X]);
 		dilog_boxes = openfl.Assets.getText(name).split(":");
 		i = 2;
 		text.resetText(dilog_boxes[i]);
@@ -84,7 +85,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		active = true;
 		pointer.visible = false;
 
-		text.start(0.02, true, false, [FlxKey.X]);
+		text.start(false, false);
 	}
 
 	// 香蕉對話
@@ -164,9 +165,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		visible = true;
 		active = true;
-		pointer.visible = true;
-		touchBanana = false;
-		text.start(0.02, true, false, [FlxKey.X]);
+
+		// 文字動畫跑完才會出現箭頭
+		text.start(true, false, function()
+		{
+			pointer.visible = true;
+			touchBanana = false;
+		});
 	}
 
 	// 更新啦
@@ -209,7 +214,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				pointer.visible = false;
 				show(name, diaUpDown);
 			}
-			else
+			else if (!touchBanana)
 			{
 				profile += 2;
 				changeProfile();
@@ -225,7 +230,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else
 				{
 					text.resetText(dilog_boxes[i]);
-					text.start(0.02, true, false, [FlxKey.X]);
+					text.start(true, false);
 				}
 			}
 		}
