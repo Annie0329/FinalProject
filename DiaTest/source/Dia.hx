@@ -32,6 +32,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	public var touchBanana:Bool = false;
 
+	var textRunDone:Bool = false;
+
 	public var answer:Float = 0;
 
 	public var bananaQ:Bool;
@@ -83,9 +85,14 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 		visible = true;
 		active = true;
+		textRunDone = false;
+
 		pointer.visible = false;
 
-		text.start(false, false);
+		text.start(false, false, function()
+		{
+			textRunDone = true;
+		});
 	}
 
 	// 香蕉對話
@@ -119,6 +126,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaApe__png;
 			case "S":
 				profilePic = AssetPaths.diaSpartan__png;
+			case "L":
+				profilePic = AssetPaths.diaLake__png;
 		}
 
 		// 召喚解釋畫面
@@ -165,12 +174,14 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		visible = true;
 		active = true;
+		textRunDone = false;
 
 		// 文字動畫跑完才會出現箭頭
 		text.start(true, false, function()
 		{
 			pointer.visible = true;
 			touchBanana = false;
+			textRunDone = true;
 		});
 	}
 
@@ -196,7 +207,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	function updateEnter()
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-		if (enter)
+		if (enter && textRunDone)
 		{
 			// 香蕉問題回答的對錯
 			if (pointer.visible)
@@ -229,8 +240,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				}
 				else
 				{
+					textRunDone = false;
 					text.resetText(dilog_boxes[i]);
-					text.start(true, false);
+					text.start(false, false, function()
+					{
+						textRunDone = true;
+					});
 				}
 			}
 		}
@@ -260,7 +275,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
-	// 按x鍵直接跳過整串對話
+	// 按v鍵直接跳過整串對話
 	function updateSkip()
 	{
 		var vKey:Bool = false;

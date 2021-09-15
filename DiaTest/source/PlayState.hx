@@ -34,6 +34,7 @@ class PlayState extends FlxState
 	// 其他角色
 	var doge:FlxSprite;
 	var spartan:FlxSprite;
+	var lake:FlxSprite;
 
 	// 箱子和石頭
 	var box:FlxSprite;
@@ -93,12 +94,18 @@ class PlayState extends FlxState
 		add(player);
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
-		if(place=="miner")
+		if (place == "miner")
 			playerBagPic();
 
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
 		add(banana);
+
+		// 湖
+		lake = new FlxSprite();
+		lake.makeGraphic(80, 160, FlxColor.TRANSPARENT);
+		lake.immovable = true;
+		add(lake);
 
 		// 石頭
 		stone = new FlxTypedGroup<FlxSprite>();
@@ -198,6 +205,9 @@ class PlayState extends FlxState
 						var b = new FlxSprite(entity.x + 20, entity.y + 20, AssetPaths.banana__png);
 						b.immovable = true;
 						banana.add(b);
+
+					case "lake":
+						lake.setPosition(x, y);
 				}
 
 			// 礦場
@@ -212,6 +222,9 @@ class PlayState extends FlxState
 
 					case "spartan":
 						spartan.setPosition(x, y);
+
+					case "lake":
+						lake.setPosition(x, y);
 				}
 
 			// 石頭關卡
@@ -300,6 +313,7 @@ class PlayState extends FlxState
 		FlxG.collide(player, doge, dogeTalk);
 		FlxG.collide(player, spartan, spartanTalk);
 		FlxG.collide(player, banana, forestQ);
+		FlxG.collide(player, lake, lakeTalk);
 		FlxG.collide(player, stone, stoneStop);
 		FlxG.collide(player, box, boxStop);
 
@@ -338,7 +352,6 @@ class PlayState extends FlxState
 							talkToBanana = false;
 
 							playerBagPic();
-							
 						}
 						else
 							name = AssetPaths.forestMission__txt;
@@ -363,6 +376,12 @@ class PlayState extends FlxState
 				case "banana":
 					if (dia.touchBanana)
 						dia.startTalkToBanana();
+
+				// 湖
+				case "lake":
+					name = AssetPaths.lakeTalking__txt;
+					playerUpDown();
+					dia.show(name, diaUpDown);
 			}
 
 			talk = "none";
@@ -414,6 +433,13 @@ class PlayState extends FlxState
 		dia.bananaTalk(name, banana, diaUpDown, bqNumber);
 
 		talkToBanana = true;
+	}
+
+	// 湖對話
+	function lakeTalk(player:Player, lake:FlxSprite)
+	{
+		bubblePosition(lake.x, lake.y + lake.height / 2, lake.width);
+		talk = "lake";
 	}
 
 	// 石頭別動
@@ -534,11 +560,13 @@ class PlayState extends FlxState
 
 				// 斯巴達離開
 				case "spartanOut":
+					player.active = false;
 					FlxTween.tween(spartan, {x: 3000}, 1, {
 						onComplete: function(_)
 						{
 							map.loadEntities(placeEntities, "entities");
 							place = "minerDone";
+							player.active = true;
 						}
 					});
 			}
