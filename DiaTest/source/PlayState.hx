@@ -240,7 +240,7 @@ class PlayState extends FlxState
 						stone.add(s);
 
 					case "box":
-						box.setPosition(x + 4, y + 4);
+						box.setPosition(x + 4, y - 4);
 				}
 
 			// 斯巴達跑回去
@@ -261,7 +261,7 @@ class PlayState extends FlxState
 
 					case "box":
 						box.x = 3760;
-						FlxTween.tween(box, {x: x + 4, y: y + 4}, 1, {
+						FlxTween.tween(box, {x: x + 4, y: y - 4}, 1, {
 							onComplete: function(_)
 							{
 								stoneCounter = 0;
