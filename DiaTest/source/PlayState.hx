@@ -279,11 +279,6 @@ class PlayState extends FlxState
 		updateTalking();
 		updateR();
 
-		if (stoneCounter >= stoneGoal)
-			player.active = false;
-		else
-			player.active = true;
-
 		// 除錯大隊
 		ufo.text = Std.string(player.active); // ", " + Std.string(FlxG.mouse.screenY);
 
@@ -324,8 +319,8 @@ class PlayState extends FlxState
 		FlxG.collide(player, stone, stoneStop);
 		FlxG.collide(player, box);
 
-		FlxG.collide(stone, walls);
 		FlxG.collide(stone);
+		FlxG.collide(stone, walls);
 		FlxG.collide(stone, box, stoneInsideBox);
 
 		FlxG.collide(box, walls);
@@ -471,13 +466,13 @@ class PlayState extends FlxState
 		stoneCounter++;
 		if (stoneCounter >= stoneGoal)
 		{
+			boxCounter++;
 			player.active = false;
 			box.loadGraphic(AssetPaths.boxFull__png);
 			FlxTween.tween(box, {x: 3000}, 1, {
 				onComplete: function(_)
 				{
 					restartStone();
-					boxCounter++;
 				}
 			});
 		}
