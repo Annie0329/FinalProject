@@ -20,6 +20,8 @@ class OpeningState extends FlxState
 
 		openingAnimation.animation.play("oa");
 
+		FlxG.mouse.visible = false;
+
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
 		super.create();

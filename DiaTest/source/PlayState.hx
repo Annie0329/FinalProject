@@ -17,6 +17,7 @@ class PlayState extends FlxState
 
 	// 各關目標
 	var bananaGoal:Int = 1;
+	var stoneGoal:Int = 3;
 	var boxGoal:Int = 1;
 
 	// 對話框和他的變數
@@ -41,7 +42,6 @@ class PlayState extends FlxState
 	var boxCounter:Int = 0;
 	var stone:FlxTypedGroup<FlxSprite> = null;
 	var stoneCounter:Int = 0;
-	var target:FlxSprite;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -84,10 +84,6 @@ class PlayState extends FlxState
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
-
-		// 箱子目標
-		target = new FlxSprite(AssetPaths.target__png);
-		add(target);
 
 		// 玩家
 		player = new Player();
@@ -151,6 +147,8 @@ class PlayState extends FlxState
 		ufo.scrollFactor.set(0, 0);
 		add(ufo);
 		ufo.visible = false;
+
+		FlxG.mouse.visible = false;
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
@@ -243,9 +241,6 @@ class PlayState extends FlxState
 
 					case "box":
 						box.setPosition(x + 4, y + 4);
-
-					case "target":
-						target.setPosition(x + 4, y + 4);
 				}
 
 			// 斯巴達跑回去
@@ -265,11 +260,18 @@ class PlayState extends FlxState
 						stone.add(s);
 
 					case "box":
-						box.setPosition(x + 4, y + 4);
+						box.x = 3760;
+						FlxTween.tween(box, {x: x + 4, y: y + 4}, 1, {
+							onComplete: function(_)
+							{
+								stoneCounter = 0;
+							}
+						});
 				}
 		}
 	}
 
+	// 更新啦
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
@@ -277,8 +279,13 @@ class PlayState extends FlxState
 		updateTalking();
 		updateR();
 
+		if (stoneCounter >= stoneGoal)
+			player.active = false;
+		else
+			player.active = true;
+
 		// 除錯大隊
-		ufo.text = Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(player.active); // ", " + Std.string(FlxG.mouse.screenY);
 
 		// 如果按esc鍵就回選單
 		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
@@ -315,13 +322,13 @@ class PlayState extends FlxState
 		FlxG.collide(player, banana, forestQ);
 		FlxG.collide(player, lake, lakeTalk);
 		FlxG.collide(player, stone, stoneStop);
-		FlxG.collide(player, box, boxStop);
+		FlxG.collide(player, box);
 
 		FlxG.collide(stone, walls);
+		FlxG.collide(stone);
 		FlxG.collide(stone, box, stoneInsideBox);
 
 		FlxG.collide(box, walls);
-		FlxG.overlap(box, target, boxOnTarget);
 	}
 
 	// 對話大滿貫
@@ -337,7 +344,6 @@ class PlayState extends FlxState
 		if (bubble.visible && enter)
 		{
 			bubble.visible = false;
-
 			switch (talk)
 			{
 				// doge
@@ -448,12 +454,6 @@ class PlayState extends FlxState
 		stone.velocity.set(0, 0);
 	}
 
-	// 箱子別動
-	function boxStop(player:Player, box:FlxSprite)
-	{
-		box.velocity.set(0, 0);
-	}
-
 	// 按r重新開始推石頭遊戲
 	function updateR()
 	{
@@ -469,29 +469,23 @@ class PlayState extends FlxState
 	{
 		stone.kill();
 		stoneCounter++;
-		if (stoneCounter > 0)
+		if (stoneCounter >= stoneGoal)
 		{
+			player.active = false;
 			box.loadGraphic(AssetPaths.boxFull__png);
-			box.immovable = false;
-		}
-	}
-
-	// 箱子碰到目標了
-	function boxOnTarget(box:FlxSprite, target:FlxSprite)
-	{
-		if (stoneCounter > 0)
-		{
-			restartStone();
-			boxCounter++;
+			FlxTween.tween(box, {x: 3000}, 1, {
+				onComplete: function(_)
+				{
+					restartStone();
+					boxCounter++;
+				}
+			});
 		}
 	}
 
 	// 重新開始推石頭遊戲
 	function restartStone()
 	{
-		// 把玩家移到原位
-		stoneCounter = 0;
-		box.immovable = true;
 		box.loadGraphic(AssetPaths.boxEmpty__png);
 		stone.forEach(function(sprite)
 		{

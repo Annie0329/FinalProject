@@ -38,6 +38,8 @@ class MenuState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
+		FlxG.mouse.visible = false;
+
 		// 淡入效果，true是淡入
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
