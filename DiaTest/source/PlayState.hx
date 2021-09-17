@@ -185,7 +185,7 @@ class PlayState extends FlxState
 	// 換成猩猩背包包的造型
 	function playerBagPic()
 	{
-		player.loadGraphic(AssetPaths.apeNew__png, true, 46, 64);
+		player.loadGraphic(AssetPaths.apeNew__png, true, 50, 64);
 		// 面向右邊時使用鏡像的左邊圖片
 		player.setFacingFlip(LEFT, false, false);
 		player.setFacingFlip(RIGHT, true, false);

@@ -207,7 +207,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	function updateEnter()
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-		if (enter && textRunDone)
+		if (enter) // && textRunDone)
 		{
 			// 香蕉問題回答的對錯
 			if (pointer.visible)
