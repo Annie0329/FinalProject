@@ -66,6 +66,7 @@ class PlayState extends FlxState
 		this.place = place; // 這個place等於那個place(咒語)
 	}
 
+	// 加好加滿
 	override public function create()
 	{
 		map = new FlxOgmo3Loader(AssetPaths.testMap__ogmo, AssetPaths.diaMap__json);
@@ -84,14 +85,6 @@ class PlayState extends FlxState
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
-
-		// 玩家
-		player = new Player();
-		add(player);
-		FlxG.camera.follow(player, TOPDOWN, 1);
-
-		if (place == "miner")
-			playerBagPic();
 
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
@@ -121,6 +114,14 @@ class PlayState extends FlxState
 		spartan = new FlxSprite(AssetPaths.spartan__png);
 		spartan.immovable = true;
 		add(spartan);
+
+		// 玩家
+		player = new Player();
+		add(player);
+		FlxG.camera.follow(player, TOPDOWN, 1);
+
+		if (place == "miner")
+			playerBagPic();
 
 		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
@@ -179,6 +180,23 @@ class PlayState extends FlxState
 				playerUpDown();
 				dia.show(name, diaUpDown);
 		}
+	}
+
+	// 換成猩猩背包包的造型
+	function playerBagPic()
+	{
+		player.loadGraphic(AssetPaths.apeNew__png, true, 46, 64);
+		// 面向右邊時使用鏡像的左邊圖片
+		player.setFacingFlip(LEFT, false, false);
+		player.setFacingFlip(RIGHT, true, false);
+
+		// 走路動畫
+		player.animation.add("lr", [3, 4, 5, 6, 7], 6, false);
+		player.animation.add("u", [9, 8, 10, 8], 6, false);
+		player.animation.add("d", [1, 0, 2, 0], 6, false);
+
+		player.setSize(50, 32);
+		player.offset.set(0, 32);
 	}
 
 	// 設位置
@@ -251,7 +269,7 @@ class PlayState extends FlxState
 						spartan.setPosition(x, y);
 				}
 
-			// 重設關卡
+			// 重設石頭關卡
 			case "boxRestart":
 				switch (entity.name)
 				{
@@ -278,32 +296,15 @@ class PlayState extends FlxState
 		updateWhenDiaInvisible();
 		updateTalking();
 		updateR();
+		updateEsc();
 
 		// 除錯大隊
-		ufo.text = Std.string(player.active); // ", " + Std.string(FlxG.mouse.screenY);
-
-		// 如果按esc鍵就回選單
-		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
-		if (esc && !dia.visible)
-		{
-			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
-			{
-				FlxG.switchState(new MenuState());
-			});
-		}
+		ufo.text = diaUpDown;
 
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
-			player.loadGraphic(AssetPaths.apeNew__png, true, 46, 64);
-			// 面向右邊時使用鏡像的左邊圖片
-			player.setFacingFlip(LEFT, false, false);
-			player.setFacingFlip(RIGHT, true, false);
-
-			// 走路動畫
-			player.animation.add("lr", [3, 4, 5, 6, 7], 6, false);
-			player.animation.add("u", [9, 8, 10, 8], 6, false);
-			player.animation.add("d", [1, 0, 2, 0], 6, false);
+			ufo.visible = true;
 		}
 
 		// 碰撞爆
@@ -324,82 +325,6 @@ class PlayState extends FlxState
 		FlxG.collide(stone, box, stoneInsideBox);
 
 		FlxG.collide(box, walls);
-	}
-
-	// 對話大滿貫
-	function updateTalking()
-	{
-		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-
-		// 如果玩家離開就不能跟其他人對話
-		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]))
-			bubble.visible = false;
-
-		// 如果有對話泡泡又按enter就對話
-		if (bubble.visible && enter)
-		{
-			bubble.visible = false;
-			switch (talk)
-			{
-				// doge
-				case "doge":
-					// 紀念碑對話
-					if (place == "monumentDone")
-					{
-						if (bananaCounter >= bananaGoal)
-						{
-							name = AssetPaths.forestMissionFinish__txt;
-							place = "miner";
-							talkToBanana = false;
-
-							playerBagPic();
-						}
-						else
-							name = AssetPaths.forestMission__txt;
-					}
-
-					// 礦場對話
-					else if (place == "minerDone")
-						name = AssetPaths.minerDoge__txt;
-					playerUpDown();
-					dia.show(name, diaUpDown);
-
-				// 斯巴達
-				case "spartan":
-					if (boxCounter >= boxGoal)
-						name = AssetPaths.stoneMissionFinish__txt;
-					else
-						name = AssetPaths.minerSpartan__txt;
-					playerUpDown();
-					dia.show(name, diaUpDown);
-
-				// 香蕉
-				case "banana":
-					if (dia.touchBanana)
-						dia.startTalkToBanana();
-
-				// 湖
-				case "lake":
-					name = AssetPaths.lakeTalking__txt;
-					playerUpDown();
-					dia.show(name, diaUpDown);
-			}
-
-			talk = "none";
-		}
-	}
-
-	function playerBagPic()
-	{
-		player.loadGraphic(AssetPaths.apeNew__png, true, 46, 64);
-		// 面向右邊時使用鏡像的左邊圖片
-		player.setFacingFlip(LEFT, false, false);
-		player.setFacingFlip(RIGHT, true, false);
-
-		// 走路動畫
-		player.animation.add("lr", [3, 4, 5, 6, 7], 6, false);
-		player.animation.add("u", [9, 8, 10, 8], 6, false);
-		player.animation.add("d", [1, 0, 2, 0], 6, false);
 	}
 
 	// 泡泡位置
@@ -491,6 +416,69 @@ class PlayState extends FlxState
 		place = "minerDone";
 	}
 
+	// 對話大滿貫
+	function updateTalking()
+	{
+		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
+
+		// 如果玩家離開就不能對話
+		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]))
+			bubble.visible = false;
+
+		// 如果有對話泡泡又按enter就對話
+		if (bubble.visible && enter)
+		{
+			bubble.visible = false;
+			switch (talk)
+			{
+				// doge
+				case "doge":
+					// 紀念碑對話
+					if (place == "monumentDone")
+					{
+						if (bananaCounter >= bananaGoal)
+						{
+							name = AssetPaths.forestMissionFinish__txt;
+							place = "miner";
+							talkToBanana = false;
+
+							playerBagPic();
+						}
+						else
+							name = AssetPaths.forestMission__txt;
+					}
+
+					// 礦場對話
+					else if (place == "minerDone")
+						name = AssetPaths.minerDoge__txt;
+					playerUpDown();
+					dia.show(name, diaUpDown);
+
+				// 斯巴達
+				case "spartan":
+					if (boxCounter >= boxGoal)
+						name = AssetPaths.stoneMissionFinish__txt;
+					else
+						name = AssetPaths.minerSpartan__txt;
+					playerUpDown();
+					dia.show(name, diaUpDown);
+
+				// 香蕉
+				case "banana":
+					if (dia.touchBanana)
+						dia.startTalkToBanana();
+
+				// 湖
+				case "lake":
+					name = AssetPaths.lakeTalking__txt;
+					playerUpDown();
+					dia.show(name, diaUpDown);
+			}
+
+			talk = "none";
+		}
+	}
+
 	// 對話結束時要做的事
 	function updateWhenDiaInvisible()
 	{
@@ -565,9 +553,24 @@ class PlayState extends FlxState
 	// 如果玩家在螢幕上方，對話框就放到下方
 	function playerUpDown()
 	{
-		if (player.y % (FlxG.height * 2) > FlxG.height)
+		// 這串偉大的公式是把玩家的世界座標轉成螢幕座標，感謝Kino大大
+		// https://kinocreates.io/tutorials/haxeflixel-screen-vs-world-position/
+		if (player.y - player.height / 2 - (FlxG.camera.scroll.y * player.scrollFactor.y) > FlxG.height / 2)
 			diaUpDown = "up";
 		else
 			diaUpDown = "down";
+	}
+
+	// 如果按esc鍵就回選單
+	function updateEsc()
+	{
+		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
+		if (esc && !dia.visible)
+		{
+			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+			{
+				FlxG.switchState(new MenuState());
+			});
+		}
 	}
 }
