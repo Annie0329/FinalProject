@@ -19,7 +19,7 @@ class Player extends FlxSprite
 		setFacingFlip(RIGHT, true, false);
 
 		// 走路動畫
-		animation.add("lr", [3, 4, 5, 6, 7], 6, false);
+		animation.add("lr", [3, 4, 3, 5, 6, 7, 6, 5], 6, false);
 		animation.add("u", [9, 8, 10, 8], 6, false);
 		animation.add("d", [1, 0, 2, 0], 6, false);
 

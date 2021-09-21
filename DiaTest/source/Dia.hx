@@ -59,7 +59,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(text);
 
 		text.delay = 0.04;
-		text.skipKeys = ["X"];
+		text.skipKeys = ["X", "SHIFT"];
 
 		// 箭頭
 		pointer = new FlxSprite(text.x + 5, background.y + 38, AssetPaths.pointer__png);
@@ -131,10 +131,19 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		}
 
 		// 召喚解釋畫面
-		if (dilog_boxes[profile] == "DE")
+		if (dilog_boxes[profile] == "DE" || dilog_boxes[profile] == "AE")
 		{
-			profilePic = AssetPaths.diaDoge__png;
-			explainPic = "assets/images/explain" + Std.string(explainNum) + ".png";
+			if (dilog_boxes[profile] == "DE")
+			{
+				profilePic = AssetPaths.diaDoge__png;
+				explainPic = "assets/images/explain" + Std.string(explainNum) + ".png";
+			}
+			else if (dilog_boxes[profile] == "AE")
+			{
+				profilePic = AssetPaths.diaApe__png;
+				explainPic = "assets/images/explain6.png";
+			}
+
 			explain.loadGraphic(explainPic);
 			explain.visible = true;
 			explainNum++;

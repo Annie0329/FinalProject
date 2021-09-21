@@ -45,6 +45,7 @@ class PlayState extends FlxState
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
+	var mapRoom:FlxOgmo3Loader;
 	var through:FlxTilemap;
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
@@ -191,7 +192,7 @@ class PlayState extends FlxState
 		player.setFacingFlip(RIGHT, true, false);
 
 		// 走路動畫
-		player.animation.add("lr", [3, 4, 5, 6, 7], 6, false);
+		player.animation.add("lr", [3, 4, 3, 5, 6, 7, 6, 5], 6, false);
 		player.animation.add("u", [9, 8, 10, 8], 6, false);
 		player.animation.add("d", [1, 0, 2, 0], 6, false);
 
@@ -452,6 +453,8 @@ class PlayState extends FlxState
 					else if (place == "minerDone")
 						name = AssetPaths.minerDoge__txt;
 					playerUpDown();
+					if (name == AssetPaths.forestMissionFinish__txt)
+						diaUpDown = "up";
 					dia.show(name, diaUpDown);
 
 				// 斯巴達
