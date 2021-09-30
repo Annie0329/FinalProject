@@ -30,8 +30,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var diaUpDown:String;
 	var profilePic:String;
 
-	public var touchBanana:Bool = false;
-
 	var textRunDone:Bool = false;
 
 	public var answer:Float = 0;
@@ -66,6 +64,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(pointer);
 
 		visible = false;
+		active = false;
 
 		// 別跟著攝影機動
 		forEach(function(sprite) sprite.scrollFactor.set(0, 0));
@@ -83,10 +82,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 		diaPosition(diaUpDown);
 
-		visible = true;
-		active = true;
 		textRunDone = false;
-
 		pointer.visible = false;
 
 		text.start(false, false, function()
@@ -95,31 +91,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		});
 	}
 
-	// 香蕉對話
-	public function bananaTalk(name, banana, diaUpDown, bqNumber)
-	{
-		dilog_boxes = openfl.Assets.getText(name).split(":");
-		i = bqNumber * 2;
-		text.resetText(dilog_boxes[i]);
-
-		profile = 1;
-		changeProfile();
-
-		diaPosition(diaUpDown);
-
-		bananaAnswer(bqNumber);
-
-		this.banana = banana; // 我們告訴迪亞這隻香蕉(迪亞香蕉)是那隻香蕉(PlayState香蕉)(邏輯100)
-		touchBanana = true;
-	}
-
 	// 換對話框頭像
 	function changeProfile()
 	{
 		switch (dilog_boxes[profile])
 		{
-			case "B":
-				profilePic = AssetPaths.diaBanana__png;
 			case "D":
 				profilePic = AssetPaths.diaDoge__png;
 			case "A":
@@ -128,6 +104,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaSpartan__png;
 			case "L":
 				profilePic = AssetPaths.diaLake__png;
+			case "N":
+				profilePic = AssetPaths.diaNull__png;
 		}
 
 		// 召喚解釋畫面
@@ -167,47 +145,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		pointer.y = background.y + 38;
 	}
 
-	// 香蕉問題答案
-	function bananaAnswer(bqNumber)
-	{
-		if (bqNumber == 2 || bqNumber == 3 || bqNumber == 6)
-			answer = background.y + 38;
-		else if (bqNumber == 1 || bqNumber == 4)
-			answer = background.y + 62;
-		else
-			answer = background.y + 86;
-	}
-
-	// 開始跟香蕉說話，因為香蕉是群組呼叫比較麻煩
-	public function startTalkToBanana()
-	{
-		visible = true;
-		active = true;
-		textRunDone = false;
-
-		// 文字動畫跑完才會出現箭頭
-		text.start(true, false, function()
-		{
-			pointer.visible = true;
-			touchBanana = false;
-			textRunDone = true;
-		});
-	}
-
 	// 更新啦
 	override public function update(elapsed:Float)
 	{
 		updateEnter();
 		updateSkip();
 		movePointer();
-
-		// 如果玩家離開香蕉就不能跟香蕉說話
-		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]) && !visible)
-		{
-			active = false;
-			touchBanana = false;
-		}
 
 		super.update(elapsed);
 	}
@@ -218,44 +161,25 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (enter) // && textRunDone)
 		{
-			// 香蕉問題回答的對錯
-			if (pointer.visible)
+			profile += 2;
+			changeProfile();
+
+			i += 2;
+
+			// 對話結束就離開
+			if (i > dilog_boxes.length)
 			{
-				if (pointer.y == answer)
-				{
-					bananaQ = true;
-					name = AssetPaths.bananaYes__txt;
-				}
-				else
-				{
-					bananaQ = false;
-					name = AssetPaths.bananaNo__txt;
-				}
-				pointer.visible = false;
-				show(name, diaUpDown);
+				visible = false;
+				active = false;
 			}
-			else if (!touchBanana)
+			else
 			{
-				profile += 2;
-				changeProfile();
-
-				i += 2;
-
-				// 對話結束就離開
-				if (i > dilog_boxes.length)
+				textRunDone = false;
+				text.resetText(dilog_boxes[i]);
+				text.start(false, false, function()
 				{
-					visible = false;
-					active = false;
-				}
-				else
-				{
-					textRunDone = false;
-					text.resetText(dilog_boxes[i]);
-					text.start(false, false, function()
-					{
-						textRunDone = true;
-					});
-				}
+					textRunDone = true;
+				});
 			}
 		}
 	}

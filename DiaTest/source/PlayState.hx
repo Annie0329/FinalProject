@@ -5,16 +5,18 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 
 class PlayState extends FlxState
 {
 	// 玩家
 	var player:Player;
-
+	var bag:Bag;
 	// 各關目標
 	var bananaGoal:Int = 1;
 	var stoneGoal:Int = 3;
@@ -28,9 +30,7 @@ class PlayState extends FlxState
 
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
-	var talkToBanana:Bool = true;
-	var bananaCounter:Int = 0;
-	var bqNumber:Int = 1;
+	var bananaValue:Int = 0;
 
 	// 其他角色
 	var doge:FlxSprite;
@@ -53,9 +53,12 @@ class PlayState extends FlxState
 	var place:String = "miner";
 
 	var talk:String = "none";
+	var getBag:Bool = false;
 
 	// 除錯ufo
 	var ufo:FlxText;
+
+	var save:FlxSave;
 
 	/**
 		*來自MenuState的呼喚，我們要從哪裡開始
@@ -92,8 +95,7 @@ class PlayState extends FlxState
 		add(banana);
 
 		// 湖
-		lake = new FlxSprite();
-		lake.makeGraphic(80, 160, FlxColor.TRANSPARENT);
+		lake = new FlxSprite().makeGraphic(80, 160, FlxColor.TRANSPARENT);
 		lake.immovable = true;
 		add(lake);
 
@@ -133,9 +135,11 @@ class PlayState extends FlxState
 		dia = new Dia();
 		add(dia);
 
+		bag = new Bag();
+		add(bag);
+
 		// 泡泡
-		bubble = new FlxSprite(0, 0);
-		bubble.loadGraphic(AssetPaths.bubble__png);
+		bubble = new FlxSprite(0, 0).loadGraphic(AssetPaths.bubble__png);
 		bubble.visible = false;
 		add(bubble);
 
@@ -149,6 +153,23 @@ class PlayState extends FlxState
 		ufo.scrollFactor.set(0, 0);
 		add(ufo);
 		ufo.visible = false;
+
+		// 儲存資料的元件
+		save = new FlxSave();
+		save.bind("DiaTest");
+		if (save.data.bananaValue != null)
+		{
+			bananaValue = save.data.bananaValue;
+			bag.updateBag(bananaValue);
+		}
+		if (save.data.playerBag != null)
+		{
+			player.playerBag = save.data.playerBag;
+			if (player.playerBag)
+				player.playerBagPic();
+		}
+		if (save.data.playerPos != null)
+			player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 
 		FlxG.mouse.visible = false;
 
@@ -165,17 +186,10 @@ class PlayState extends FlxState
 			// 第一章從紀念碑開始
 			case "monument":
 				place = "monumentDone";
-				name = AssetPaths.c1Opening__txt;
-				playerUpDown();
-				dia.show(name, diaUpDown);
 
 			// 第二章從礦場開始
 			case "miner":
 				place = "stone";
-
-				// 記得殺香蕉
-				banana.kill();
-				bananaCounter = bananaGoal;
 
 				name = AssetPaths.c2Opening__txt;
 				playerUpDown();
@@ -298,14 +312,16 @@ class PlayState extends FlxState
 		updateTalking();
 		updateR();
 		updateEsc();
+		updateC();
 
 		// 除錯大隊
-		ufo.text = diaUpDown;
+		ufo.text = if (save.data.bananaValue != null) Std.string(save.data.playerPos) else "no";
 
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
 			ufo.visible = true;
+			// save.erase();
 		}
 
 		// 碰撞爆
@@ -316,7 +332,7 @@ class PlayState extends FlxState
 
 		FlxG.collide(player, doge, dogeTalk);
 		FlxG.collide(player, spartan, spartanTalk);
-		FlxG.collide(player, banana, forestQ);
+		FlxG.overlap(player, banana, getBanana);
 		FlxG.collide(player, lake, lakeTalk);
 		FlxG.collide(player, stone, stoneStop);
 		FlxG.collide(player, box);
@@ -342,24 +358,18 @@ class PlayState extends FlxState
 		talk = "doge";
 	}
 
+	function getBanana(player:Player, banana:FlxSprite)
+	{
+		banana.kill();
+		bananaValue++;
+		bag.updateBag(bananaValue);
+	}
+
 	// 斯巴達對話
 	function spartanTalk(player:Player, spartan:FlxSprite)
 	{
 		bubblePosition(spartan.x, spartan.y, spartan.width);
 		talk = "spartan";
-	}
-
-	// 香蕉問問題
-	function forestQ(player:Player, banana:FlxSprite)
-	{
-		bubblePosition(banana.x, banana.y, banana.width);
-		talk = "banana";
-
-		name = AssetPaths.bananaQuestion__txt;
-		playerUpDown();
-		dia.bananaTalk(name, banana, diaUpDown, bqNumber);
-
-		talkToBanana = true;
 	}
 
 	// 湖對話
@@ -437,25 +447,18 @@ class PlayState extends FlxState
 					// 紀念碑對話
 					if (place == "monumentDone")
 					{
-						if (bananaCounter >= bananaGoal)
-						{
-							name = AssetPaths.forestMissionFinish__txt;
-							place = "miner";
-							talkToBanana = false;
-
-							playerBagPic();
-						}
-						else
+						if (player.playerBag)
 							name = AssetPaths.forestMission__txt;
+						else
+						{
+							name = AssetPaths.c1Opening__txt;
+							getBag = true;
+						}
 					}
 
 					// 礦場對話
 					else if (place == "minerDone")
 						name = AssetPaths.minerDoge__txt;
-					playerUpDown();
-					if (name == AssetPaths.forestMissionFinish__txt)
-						diaUpDown = "up";
-					dia.show(name, diaUpDown);
 
 				// 斯巴達
 				case "spartan":
@@ -463,22 +466,20 @@ class PlayState extends FlxState
 						name = AssetPaths.stoneMissionFinish__txt;
 					else
 						name = AssetPaths.minerSpartan__txt;
-					playerUpDown();
-					dia.show(name, diaUpDown);
-
-				// 香蕉
-				case "banana":
-					if (dia.touchBanana)
-						dia.startTalkToBanana();
 
 				// 湖
 				case "lake":
 					name = AssetPaths.lakeTalking__txt;
-					playerUpDown();
-					dia.show(name, diaUpDown);
 			}
 
 			talk = "none";
+
+			playerUpDown();
+			if (name == AssetPaths.forestMissionFinish__txt)
+				diaUpDown = "up";
+			dia.visible = true;
+			dia.active = true;
+			dia.show(name, diaUpDown);
 		}
 	}
 
@@ -491,23 +492,19 @@ class PlayState extends FlxState
 		else
 			player.active = true;
 
+		if (bag.visible)
+			player.active = false;
+		else
+			player.active = true;
+
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
-			// 香蕉終結者2000
-			if (talkToBanana)
+			if (getBag)
 			{
-				// 如果答對香蕉的問題就殺香蕉換題目
-				if (dia.bananaQ)
-				{
-					dia.banana.kill(); // 我們把香蕉移到迪亞那邊，殺死迪亞香蕉，然後砰！這裡的香蕉就死了
-					bqNumber++;
-					bananaCounter++;
-					talkToBanana = false;
-					dia.bananaQ = false;
-				}
+				player.playerBagPic();
+				getBag = false;
 			}
-
 			// 談笑間切換地圖
 			switch (place)
 			{
@@ -570,10 +567,25 @@ class PlayState extends FlxState
 		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
 		if (esc && !dia.visible)
 		{
+			save.data.bananaValue = bananaValue;
+			save.data.playerBag = player.playerBag;
+			save.data.playerPos = player.getPosition();
+			save.flush();
+
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
 				FlxG.switchState(new MenuState());
 			});
+		}
+	}
+
+	function updateC()
+	{
+		var c = FlxG.keys.anyJustReleased([C]);
+		if (c && !dia.visible && player.playerBag)
+		{
+			bag.visible = true;
+			bag.active = true;
 		}
 	}
 }
