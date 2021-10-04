@@ -22,8 +22,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	var text:FlxTypeText;
 	var background:FlxSprite;
-	var explain:FlxSprite;
-	var pointer:FlxSprite;
 
 	public var name:String;
 
@@ -41,11 +39,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		super();
 
-		// 解釋畫面
-		explain = new FlxSprite(0, 0, AssetPaths.explain1__png);
-		explain.scrollFactor.set(0, 0);
-		add(explain);
-
 		// 背景
 		background = new FlxSprite(10, 10, AssetPaths.diaDoge__png);
 		background.screenCenter(FlxAxes.X);
@@ -59,10 +52,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.delay = 0.04;
 		text.skipKeys = ["X", "SHIFT"];
 
-		// 箭頭
-		pointer = new FlxSprite(text.x + 5, background.y + 38, AssetPaths.pointer__png);
-		add(pointer);
-
 		visible = false;
 		active = false;
 
@@ -70,7 +59,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 	}
 
-	// 一般對話
+	// 對話
 	public function show(name, diaUpDown)
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
@@ -83,7 +72,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		diaPosition(diaUpDown);
 
 		textRunDone = false;
-		pointer.visible = false;
 
 		text.start(false, false, function()
 		{
@@ -108,27 +96,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaNull__png;
 		}
 
-		// 召喚解釋畫面
-		if (dilog_boxes[profile] == "DE" || dilog_boxes[profile] == "AE")
-		{
-			if (dilog_boxes[profile] == "DE")
-			{
-				profilePic = AssetPaths.diaDoge__png;
-				explainPic = "assets/images/explain" + Std.string(explainNum) + ".png";
-			}
-			else if (dilog_boxes[profile] == "AE")
-			{
-				profilePic = AssetPaths.diaApe__png;
-				explainPic = "assets/images/explain6.png";
-			}
-
-			explain.loadGraphic(explainPic);
-			explain.visible = true;
-			explainNum++;
-		}
-		else
-			explain.visible = false;
-
 		background.loadGraphic(profilePic);
 	}
 
@@ -142,7 +109,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			background.y = FlxG.height - background.height - 10;
 
 		text.y = background.y + 10;
-		pointer.y = background.y + 38;
 	}
 
 	// 更新啦
@@ -150,7 +116,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		updateEnter();
 		updateSkip();
-		movePointer();
 
 		super.update(elapsed);
 	}
@@ -184,36 +149,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
-	// 移動箭頭
-	function movePointer()
-	{
-		var up = FlxG.keys.anyJustReleased([UP]);
-		var down = FlxG.keys.anyJustReleased([DOWN]);
-		if (pointer.visible)
-		{
-			if (up)
-			{
-				if (pointer.y == background.y + 38)
-					pointer.y = background.y + 86;
-				else
-					pointer.y -= 24;
-			}
-			if (down)
-			{
-				if (pointer.y == background.y + 86)
-					pointer.y = background.y + 38;
-				else
-					pointer.y += 24;
-			}
-		}
-	}
-
 	// 按v鍵直接跳過整串對話
 	function updateSkip()
 	{
 		var vKey:Bool = false;
 		vKey = FlxG.keys.anyJustReleased([V]);
-		if (vKey && !pointer.visible)
+		if (vKey)
 		{
 			visible = false;
 			active = false;

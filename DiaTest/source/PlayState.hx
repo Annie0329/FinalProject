@@ -17,8 +17,8 @@ class PlayState extends FlxState
 	// 玩家
 	var player:Player;
 	var bag:Bag;
+
 	// 各關目標
-	var bananaGoal:Int = 1;
 	var stoneGoal:Int = 3;
 	var boxGoal:Int = 1;
 
@@ -30,12 +30,17 @@ class PlayState extends FlxState
 
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
-	var bananaValue:Int = 0;
+
+	var diamondValue:Int = 0;
 
 	// 其他角色
 	var doge:FlxSprite;
 	var spartan:FlxSprite;
 	var lake:FlxSprite;
+	var monument:FlxSprite;
+	var shop:FlxSprite;
+
+	var saveStone:FlxTypedGroup<FlxSprite> = null;
 
 	// 箱子和石頭
 	var box:FlxSprite;
@@ -50,7 +55,7 @@ class PlayState extends FlxState
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
-	var place:String = "miner";
+	var loadsave:Bool;
 
 	var talk:String = "none";
 	var getBag:Bool = false;
@@ -61,13 +66,13 @@ class PlayState extends FlxState
 	var save:FlxSave;
 
 	/**
-		*來自MenuState的呼喚，我們要從哪裡開始
-		*@param place
+		*來自MenuState的呼喚，我們到底要不要用存檔檔案
+		*@param loadsave
 	 */
-	public function new(place:String)
+	public function new(loadsave:Bool)
 	{
 		super();
-		this.place = place; // 這個place等於那個place(咒語)
+		this.loadsave = loadsave; // 這個loadsave等於那個loadsave(咒語)
 	}
 
 	// 加好加滿
@@ -99,6 +104,20 @@ class PlayState extends FlxState
 		lake.immovable = true;
 		add(lake);
 
+		// 紀念碑
+		monument = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		monument.immovable = true;
+		add(monument);
+
+		// 存檔點
+		saveStone = new FlxTypedGroup<FlxSprite>();
+		add(saveStone);
+
+		// 商店
+		shop = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		shop.immovable = true;
+		add(shop);
+
 		// 石頭
 		stone = new FlxTypedGroup<FlxSprite>();
 		add(stone);
@@ -123,9 +142,6 @@ class PlayState extends FlxState
 		add(player);
 		FlxG.camera.follow(player, TOPDOWN, 1);
 
-		if (place == "miner")
-			playerBagPic();
-
 		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
 		through.follow();
@@ -135,17 +151,17 @@ class PlayState extends FlxState
 		dia = new Dia();
 		add(dia);
 
-		bag = new Bag();
-		add(bag);
-
 		// 泡泡
 		bubble = new FlxSprite(0, 0).loadGraphic(AssetPaths.bubble__png);
 		bubble.visible = false;
 		add(bubble);
 
+		// 包包介面
+		bag = new Bag();
+		add(bag);
+
 		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
-		beginPlace();
 
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 200, "ufo", 20);
@@ -157,44 +173,29 @@ class PlayState extends FlxState
 		// 儲存資料的元件
 		save = new FlxSave();
 		save.bind("DiaTest");
-		if (save.data.bananaValue != null)
+		if (loadsave)
 		{
-			bananaValue = save.data.bananaValue;
-			bag.updateBag(bananaValue);
+			if (save.data.bananaValue != null && save.data.diamondValue != null)
+			{
+				bag.bananaCounter = save.data.bananaValue;
+				bag.diamondCounter = save.data.diamondValue;
+				bag.updateBag();
+			}
+			if (save.data.playerBag != null)
+			{
+				player.playerBag = save.data.playerBag;
+				if (player.playerBag)
+					player.playerBagPic();
+			}
+			if (save.data.playerPos != null)
+				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 		}
-		if (save.data.playerBag != null)
-		{
-			player.playerBag = save.data.playerBag;
-			if (player.playerBag)
-				player.playerBagPic();
-		}
-		if (save.data.playerPos != null)
-			player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 
 		FlxG.mouse.visible = false;
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
 		super.create();
-	}
-
-	// 開場專屬對話
-	function beginPlace()
-	{
-		switch (place)
-		{
-			// 第一章從紀念碑開始
-			case "monument":
-				place = "monumentDone";
-
-			// 第二章從礦場開始
-			case "miner":
-				place = "stone";
-
-				name = AssetPaths.c2Opening__txt;
-				playerUpDown();
-				dia.show(name, diaUpDown);
-		}
 	}
 
 	// 換成猩猩背包包的造型
@@ -220,87 +221,42 @@ class PlayState extends FlxState
 		var x = entity.x;
 		var y = entity.y;
 
-		switch (place)
+		switch (entity.name)
 		{
-			// 紀念碑
+			case "player":
+				player.setPosition(x + 8, y + 8);
+
+			case "guy":
+				doge.setPosition(x, y);
+
+			case "banana":
+				var b = new FlxSprite(x + 20, y + 20, AssetPaths.banana__png);
+				b.immovable = true;
+				banana.add(b);
+
+			case "lake":
+				lake.setPosition(x, y);
+
 			case "monument":
-				switch (entity.name)
-				{
-					case "player":
-						player.setPosition(x + 8, y + 8);
+				monument.setPosition(x, y);
 
-					case "guy":
-						doge.setPosition(x, y);
+			case "saveStone":
+				var ss = new FlxSprite(x, y, AssetPaths.saveStone__png);
+				ss.immovable = true;
+				saveStone.add(ss);
 
-					case "banana":
-						var b = new FlxSprite(entity.x + 20, entity.y + 20, AssetPaths.banana__png);
-						b.immovable = true;
-						banana.add(b);
+			case "shop":
+				shop.setPosition(x, y);
 
-					case "lake":
-						lake.setPosition(x, y);
-				}
+			case "spartan":
+				spartan.setPosition(x, y);
 
-			// 礦場
-			case "miner":
-				switch (entity.name)
-				{
-					case "playerMiner":
-						player.setPosition(x + 8, y + 8);
-
-					case "guyMiner":
-						doge.setPosition(x, y);
-
-					case "spartan":
-						spartan.setPosition(x, y);
-
-					case "lake":
-						lake.setPosition(x, y);
-				}
-
-			// 石頭關卡
 			case "stone":
-				switch (entity.name)
-				{
-					case "playerStone":
-						player.setPosition(x + 8, y + 8);
+				var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
+				stone.add(s);
 
-					case "spartanStone":
-						spartan.setPosition(x, y);
-
-					case "stone":
-						var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
-						stone.add(s);
-
-					case "box":
-						box.setPosition(x + 4, y - 4);
-				}
-
-			// 斯巴達跑回去
-			case "minerDone":
-				switch (entity.name)
-				{
-					case "spartan":
-						spartan.setPosition(x, y);
-				}
-
-			// 重設石頭關卡
-			case "boxRestart":
-				switch (entity.name)
-				{
-					case "stone":
-						var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
-						stone.add(s);
-
-					case "box":
-						box.x = 3760;
-						FlxTween.tween(box, {x: x + 4, y: y - 4}, 1, {
-							onComplete: function(_)
-							{
-								stoneCounter = 0;
-							}
-						});
-				}
+			case "box":
+				box.setPosition(x - 4, y - 4);
 		}
 	}
 
@@ -315,8 +271,7 @@ class PlayState extends FlxState
 		updateC();
 
 		// 除錯大隊
-		ufo.text = if (save.data.bananaValue != null) Std.string(save.data.playerPos) else "no";
-
+		ufo.text = "oui";
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -333,7 +288,11 @@ class PlayState extends FlxState
 		FlxG.collide(player, doge, dogeTalk);
 		FlxG.collide(player, spartan, spartanTalk);
 		FlxG.overlap(player, banana, getBanana);
+
 		FlxG.collide(player, lake, lakeTalk);
+		FlxG.collide(player, monument, monumentTalk);
+		FlxG.collide(player, shop, shopOpen);
+		FlxG.collide(player, saveStone, saveFile);
 		FlxG.collide(player, stone, stoneStop);
 		FlxG.collide(player, box);
 
@@ -358,11 +317,12 @@ class PlayState extends FlxState
 		talk = "doge";
 	}
 
+	// Kris get the banana
 	function getBanana(player:Player, banana:FlxSprite)
 	{
 		banana.kill();
-		bananaValue++;
-		bag.updateBag(bananaValue);
+		bag.bananaCounter++;
+		bag.updateBag();
 	}
 
 	// 斯巴達對話
@@ -379,6 +339,29 @@ class PlayState extends FlxState
 		talk = "lake";
 	}
 
+	// 紀念碑對話
+	function monumentTalk(player:Player, monument:FlxSprite)
+	{
+		bubblePosition(monument.x, monument.y + monument.height / 2, monument.width);
+		talk = "monument";
+	}
+
+	// 存檔
+	function saveFile(player:Player, saveStone:FlxSprite)
+	{
+		bubblePosition(saveStone.x, saveStone.y, saveStone.width);
+		talk = "saveStone";
+	}
+
+	// 商店開門
+	function shopOpen(player:Player, shop:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			bag.buyAndSell();
+		});
+	}
+
 	// 石頭別動
 	function stoneStop(player:Player, stone:FlxSprite)
 	{
@@ -389,9 +372,14 @@ class PlayState extends FlxState
 	function updateR()
 	{
 		var r = FlxG.keys.anyJustReleased([R]);
-		if (r && place == "minerDone")
+		if (r)
 		{
-			restartStone();
+			box.loadGraphic(AssetPaths.boxEmpty__png);
+			stone.forEach(function(sprite)
+			{
+				sprite.kill();
+			});
+			map.loadEntities(restartStone, "entities");
 		}
 	}
 
@@ -405,26 +393,37 @@ class PlayState extends FlxState
 			boxCounter++;
 			player.active = false;
 			box.loadGraphic(AssetPaths.boxFull__png);
-			FlxTween.tween(box, {x: 3000}, 1, {
+			FlxTween.tween(box, {y: 1360}, 1, {
 				onComplete: function(_)
 				{
-					restartStone();
+					box.loadGraphic(AssetPaths.boxEmpty__png);
+					map.loadEntities(restartStone, "entities");
 				}
 			});
 		}
 	}
 
 	// 重新開始推石頭遊戲
-	function restartStone()
+	function restartStone(entity:EntityData)
 	{
-		box.loadGraphic(AssetPaths.boxEmpty__png);
-		stone.forEach(function(sprite)
+		// 重設石頭關卡
+		var x = entity.x;
+		var y = entity.y;
+		switch (entity.name)
 		{
-			sprite.kill();
-		});
-		place = "boxRestart";
-		map.loadEntities(placeEntities, "entities");
-		place = "minerDone";
+			case "stone":
+				var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
+				stone.add(s);
+
+			case "box":
+				box.y = 720;
+				FlxTween.tween(box, {x: x - 4, y: y - 4}, 1, {
+					onComplete: function(_)
+					{
+						stoneCounter = 0;
+					}
+				});
+		}
 	}
 
 	// 對話大滿貫
@@ -437,7 +436,7 @@ class PlayState extends FlxState
 			bubble.visible = false;
 
 		// 如果有對話泡泡又按enter就對話
-		if (bubble.visible && enter)
+		if (bubble.visible && enter && !bag.visible)
 		{
 			bubble.visible = false;
 			switch (talk)
@@ -445,38 +444,38 @@ class PlayState extends FlxState
 				// doge
 				case "doge":
 					// 紀念碑對話
-					if (place == "monumentDone")
+					if (player.playerBag)
+						name = AssetPaths.forestMission__txt;
+					else
 					{
-						if (player.playerBag)
-							name = AssetPaths.forestMission__txt;
-						else
-						{
-							name = AssetPaths.c1Opening__txt;
-							getBag = true;
-						}
+						name = AssetPaths.c1Opening__txt;
+						getBag = true;
 					}
-
-					// 礦場對話
-					else if (place == "minerDone")
-						name = AssetPaths.minerDoge__txt;
 
 				// 斯巴達
 				case "spartan":
-					if (boxCounter >= boxGoal)
-						name = AssetPaths.stoneMissionFinish__txt;
-					else
-						name = AssetPaths.minerSpartan__txt;
+					name = AssetPaths.minerSpartan__txt;
 
 				// 湖
 				case "lake":
 					name = AssetPaths.lakeTalking__txt;
-			}
 
+				// 紀念碑
+				case "monument":
+					name = AssetPaths.monument__txt;
+
+				// 存檔點
+				case "saveStone":
+					save.data.bananaValue = bag.bananaCounter;
+					save.data.diamondValue = bag.diamondCounter;
+					save.data.playerBag = player.playerBag;
+					save.data.playerPos = player.getPosition();
+					save.flush();
+					name = AssetPaths.saveFile__txt;
+			}
 			talk = "none";
 
 			playerUpDown();
-			if (name == AssetPaths.forestMissionFinish__txt)
-				diaUpDown = "up";
 			dia.visible = true;
 			dia.active = true;
 			dia.show(name, diaUpDown);
@@ -487,12 +486,7 @@ class PlayState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible)
-			player.active = false;
-		else
-			player.active = true;
-
-		if (bag.visible)
+		if (dia.visible || bag.visible)
 			player.active = false;
 		else
 			player.active = true;
@@ -504,48 +498,6 @@ class PlayState extends FlxState
 			{
 				player.playerBagPic();
 				getBag = false;
-			}
-			// 談笑間切換地圖
-			switch (place)
-			{
-				// 前往礦場
-				case "miner":
-					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
-					{
-						map.loadEntities(placeEntities, "entities");
-						FlxG.camera.fade(FlxColor.BLACK, .33, true);
-						banana.kill();
-
-						name = AssetPaths.c2Opening__txt;
-						playerUpDown();
-						dia.show(name, diaUpDown);
-						place = "stone";
-					});
-
-				// 參觀關卡
-				case "stone":
-					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
-					{
-						map.loadEntities(placeEntities, "entities");
-						FlxG.camera.fade(FlxColor.BLACK, .33, true);
-						place = "spartanOut";
-
-						name = AssetPaths.stoneExplain__txt;
-						playerUpDown();
-						dia.show(name, diaUpDown);
-					});
-
-				// 斯巴達離開
-				case "spartanOut":
-					player.active = false;
-					FlxTween.tween(spartan, {x: 3000}, 1, {
-						onComplete: function(_)
-						{
-							map.loadEntities(placeEntities, "entities");
-							place = "minerDone";
-							player.active = true;
-						}
-					});
 			}
 		}
 	}
@@ -567,11 +519,6 @@ class PlayState extends FlxState
 		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
 		if (esc && !dia.visible)
 		{
-			save.data.bananaValue = bananaValue;
-			save.data.playerBag = player.playerBag;
-			save.data.playerPos = player.getPosition();
-			save.flush();
-
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
 				FlxG.switchState(new MenuState());
@@ -579,13 +526,13 @@ class PlayState extends FlxState
 		}
 	}
 
+	// 按C開啟包包
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
 		if (c && !dia.visible && player.playerBag)
 		{
-			bag.visible = true;
-			bag.active = true;
+			bag.bagUi();
 		}
 	}
 }

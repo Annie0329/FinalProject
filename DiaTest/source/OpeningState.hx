@@ -15,7 +15,7 @@ class OpeningState extends FlxState
 		// 開場動畫
 		openingAnimation = new FlxSprite();
 		openingAnimation.loadGraphic(AssetPaths.openingAnimation__png, true, 480, 360);
-		openingAnimation.animation.add("oa", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 1, false);
+		openingAnimation.animation.add("oa", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 0.5, false);
 		add(openingAnimation);
 
 		openingAnimation.animation.play("oa");

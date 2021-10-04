@@ -5,19 +5,25 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 
 class MenuState extends FlxState
 {
 	var menuBackground:FlxSprite;
 
-	var menuPointer:FlxSprite;
-	var pointerBar:Int = 50;
 	var pointerStart:Int = 215;
+	var pointerAnoPos:Int = 170;
+	var pointerBar:Int = 50;
+	var pointerChoNum:Int = 3;
+	var pointerDir:String = "ud";
+	var pointer:Pointer;
 
 	var menu:String = "main";
-	var place:String = "monument";
+	var loadsave:Bool;
 
 	var ufo:FlxText;
+
+	var save:FlxSave;
 
 	override public function create()
 	{
@@ -26,8 +32,9 @@ class MenuState extends FlxState
 		add(menuBackground);
 
 		// 箭頭
-		menuPointer = new FlxSprite(170, 215, AssetPaths.menuPointer__png);
-		add(menuPointer);
+		pointer = new Pointer();
+		add(pointer);
+		pointer.setPointer(215, 170, 50, 3, "ud");
 
 		// 除錯ufo
 		ufo = new FlxText(0, 0, "ufo", 20);
@@ -37,6 +44,15 @@ class MenuState extends FlxState
 		ufo.color = FlxColor.BLACK;
 		add(ufo);
 		ufo.visible = false;
+
+		// 存檔元件
+		save = new FlxSave();
+		save.bind("DiaTest");
+
+		if (save.data.bananaValue != null)
+			pointer.y = pointerStart;
+		else
+			pointer.y = pointerStart + pointerBar;
 
 		FlxG.mouse.visible = false;
 
@@ -49,75 +65,54 @@ class MenuState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		ufo.text = Std.string(pointerBar); // Std.string(FlxG.mouse.screenX) + ", " + Std.string(FlxG.mouse.screenY);
+		ufo.text = "oui";
 
 		var up = FlxG.keys.anyJustReleased([UP, W]);
 		var down = FlxG.keys.anyJustReleased([DOWN, S]);
-		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
+		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 		var x = FlxG.keys.anyJustReleased([X]);
 
-		// 移動箭頭
-		if (up)
+		var e = FlxG.keys.anyJustReleased([E]);
+		if (e)
 		{
-			if (menuPointer.y == pointerStart)
-				menuPointer.y = pointerStart + pointerBar * 2;
-			else
-				menuPointer.y -= pointerBar;
+			ufo.visible = true;
+			save.erase();
 		}
-		if (down)
-		{
-			if (menuPointer.y == pointerStart + pointerBar * 2)
-				menuPointer.y = pointerStart;
-			else
-				menuPointer.y += pointerBar;
-		}
+
 		// 確認
 		if (enter)
 		{
 			// 主選單功能
 			if (menu == "main")
 			{
-				// 章節選擇
-				if (menuPointer.y == pointerStart)
+				// 繼續遊戲
+				if (pointer.y == pointer.start)
 				{
-					menuBackground.loadGraphic(AssetPaths.menuChapterSelect__png);
-					menu = "chapterSelect";
-					pointerBar = 60;
-					pointerStart = 110;
-					menuPointer.y = pointerStart;
+					if (save.data.bananaValue != null)
+						FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+						{
+							loadsave = true;
+							FlxG.switchState(new PlayState(loadsave));
+						});
 				}
 
 				// 重新開始
-				else if (menuPointer.y == pointerStart + pointerBar)
+				else if (pointer.y == pointer.start + pointer.bar)
+				{
 					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 					{
-						place = "monument";
-						FlxG.switchState(new PlayState(place));
+						loadsave = false;
+						FlxG.switchState(new PlayState(loadsave));
 					});
+				}
 
 				// 關於
 				else
 				{
-					menuPointer.visible = false;
+					pointer.visible = false;
 					menuBackground.loadGraphic(AssetPaths.menuAbout__png);
 					menu = "about";
 				}
-			}
-
-			// 章節選擇功能
-			else if (menu == "chapterSelect")
-			{
-				// 第一章
-				if (menuPointer.y == pointerStart)
-					place = "monument";
-
-				// 第二章
-				else if (menuPointer.y == pointerStart + pointerBar)
-					place = "miner";
-				FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
-				{
-					FlxG.switchState(new PlayState(place));
-				});
 			}
 		}
 
@@ -125,14 +120,11 @@ class MenuState extends FlxState
 		if (x)
 		{
 			menuBackground.loadGraphic(AssetPaths.menuMain__png);
-			menuPointer.visible = true;
+			pointer.visible = true;
 			pointerBar = 50;
 			pointerStart = 215;
 
-			if (menu == "chapterSelect")
-				menuPointer.y = pointerStart;
-			else
-				menuPointer.y = pointerStart + pointerBar * 2;
+			pointer.y = pointerStart + pointerBar * 2;
 
 			menu = "main";
 		}
