@@ -73,6 +73,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 		textRunDone = false;
 
+		visible = true;
+		active = true;
+
 		text.start(false, false, function()
 		{
 			textRunDone = true;

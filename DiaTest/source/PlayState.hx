@@ -252,11 +252,11 @@ class PlayState extends FlxState
 				spartan.setPosition(x, y);
 
 			case "stone":
-				var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
+				var s = new FlxSprite(x, y, AssetPaths.stone__png);
 				stone.add(s);
 
 			case "box":
-				box.setPosition(x - 4, y - 4);
+				box.setPosition(x - 2, y);
 		}
 	}
 
@@ -298,6 +298,7 @@ class PlayState extends FlxState
 
 		FlxG.collide(stone);
 		FlxG.collide(stone, walls);
+		FlxG.collide(stone, saveStone);
 		FlxG.collide(stone, box, stoneInsideBox);
 
 		FlxG.collide(box, walls);
@@ -393,11 +394,18 @@ class PlayState extends FlxState
 			boxCounter++;
 			player.active = false;
 			box.loadGraphic(AssetPaths.boxFull__png);
-			FlxTween.tween(box, {y: 1360}, 1, {
+			FlxTween.tween(box, {y: 1360}, 2, {
 				onComplete: function(_)
 				{
 					box.loadGraphic(AssetPaths.boxEmpty__png);
 					map.loadEntities(restartStone, "entities");
+
+					bag.diamondCounter++;
+					bag.updateBag();
+
+					name = AssetPaths.stoneFinish__txt;
+					playerUpDown();
+					dia.show(name, diaUpDown);
 				}
 			});
 		}
@@ -412,12 +420,12 @@ class PlayState extends FlxState
 		switch (entity.name)
 		{
 			case "stone":
-				var s = new FlxSprite(x + 20, y + 20, AssetPaths.stone__png);
+				var s = new FlxSprite(x, y, AssetPaths.stone__png);
 				stone.add(s);
 
 			case "box":
 				box.y = 720;
-				FlxTween.tween(box, {x: x - 4, y: y - 4}, 1, {
+				FlxTween.tween(box, {x: x - 2, y: y}, 2, {
 					onComplete: function(_)
 					{
 						stoneCounter = 0;
@@ -476,8 +484,6 @@ class PlayState extends FlxState
 			talk = "none";
 
 			playerUpDown();
-			dia.visible = true;
-			dia.active = true;
 			dia.show(name, diaUpDown);
 		}
 	}
