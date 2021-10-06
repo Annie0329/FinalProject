@@ -105,7 +105,7 @@ class PlayState extends FlxState
 		add(lake);
 
 		// 紀念碑
-		monument = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		monument = new FlxSprite(AssetPaths.monument__png);
 		monument.immovable = true;
 		add(monument);
 

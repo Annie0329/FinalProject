@@ -64,18 +64,17 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		dilog_boxes = openfl.Assets.getText(name).split(":");
 		i = 2;
-		text.resetText(dilog_boxes[i]);
+
+		diaPosition(diaUpDown);
 
 		profile = 1;
 		changeProfile();
 
-		diaPosition(diaUpDown);
+		active = true;
+		visible = true;
 
 		textRunDone = false;
-
-		visible = true;
-		active = true;
-
+		text.resetText(dilog_boxes[i]);
 		text.start(false, false, function()
 		{
 			textRunDone = true;
@@ -137,8 +136,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			// 對話結束就離開
 			if (i > dilog_boxes.length)
 			{
-				visible = false;
-				active = false;
+				text.resetText("  ");
+				text.start(false, false, function()
+				{
+					visible = false;
+					active = false;
+				});
 			}
 			else
 			{
