@@ -394,7 +394,7 @@ class PlayState extends FlxState
 			boxCounter++;
 			player.active = false;
 			box.loadGraphic(AssetPaths.boxFull__png);
-			FlxTween.tween(box, {y: 1360}, 2, {
+			FlxTween.tween(box, {y: 1320}, 2, {
 				onComplete: function(_)
 				{
 					box.loadGraphic(AssetPaths.boxEmpty__png);
