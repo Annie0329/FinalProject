@@ -39,6 +39,7 @@ class PlayState extends FlxState
 	var lake:FlxSprite;
 	var monument:FlxSprite;
 	var shop:FlxSprite;
+	var minerDoor:FlxSprite;
 
 	var saveStone:FlxTypedGroup<FlxSprite> = null;
 
@@ -112,6 +113,11 @@ class PlayState extends FlxState
 		// 存檔點
 		saveStone = new FlxTypedGroup<FlxSprite>();
 		add(saveStone);
+
+		// 礦場門
+		minerDoor = new FlxSprite().makeGraphic(80, 80, FlxColor.WHITE);
+		add(minerDoor);
+		minerDoor.visible = false;
 
 		// 商店
 		shop = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
@@ -245,6 +251,9 @@ class PlayState extends FlxState
 				ss.immovable = true;
 				saveStone.add(ss);
 
+			case "minerDoor":
+				minerDoor.setPosition(x, y);
+
 			case "shop":
 				shop.setPosition(x, y);
 
@@ -288,6 +297,7 @@ class PlayState extends FlxState
 		FlxG.collide(player, doge, dogeTalk);
 		FlxG.collide(player, spartan, spartanTalk);
 		FlxG.overlap(player, banana, getBanana);
+		FlxG.overlap(player, minerDoor);
 
 		FlxG.collide(player, lake, lakeTalk);
 		FlxG.collide(player, monument, monumentTalk);
@@ -394,7 +404,7 @@ class PlayState extends FlxState
 			boxCounter++;
 			player.active = false;
 			box.loadGraphic(AssetPaths.boxFull__png);
-			FlxTween.tween(box, {y: 1320}, 2, {
+			FlxTween.tween(box, {y: box.y + 360}, 2, {
 				onComplete: function(_)
 				{
 					box.loadGraphic(AssetPaths.boxEmpty__png);
@@ -424,7 +434,7 @@ class PlayState extends FlxState
 				stone.add(s);
 
 			case "box":
-				box.y = 720;
+				box.y -= 640;
 				FlxTween.tween(box, {x: x - 2, y: y}, 2, {
 					onComplete: function(_)
 					{
