@@ -17,10 +17,7 @@ class PlayState extends FlxState
 	// 玩家
 	var player:Player;
 	var bag:Bag;
-
-	// 各關目標
-	var stoneGoal:Int = 3;
-	var boxGoal:Int = 1;
+	var playerPoint:FlxPoint;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -31,11 +28,9 @@ class PlayState extends FlxState
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
 
-	var diamondValue:Int = 0;
-
 	// 其他角色
 	var doge:FlxSprite;
-	var spartan:FlxSprite;
+
 	var lake:FlxSprite;
 	var monument:FlxSprite;
 	var shop:FlxSprite;
@@ -43,20 +38,15 @@ class PlayState extends FlxState
 
 	var saveStone:FlxTypedGroup<FlxSprite> = null;
 
-	// 箱子和石頭
-	var box:FlxSprite;
-	var boxCounter:Int = 0;
-	var stone:FlxTypedGroup<FlxSprite> = null;
-	var stoneCounter:Int = 0;
-
 	// 地圖組
 	var map:FlxOgmo3Loader;
-	var mapRoom:FlxOgmo3Loader;
 	var through:FlxTilemap;
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 	var loadsave:Bool;
+
+	var place:String = "monument";
 
 	var talk:String = "none";
 	var getBag:Bool = false;
@@ -79,7 +69,7 @@ class PlayState extends FlxState
 	// 加好加滿
 	override public function create()
 	{
-		map = new FlxOgmo3Loader(AssetPaths.testMap__ogmo, AssetPaths.diaMap__json);
+		map = new FlxOgmo3Loader(AssetPaths.testMap__ogmo, AssetPaths.monumentMap__json);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -116,32 +106,18 @@ class PlayState extends FlxState
 
 		// 礦場門
 		minerDoor = new FlxSprite().makeGraphic(80, 80, FlxColor.WHITE);
+		minerDoor.immovable = true;
 		add(minerDoor);
-		minerDoor.visible = false;
 
 		// 商店
 		shop = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
 		shop.immovable = true;
 		add(shop);
 
-		// 石頭
-		stone = new FlxTypedGroup<FlxSprite>();
-		add(stone);
-
-		// 箱子
-		box = new FlxSprite(AssetPaths.boxEmpty__png);
-		box.immovable = true;
-		add(box);
-
 		// Doge
 		doge = new FlxSprite(AssetPaths.doge__png);
 		doge.immovable = true;
 		add(doge);
-
-		// 布布
-		spartan = new FlxSprite(AssetPaths.spartan__png);
-		spartan.immovable = true;
-		add(spartan);
 
 		// 玩家
 		player = new Player();
@@ -198,7 +174,6 @@ class PlayState extends FlxState
 		}
 
 		FlxG.mouse.visible = false;
-
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
 		super.create();
@@ -230,13 +205,15 @@ class PlayState extends FlxState
 		switch (entity.name)
 		{
 			case "player":
-				player.setPosition(x + 8, y + 8);
+				player.setPosition(x, y + 32);
 
 			case "guy":
 				doge.setPosition(x, y);
 
 			case "banana":
-				var b = new FlxSprite(x + 20, y + 20, AssetPaths.banana__png);
+				var b = new FlxSprite(x + 20, y + 20).loadGraphic(AssetPaths.banana__png, true, 40, 40);
+				b.animation.add("spin", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 5, true);
+				b.animation.play("spin");
 				b.immovable = true;
 				banana.add(b);
 
@@ -247,7 +224,9 @@ class PlayState extends FlxState
 				monument.setPosition(x, y);
 
 			case "saveStone":
-				var ss = new FlxSprite(x, y, AssetPaths.saveStone__png);
+				var ss = new FlxSprite(x, y).loadGraphic(AssetPaths.saveStone__png, true, 80, 80);
+				ss.animation.add("shine", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 10, true);
+				ss.animation.play("shine");
 				ss.immovable = true;
 				saveStone.add(ss);
 
@@ -256,16 +235,6 @@ class PlayState extends FlxState
 
 			case "shop":
 				shop.setPosition(x, y);
-
-			case "spartan":
-				spartan.setPosition(x, y);
-
-			case "stone":
-				var s = new FlxSprite(x, y, AssetPaths.stone__png);
-				stone.add(s);
-
-			case "box":
-				box.setPosition(x - 2, y);
 		}
 	}
 
@@ -275,7 +244,6 @@ class PlayState extends FlxState
 		super.update(elapsed);
 		updateWhenDiaInvisible();
 		updateTalking();
-		updateR();
 		updateEsc();
 		updateC();
 
@@ -295,23 +263,13 @@ class PlayState extends FlxState
 		FlxG.overlap(player, through);
 
 		FlxG.collide(player, doge, dogeTalk);
-		FlxG.collide(player, spartan, spartanTalk);
 		FlxG.overlap(player, banana, getBanana);
-		FlxG.overlap(player, minerDoor);
+		FlxG.collide(player, minerDoor, goToMiner);
 
 		FlxG.collide(player, lake, lakeTalk);
 		FlxG.collide(player, monument, monumentTalk);
 		FlxG.collide(player, shop, shopOpen);
 		FlxG.collide(player, saveStone, saveFile);
-		FlxG.collide(player, stone, stoneStop);
-		FlxG.collide(player, box);
-
-		FlxG.collide(stone);
-		FlxG.collide(stone, walls);
-		FlxG.collide(stone, saveStone);
-		FlxG.collide(stone, box, stoneInsideBox);
-
-		FlxG.collide(box, walls);
 	}
 
 	// 泡泡位置
@@ -336,13 +294,6 @@ class PlayState extends FlxState
 		bag.updateBag();
 	}
 
-	// 斯巴達對話
-	function spartanTalk(player:Player, spartan:FlxSprite)
-	{
-		bubblePosition(spartan.x, spartan.y, spartan.width);
-		talk = "spartan";
-	}
-
 	// 湖對話
 	function lakeTalk(player:Player, lake:FlxSprite)
 	{
@@ -364,6 +315,20 @@ class PlayState extends FlxState
 		talk = "saveStone";
 	}
 
+	// 去礦場
+	function goToMiner(player:Player, minerDoor:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			save.data.bananaValue = bag.bananaCounter;
+			save.data.diamondValue = bag.diamondCounter;
+			save.data.playerBag = player.playerBag;
+			save.data.playerPos = player.getPosition();
+			save.flush();
+			FlxG.switchState(new MinerState(true));
+		});
+	}
+
 	// 商店開門
 	function shopOpen(player:Player, shop:FlxSprite)
 	{
@@ -371,77 +336,6 @@ class PlayState extends FlxState
 		{
 			bag.buyAndSell();
 		});
-	}
-
-	// 石頭別動
-	function stoneStop(player:Player, stone:FlxSprite)
-	{
-		stone.velocity.set(0, 0);
-	}
-
-	// 按r重新開始推石頭遊戲
-	function updateR()
-	{
-		var r = FlxG.keys.anyJustReleased([R]);
-		if (r)
-		{
-			box.loadGraphic(AssetPaths.boxEmpty__png);
-			stone.forEach(function(sprite)
-			{
-				sprite.kill();
-			});
-			map.loadEntities(restartStone, "entities");
-		}
-	}
-
-	// 石頭放到箱子裡了
-	function stoneInsideBox(stone:FlxSprite, box:FlxSprite)
-	{
-		stone.kill();
-		stoneCounter++;
-		if (stoneCounter >= stoneGoal)
-		{
-			boxCounter++;
-			player.active = false;
-			box.loadGraphic(AssetPaths.boxFull__png);
-			FlxTween.tween(box, {y: box.y + 360}, 2, {
-				onComplete: function(_)
-				{
-					box.loadGraphic(AssetPaths.boxEmpty__png);
-					map.loadEntities(restartStone, "entities");
-
-					bag.diamondCounter++;
-					bag.updateBag();
-
-					name = AssetPaths.stoneFinish__txt;
-					playerUpDown();
-					dia.show(name, diaUpDown);
-				}
-			});
-		}
-	}
-
-	// 重新開始推石頭遊戲
-	function restartStone(entity:EntityData)
-	{
-		// 重設石頭關卡
-		var x = entity.x;
-		var y = entity.y;
-		switch (entity.name)
-		{
-			case "stone":
-				var s = new FlxSprite(x, y, AssetPaths.stone__png);
-				stone.add(s);
-
-			case "box":
-				box.y -= 640;
-				FlxTween.tween(box, {x: x - 2, y: y}, 2, {
-					onComplete: function(_)
-					{
-						stoneCounter = 0;
-					}
-				});
-		}
 	}
 
 	// 對話大滿貫
@@ -469,10 +363,6 @@ class PlayState extends FlxState
 						name = AssetPaths.c1Opening__txt;
 						getBag = true;
 					}
-
-				// 斯巴達
-				case "spartan":
-					name = AssetPaths.minerSpartan__txt;
 
 				// 湖
 				case "lake":
