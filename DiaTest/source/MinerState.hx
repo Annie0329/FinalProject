@@ -161,8 +161,13 @@ class MinerState extends FlxState
 				if (player.playerBag)
 					player.playerBagPic();
 			}
-			// if (save.data.playerPos != null)
-			// player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+			if (save.data.playerPos != null && save.data.place != null)
+			{
+				if (save.data.place == "menu")
+					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+				else if (save.data.place == "monument")
+					player.setPosition(monumentDoor.x + 100, monumentDoor.y + 32);
+			}
 		}
 
 		FlxG.mouse.visible = false;
@@ -291,6 +296,7 @@ class MinerState extends FlxState
 			save.data.bananaValue = bag.bananaCounter;
 			save.data.diamondValue = bag.diamondCounter;
 			save.data.playerBag = player.playerBag;
+			save.data.place = place;
 			save.flush();
 			FlxG.switchState(new PlayState(true));
 		});
@@ -391,6 +397,8 @@ class MinerState extends FlxState
 					save.data.bananaValue = bag.bananaCounter;
 					save.data.diamondValue = bag.diamondCounter;
 					save.data.playerBag = player.playerBag;
+					save.data.playerPos = player.getPosition();
+					save.data.place = place;
 					save.flush();
 					name = AssetPaths.saveFile__txt;
 			}

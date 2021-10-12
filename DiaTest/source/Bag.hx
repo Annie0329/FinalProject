@@ -57,7 +57,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 香蕉圖示
-		bananaCounterIcon = new FlxSprite(background.x + 10, background.y + 10).loadGraphic(AssetPaths.banana__png);
+		bananaCounterIcon = new FlxSprite(background.x + 10, background.y + 10).loadGraphic(AssetPaths.bananaIcon__png);
 		add(bananaCounterIcon);
 
 		// 香蕉數目
@@ -82,6 +82,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 
 		shopText.delay = 0.04;
 		shopText.skipKeys = ["X", "SHIFT"];
+		shopText.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
+		// shopText.font = AssetPaths.font__ttf;
 
 		// 箭頭
 		pointer = new Pointer();

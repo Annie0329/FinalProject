@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
@@ -45,12 +46,14 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 字
-		text = new FlxTypeText(120, background.y + 10, 350, "text", 18);
+		text = new FlxTypeText(120, background.y + 10, 350, "text", 18, true);
 		text.color = FlxColor.BLACK;
+		text.font = AssetPaths.font__ttf;
 		add(text);
 
 		text.delay = 0.04;
 		text.skipKeys = ["X", "SHIFT"];
+		text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
 
 		visible = false;
 		active = false;

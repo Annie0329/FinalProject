@@ -20,6 +20,7 @@ class MenuState extends FlxState
 
 	var menu:String = "main";
 	var loadsave:Bool;
+	var place:String = "menu";
 
 	var ufo:FlxText;
 
@@ -92,7 +93,12 @@ class MenuState extends FlxState
 						FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 						{
 							loadsave = true;
-							FlxG.switchState(new PlayState(loadsave));
+							if (save.data.place == "miner")
+								FlxG.switchState(new MinerState(loadsave));
+							else
+								FlxG.switchState(new PlayState(loadsave));
+							save.data.place = "menu";
+							save.flush();
 						});
 				}
 

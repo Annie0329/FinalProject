@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.tweens.FlxTween;
@@ -27,15 +28,20 @@ class PlayState extends FlxState
 
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
+	var bananaSound:FlxSound;
 
 	// 其他角色
 	var doge:FlxSprite;
-
 	var lake:FlxSprite;
 	var monument:FlxSprite;
+
+	var person1:FlxSprite;
+	var person2:FlxSprite;
+	var person3:FlxSprite;
+	var person4:FlxSprite;
+
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
-
 	var saveStone:FlxTypedGroup<FlxSprite> = null;
 
 	// 地圖組
@@ -89,6 +95,7 @@ class PlayState extends FlxState
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
 		add(banana);
+		bananaSound = FlxG.sound.load(AssetPaths.getBanana__wav);
 
 		// 湖
 		lake = new FlxSprite().makeGraphic(80, 160, FlxColor.TRANSPARENT);
@@ -169,8 +176,13 @@ class PlayState extends FlxState
 				if (player.playerBag)
 					player.playerBagPic();
 			}
-			if (save.data.playerPos != null)
-				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+			if (save.data.playerPos != null && save.data.place != null)
+			{
+				if (save.data.place == "menu")
+					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+				else if (save.data.place == "miner")
+					player.setPosition(minerDoor.x - 100, minerDoor.y + 32);
+			}
 		}
 
 		FlxG.mouse.visible = false;
@@ -290,6 +302,7 @@ class PlayState extends FlxState
 	function getBanana(player:Player, banana:FlxSprite)
 	{
 		banana.kill();
+		bananaSound.play(true);
 		bag.bananaCounter++;
 		bag.updateBag();
 	}
@@ -323,7 +336,7 @@ class PlayState extends FlxState
 			save.data.bananaValue = bag.bananaCounter;
 			save.data.diamondValue = bag.diamondCounter;
 			save.data.playerBag = player.playerBag;
-			save.data.playerPos = player.getPosition();
+			save.data.place = place;
 			save.flush();
 			FlxG.switchState(new MinerState(true));
 		});
@@ -378,6 +391,7 @@ class PlayState extends FlxState
 					save.data.diamondValue = bag.diamondCounter;
 					save.data.playerBag = player.playerBag;
 					save.data.playerPos = player.getPosition();
+					save.data.place = place;
 					save.flush();
 					name = AssetPaths.saveFile__txt;
 			}
