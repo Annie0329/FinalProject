@@ -37,7 +37,7 @@ class Pointer extends FlxSprite
 		}
 		else
 		{
-			x = anoPos;
+			x = start;
 			y = anoPos;
 		}
 	}

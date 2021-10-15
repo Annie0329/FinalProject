@@ -22,7 +22,7 @@
         {"name": "stone", "id": 49, "_eid": "55350965", "x": 640, "y": 280, "originX": 0, "originY": 0},
         {"name": "saveStone", "id": 58, "_eid": "31527380", "x": 240, "y": 360, "originX": 0, "originY": 0},
         {"name": "player", "id": 61, "_eid": "23272829", "x": 160, "y": 160, "originX": 0, "originY": 0},
-        {"name": "monumentDoor", "id": 62, "_eid": "78347318", "x": 0, "y": 160, "originX": 0, "originY": 0}
+        {"name": "monumentDoor", "id": 62, "_eid": "78347318", "x": 360, "y": 280, "originX": 0, "originY": 0}
       ]
     },
     {

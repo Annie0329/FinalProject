@@ -26,6 +26,7 @@ class MinerState extends FlxState
 	var diaUpDown:String;
 	var name:String;
 	var bubble:FlxSprite;
+	var txt:Bool = true;
 
 	// 其他角色
 	var spartan:FlxSprite;
@@ -93,9 +94,13 @@ class MinerState extends FlxState
 		add(saveStone);
 
 		// 礦場門
-		monumentDoor = new FlxSprite().makeGraphic(80, 80, FlxColor.WHITE);
+		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 80);
+		monumentDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		monumentDoor.immovable = true;
+		monumentDoor.setSize(40, 20);
+		monumentDoor.offset.set(60, 30);
 		add(monumentDoor);
+		monumentDoor.animation.play("glow");
 
 		// 石頭
 		stone = new FlxTypedGroup<FlxSprite>();
@@ -166,7 +171,15 @@ class MinerState extends FlxState
 				if (save.data.place == "menu")
 					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 				else if (save.data.place == "monument")
+				{
 					player.setPosition(monumentDoor.x + 100, monumentDoor.y + 32);
+					save.data.bananaValue = bag.bananaCounter;
+					save.data.diamondValue = bag.diamondCounter;
+					save.data.playerBag = player.playerBag;
+					save.data.playerPos = player.getPosition();
+					save.data.place = "miner";
+					save.flush();
+				}
 			}
 		}
 
@@ -296,7 +309,7 @@ class MinerState extends FlxState
 			save.data.bananaValue = bag.bananaCounter;
 			save.data.diamondValue = bag.diamondCounter;
 			save.data.playerBag = player.playerBag;
-			save.data.place = place;
+			save.data.place = "miner";
 			save.flush();
 			FlxG.switchState(new PlayState(true));
 		});
@@ -342,9 +355,10 @@ class MinerState extends FlxState
 					bag.diamondCounter++;
 					bag.updateBag();
 
-					name = AssetPaths.stoneFinish__txt;
+					name = ":N:你得到了1顆能量石！";
 					playerUpDown();
-					dia.show(name, diaUpDown);
+					txt = false;
+					dia.show(name, diaUpDown, txt);
 				}
 			});
 		}
@@ -391,7 +405,7 @@ class MinerState extends FlxState
 				// 斯巴達
 				case "spartan":
 					name = AssetPaths.minerSpartan__txt;
-
+					txt = true;
 				// 存檔點
 				case "saveStone":
 					save.data.bananaValue = bag.bananaCounter;
@@ -400,12 +414,13 @@ class MinerState extends FlxState
 					save.data.playerPos = player.getPosition();
 					save.data.place = place;
 					save.flush();
-					name = AssetPaths.saveFile__txt;
+					name = ":N:存檔成功！";
+					txt = false;
 			}
 			talk = "none";
 
 			playerUpDown();
-			dia.show(name, diaUpDown);
+			dia.show(name, diaUpDown, txt);
 		}
 	}
 

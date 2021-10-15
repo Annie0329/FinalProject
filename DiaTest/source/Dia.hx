@@ -23,6 +23,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	var text:FlxTypeText;
 	var background:FlxSprite;
+	var pointer:Pointer;
+	var pointerQ:String = "none";
+	var txt:Bool = true;
 
 	public var name:String;
 
@@ -31,10 +34,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	var textRunDone:Bool = false;
 
-	public var answer:Float = 0;
-
-	public var bananaQ:Bool;
-	public var banana:FlxSprite; // 我們把香蕉召喚到這裡
+	public var mingWin:Bool = false;
 
 	public function new()
 	{
@@ -46,14 +46,18 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 字
-		text = new FlxTypeText(120, background.y + 10, 350, "text", 18, true);
+		text = new FlxTypeText(120, background.y + 10, 340, "text", 28, true);
 		text.color = FlxColor.BLACK;
-		text.font = AssetPaths.font__ttf;
+		text.font = AssetPaths.silver__ttf;
+		text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
+		text.delay = 0.07;
+		text.skipKeys = ["X", "SHIFT"];
 		add(text);
 
-		text.delay = 0.04;
-		text.skipKeys = ["X", "SHIFT"];
-		text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
+		// 箭頭
+		pointer = new Pointer();
+		add(pointer);
+		pointer.visible = false;
 
 		visible = false;
 		active = false;
@@ -63,9 +67,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	}
 
 	// 對話
-	public function show(name, diaUpDown)
+	public function show(name, diaUpDown, txt:Bool)
 	{
-		dilog_boxes = openfl.Assets.getText(name).split(":");
+		dilog_boxes = if (txt) openfl.Assets.getText(name).split(":") else dilog_boxes = name.split(":");
 		i = 2;
 
 		diaPosition(diaUpDown);
@@ -97,7 +101,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaSpartan__png;
 			case "L":
 				profilePic = AssetPaths.diaLake__png;
-			case "N":
+			case "N", "M":
 				profilePic = AssetPaths.diaNull__png;
 		}
 
@@ -112,8 +116,21 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			background.y = 10;
 		else
 			background.y = FlxG.height - background.height - 10;
-
+		pointer.y = background.y + 75;
 		text.y = background.y + 10;
+	}
+
+	// 呼叫箭頭
+	public function getPointer(quest:String)
+	{
+		pointerQ = quest;
+		switch (pointerQ)
+		{
+			case "ming":
+				pointer.setPointer(130, 85, 58, 5, "lr");
+
+				pointer.visible = true;
+		}
 	}
 
 	// 更新啦
@@ -131,29 +148,62 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (enter) // && textRunDone)
 		{
-			profile += 2;
-			changeProfile();
-
-			i += 2;
-
-			// 對話結束就離開
-			if (i > dilog_boxes.length)
+			// 箭頭選擇
+			if (pointer.visible)
 			{
-				text.resetText("  ");
-				text.start(false, false, function()
+				switch (pointerQ)
 				{
-					visible = false;
-					active = false;
-				});
+					case "ming":
+						if (pointer.x == pointer.start)
+						{
+							name = AssetPaths.mingHint__txt;
+							txt = true;
+							mingWin = false;
+						}
+						else if (pointer.x == pointer.start + pointer.bar * 2)
+						{
+							name = ":M:答對了！給你50元。:N:你得到了50元";
+							txt = false;
+							mingWin = true;
+						}
+						else
+						{
+							name = ":M:不對喔。";
+							txt = false;
+							mingWin = false;
+						}
+				}
+				show(name, diaUpDown, txt);
+				pointer.visible = false;
+				pointerQ = "none";
 			}
 			else
 			{
-				textRunDone = false;
-				text.resetText(dilog_boxes[i]);
-				text.start(false, false, function()
+				profile += 2;
+				changeProfile();
+
+				i += 2;
+
+				// 對話結束就離開
+				if (i > dilog_boxes.length)
 				{
-					textRunDone = true;
-				});
+					text.resetText("  ");
+					text.start(false, false, function()
+					{
+						visible = false;
+						active = false;
+					});
+				}
+				// 不然就換行
+				else
+				{
+					textRunDone = false;
+					text.resetText(dilog_boxes[i]);
+					text.start(false, false, function()
+					{
+						textRunDone = true;
+					});
+				}
 			}
 		}
 	}

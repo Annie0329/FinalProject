@@ -13,6 +13,8 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 
+using flixel.util.FlxSpriteUtil;
+
 class PlayState extends FlxState
 {
 	// 玩家
@@ -25,6 +27,7 @@ class PlayState extends FlxState
 	var diaUpDown:String;
 	var name:String;
 	var bubble:FlxSprite;
+	var txt:Bool = true;
 
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
@@ -35,10 +38,15 @@ class PlayState extends FlxState
 	var lake:FlxSprite;
 	var monument:FlxSprite;
 
-	var person1:FlxSprite;
-	var person2:FlxSprite;
-	var person3:FlxSprite;
-	var person4:FlxSprite;
+	var ming:FlxSprite;
+	var archaeologist:FlxSprite;
+	var personCyan:FlxSprite;
+	var personBlue:FlxSprite;
+
+	var enemies:FlxTypedGroup<Enemy>;
+	var health:Int = 3;
+	var inCombat:Bool = false;
+	var combatHud:CombatHUD;
 
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
@@ -56,6 +64,10 @@ class PlayState extends FlxState
 
 	var talk:String = "none";
 	var getBag:Bool = false;
+
+	// 之後記得存起來
+	var getMing:Bool = false;
+	var mingFinish:Bool = false;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -112,9 +124,13 @@ class PlayState extends FlxState
 		add(saveStone);
 
 		// 礦場門
-		minerDoor = new FlxSprite().makeGraphic(80, 80, FlxColor.WHITE);
+		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 80);
+		minerDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		minerDoor.immovable = true;
+		minerDoor.setSize(40, 20);
+		minerDoor.offset.set(60, 30);
 		add(minerDoor);
+		minerDoor.animation.play("glow");
 
 		// 商店
 		shop = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
@@ -126,6 +142,27 @@ class PlayState extends FlxState
 		doge.immovable = true;
 		add(doge);
 
+		// 阿明
+		ming = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.PURPLE);
+		ming.immovable = true;
+		add(ming);
+
+		personCyan = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.CYAN);
+		personCyan.immovable = true;
+		add(personCyan);
+
+		personBlue = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.BLUE);
+		personBlue.immovable = true;
+		add(personBlue);
+
+		archaeologist = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.BROWN);
+		archaeologist.immovable = true;
+		add(archaeologist);
+
+		// 敵人
+		enemies = new FlxTypedGroup<Enemy>();
+		add(enemies);
+
 		// 玩家
 		player = new Player();
 		add(player);
@@ -135,6 +172,10 @@ class PlayState extends FlxState
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
 		through.follow();
 		add(through);
+
+		// 打人介面
+		combatHud = new CombatHUD();
+		add(combatHud);
 
 		// 對話框
 		dia = new Dia();
@@ -181,11 +222,26 @@ class PlayState extends FlxState
 				if (save.data.place == "menu")
 					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 				else if (save.data.place == "miner")
+				{
 					player.setPosition(minerDoor.x - 100, minerDoor.y + 32);
+					save.data.bananaValue = bag.bananaCounter;
+					save.data.diamondValue = bag.diamondCounter;
+					save.data.playerBag = player.playerBag;
+					save.data.playerPos = player.getPosition();
+					save.data.place = "monument";
+					save.flush();
+				}
 			}
 		}
+		else
+		{
+			name = AssetPaths.c1Opening__txt;
+			getBag = true;
+			playerUpDown();
+			dia.show(name, diaUpDown, true);
+		}
 
-		FlxG.mouse.visible = false;
+		FlxG.mouse.visible = true;
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
 		super.create();
@@ -222,6 +278,24 @@ class PlayState extends FlxState
 			case "guy":
 				doge.setPosition(x, y);
 
+			case "ming":
+				ming.setPosition(x, y);
+
+			case "personCyan":
+				personCyan.setPosition(x, y);
+
+			case "personBlue":
+				personBlue.setPosition(x, y);
+
+			case "history":
+				archaeologist.setPosition(x, y);
+
+			// 把敵人移到地磚水平中心
+			case "enemy":
+				enemies.add(new Enemy(x + 4, y, REGULAR));
+			case "boss":
+				enemies.add(new Enemy(x + 4, y, BOSS));
+
 			case "banana":
 				var b = new FlxSprite(x + 20, y + 20).loadGraphic(AssetPaths.banana__png, true, 40, 40);
 				b.animation.add("spin", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 5, true);
@@ -254,34 +328,115 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		updateWhenDiaInvisible();
-		updateTalking();
-		updateEsc();
-		updateC();
 
 		// 除錯大隊
-		ufo.text = "oui";
+		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
 			ufo.visible = true;
 			// save.erase();
 		}
+		if (inCombat)
+		{
+			if (!combatHud.visible)
+			{
+				health = combatHud.playerHealth;
 
-		// 碰撞爆
-		FlxG.overlap(player, ground);
-		FlxG.overlap(player, road);
-		FlxG.collide(player, walls);
-		FlxG.overlap(player, through);
+				// 如果被打死就扣錢
+				if (combatHud.outcome == DEFEAT)
+				{
+					bag.diamondCounter -= 50;
+					name = ":N:你失去了50元。";
+				}
+				else
+				{
+					if (combatHud.outcome == VICTORY)
+					{
+						combatHud.enemy.kill();
+						if (combatHud.enemy.type == BOSS)
+						{
+							bag.diamondCounter += 200;
+							name = ":N:你獲得了200元！";
+						}
+						else if (combatHud.enemy.type == REGULAR)
+						{
+							bag.diamondCounter += 100;
+							name = ":N:你獲得了100元！";
+						}
+						txt = false;
+						playerUpDown();
+						dia.show(name, diaUpDown, txt);
+					}
+					else
+					{
+						combatHud.enemy.flicker();
+					}
+					inCombat = false;
+					player.active = true;
+					enemies.active = true;
+				}
+				bag.updateBag();
+			}
+		}
+		else
+		{
+			updateWhenDiaInvisible();
+			updateTalking();
+			updateEsc();
+			updateC();
+			// 碰撞爆
+			FlxG.overlap(player, ground);
+			FlxG.overlap(player, road);
+			FlxG.collide(player, walls);
+			FlxG.overlap(player, through);
 
-		FlxG.collide(player, doge, dogeTalk);
-		FlxG.overlap(player, banana, getBanana);
-		FlxG.collide(player, minerDoor, goToMiner);
+			FlxG.collide(player, doge, dogeTalk);
+			FlxG.overlap(player, banana, getBanana);
+			FlxG.collide(player, minerDoor, goToMiner);
+			FlxG.collide(player, ming, mingTalk);
+			FlxG.collide(player, personCyan, personCyanTalk);
+			FlxG.collide(player, personBlue, personBlueTalk);
+			FlxG.collide(player, archaeologist, archaeologistTalk);
 
-		FlxG.collide(player, lake, lakeTalk);
-		FlxG.collide(player, monument, monumentTalk);
-		FlxG.collide(player, shop, shopOpen);
-		FlxG.collide(player, saveStone, saveFile);
+			FlxG.collide(player, lake, lakeTalk);
+			FlxG.collide(player, monument, monumentTalk);
+			FlxG.collide(player, shop, shopOpen);
+			FlxG.collide(player, saveStone, saveFile);
+
+			FlxG.collide(enemies, walls);
+			FlxG.collide(enemies, road);
+			enemies.forEachAlive(checkEnemyVision);
+			FlxG.overlap(player, enemies, playerTouchEnemy);
+		}
+	}
+
+	function playerTouchEnemy(player:Player, enemy:Enemy)
+	{
+		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
+		{
+			startCombat(enemy);
+		}
+	}
+
+	function startCombat(enemy:Enemy)
+	{
+		inCombat = true;
+		player.active = false;
+		enemies.active = false;
+		combatHud.initCombat(health, enemy);
+	}
+
+	function checkEnemyVision(enemy:Enemy)
+	{
+		if (walls.ray(enemy.getMidpoint(), player.getMidpoint()))
+		{
+			enemy.seesPlayer = true;
+			// ！！是在這裡定位玩家位置的！
+			enemy.playerPosition = player.getMidpoint();
+		}
+		else
+			enemy.seesPlayer = false;
 	}
 
 	// 泡泡位置
@@ -321,6 +476,31 @@ class PlayState extends FlxState
 		talk = "monument";
 	}
 
+	// 阿明對話
+	function mingTalk(player:Player, ming:FlxSprite)
+	{
+		bubblePosition(ming.x, ming.y + ming.height / 2, ming.width);
+		talk = "ming";
+	}
+
+	function personCyanTalk(player:Player, personCyan:FlxSprite)
+	{
+		bubblePosition(personCyan.x, personCyan.y + personCyan.height / 2, personCyan.width);
+		talk = "personCyan";
+	}
+
+	function personBlueTalk(player:Player, personBlue:FlxSprite)
+	{
+		bubblePosition(personBlue.x, personBlue.y + personBlue.height / 2, personBlue.width);
+		talk = "personBlue";
+	}
+
+	function archaeologistTalk(player:Player, archaelogist:FlxSprite)
+	{
+		bubblePosition(archaelogist.x, archaelogist.y + archaelogist.height / 2, archaelogist.width);
+		talk = "archaelogist";
+	}
+
 	// 存檔
 	function saveFile(player:Player, saveStone:FlxSprite)
 	{
@@ -336,7 +516,7 @@ class PlayState extends FlxState
 			save.data.bananaValue = bag.bananaCounter;
 			save.data.diamondValue = bag.diamondCounter;
 			save.data.playerBag = player.playerBag;
-			save.data.place = place;
+			save.data.place = "monument";
 			save.flush();
 			FlxG.switchState(new MinerState(true));
 		});
@@ -369,22 +549,45 @@ class PlayState extends FlxState
 				// doge
 				case "doge":
 					// 紀念碑對話
-					if (player.playerBag)
-						name = AssetPaths.forestMission__txt;
+					if (getMing)
+						name = AssetPaths.dogeClue__txt;
 					else
-					{
-						name = AssetPaths.c1Opening__txt;
-						getBag = true;
-					}
+						name = AssetPaths.forestMission__txt;
+					txt = true;
 
 				// 湖
 				case "lake":
 					name = AssetPaths.lakeTalking__txt;
+					txt = true;
 
 				// 紀念碑
 				case "monument":
-					name = AssetPaths.monument__txt;
+					name = ":N:裡面似乎有毀壞的記帳本。";
+					txt = false;
 
+				case "ming":
+					if (getMing)
+					{
+						name = AssetPaths.mingClue__txt;
+						dia.getPointer("ming");
+						txt = true;
+					}
+					else
+					{
+						name = AssetPaths.mingTalking__txt;
+						getMing = true;
+						txt = true;
+					}
+
+				case "personCyan":
+					name = ":N:我昨天忙翻了！交易？記不太清楚，但我確定沒借錢給Doge。";
+					txt = false;
+				case "personBlue":
+					name = ":N:交易...我記得我沒有借給藍錢。";
+					txt = false;
+				case "archaelogist":
+					name = ":N:交易啊？我借給靛30元喔。";
+					txt = false;
 				// 存檔點
 				case "saveStone":
 					save.data.bananaValue = bag.bananaCounter;
@@ -393,12 +596,13 @@ class PlayState extends FlxState
 					save.data.playerPos = player.getPosition();
 					save.data.place = place;
 					save.flush();
-					name = AssetPaths.saveFile__txt;
+					name = ":N:存檔成功！";
+					txt = false;
 			}
 			talk = "none";
 
 			playerUpDown();
-			dia.show(name, diaUpDown);
+			dia.show(name, diaUpDown, txt);
 		}
 	}
 
@@ -407,9 +611,15 @@ class PlayState extends FlxState
 	{
 		// 對話框顯示時玩家就不能動
 		if (dia.visible || bag.visible)
+		{
 			player.active = false;
+			enemies.active = false;
+		}
 		else
+		{
 			player.active = true;
+			enemies.active = true;
+		}
 
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
@@ -418,6 +628,14 @@ class PlayState extends FlxState
 			{
 				player.playerBagPic();
 				getBag = false;
+			}
+			// 答對誰是謊報者的題目
+			if (dia.mingWin && !mingFinish)
+			{
+				bag.diamondCounter += 50;
+				bag.updateBag();
+				dia.mingWin = false;
+				mingFinish = true;
 			}
 		}
 	}
@@ -450,7 +668,7 @@ class PlayState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && player.playerBag)
+		if (c && !dia.visible && player.playerBag && !bag.visible)
 		{
 			bag.bagUi();
 		}
