@@ -29,7 +29,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	public var name:String;
 
-	var diaUpDown:String;
+	public var diaUpDown:String;
+
 	var profilePic:String;
 
 	var textRunDone:Bool = false;
@@ -66,8 +67,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 	}
 
-	// 對話
-	public function show(name, diaUpDown, txt:Bool)
+	// 對話出現
+	public function show(name, txt:Bool)
 	{
 		dilog_boxes = if (txt) openfl.Assets.getText(name).split(":") else dilog_boxes = name.split(":");
 		i = 2;
@@ -103,6 +104,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaLake__png;
 			case "N", "M":
 				profilePic = AssetPaths.diaNull__png;
+
+			case "SR":
+				profilePic = AssetPaths.diaSbRed__png;
+			case "SG":
+				profilePic = AssetPaths.diaSbGreen__png;
+			case "SB":
+				profilePic = AssetPaths.diaSbBlue__png;
 		}
 
 		background.loadGraphic(profilePic);
@@ -173,7 +181,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 							mingWin = false;
 						}
 				}
-				show(name, diaUpDown, txt);
+				show(name, txt);
 				pointer.visible = false;
 				pointerQ = "none";
 			}

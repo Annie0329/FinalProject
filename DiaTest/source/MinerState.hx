@@ -25,13 +25,15 @@ class MinerState extends FlxState
 	var dia:Dia;
 	var diaUpDown:String;
 	var name:String;
-	var bubble:FlxSprite;
 	var txt:Bool = true;
+	var talkYes:Bool = false;
+	var talkId:Int;
 
 	// 其他角色
 	var spartan:FlxSprite;
 
 	var saveStone:FlxTypedGroup<FlxSprite> = null;
+	var saveStoneId:Int = 19;
 	var monumentDoor:FlxSprite;
 
 	// 箱子和石頭
@@ -48,8 +50,6 @@ class MinerState extends FlxState
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 	var loadsave:Bool;
-
-	var place = "miner";
 
 	var talk:String = "none";
 	var getBag:Bool = true;
@@ -130,11 +130,6 @@ class MinerState extends FlxState
 		dia = new Dia();
 		add(dia);
 
-		// 泡泡
-		bubble = new FlxSprite(0, 0).loadGraphic(AssetPaths.bubble__png);
-		bubble.visible = false;
-		add(bubble);
-
 		// 包包介面
 		bag = new Bag();
 		add(bag);
@@ -188,23 +183,6 @@ class MinerState extends FlxState
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
 		super.create();
-	}
-
-	// 換成猩猩背包包的造型
-	function playerBagPic()
-	{
-		player.loadGraphic(AssetPaths.apeNew__png, true, 50, 64);
-		// 面向右邊時使用鏡像的左邊圖片
-		player.setFacingFlip(LEFT, false, false);
-		player.setFacingFlip(RIGHT, true, false);
-
-		// 走路動畫
-		player.animation.add("lr", [3, 4, 3, 5, 6, 7, 6, 5], 6, false);
-		player.animation.add("u", [9, 8, 10, 8], 6, false);
-		player.animation.add("d", [1, 0, 2, 0], 6, false);
-
-		player.setSize(50, 32);
-		player.offset.set(0, 32);
 	}
 
 	// 設位置
@@ -265,7 +243,7 @@ class MinerState extends FlxState
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, through);
 
-		FlxG.collide(player, spartan, spartanTalk);
+		FlxG.collide(player, spartan, ultimateTalk);
 
 		FlxG.collide(player, saveStone, saveFile);
 		FlxG.collide(player, monumentDoor, goToMonument);
@@ -280,25 +258,18 @@ class MinerState extends FlxState
 		FlxG.collide(box, walls);
 	}
 
-	// 泡泡位置
-	function bubblePosition(bx, by:Float, bw:Float)
+	// 終極對話！
+	function ultimateTalk(player:Player, sprite:FlxSprite)
 	{
-		bubble.setPosition(bx + bw / 2 - bubble.width / 2, by - bubble.height);
-		bubble.visible = true;
-	}
-
-	// 斯巴達對話
-	function spartanTalk(player:Player, spartan:FlxSprite)
-	{
-		bubblePosition(spartan.x, spartan.y, spartan.width);
-		talk = "spartan";
+		talkYes = true;
+		talkId = sprite.ID;
 	}
 
 	// 存檔
 	function saveFile(player:Player, saveStone:FlxSprite)
 	{
-		bubblePosition(saveStone.x, saveStone.y, saveStone.width);
-		talk = "saveStone";
+		talkYes = true;
+		talkId = saveStoneId;
 	}
 
 	// 去到紀念碑
@@ -358,7 +329,7 @@ class MinerState extends FlxState
 					name = ":N:你得到了1顆能量石！";
 					playerUpDown();
 					txt = false;
-					dia.show(name, diaUpDown, txt);
+					dia.show(name, txt);
 				}
 			});
 		}
@@ -388,39 +359,40 @@ class MinerState extends FlxState
 	}
 
 	// 對話大滿貫
+	// 對話大滿貫
 	function updateTalking()
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 
 		// 如果玩家離開就不能對話
 		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]))
-			bubble.visible = false;
+			talkYes = false;
 
 		// 如果有對話泡泡又按enter就對話
-		if (bubble.visible && enter && !bag.visible)
+		if (talkYes && enter && !bag.visible)
 		{
-			bubble.visible = false;
-			switch (talk)
+			talkYes = false;
+			if (talkId == spartan.ID)
 			{
-				// 斯巴達
-				case "spartan":
-					name = AssetPaths.minerSpartan__txt;
-					txt = true;
-				// 存檔點
-				case "saveStone":
-					save.data.bananaValue = bag.bananaCounter;
-					save.data.diamondValue = bag.diamondCounter;
-					save.data.playerBag = player.playerBag;
-					save.data.playerPos = player.getPosition();
-					save.data.place = place;
-					save.flush();
-					name = ":N:存檔成功！";
-					txt = false;
+				name = AssetPaths.minerSpartan__txt;
+				txt = true;
 			}
-			talk = "none";
+			if (talkId == saveStoneId)
+			{
+				save.data.bananaValue = bag.bananaCounter;
+				save.data.diamondValue = bag.diamondCounter;
+				save.data.playerBag = player.playerBag;
+				save.data.playerPos = player.getPosition();
+				save.data.place = "miner";
+				save.flush();
+				name = ":N:存檔成功！";
+				txt = false;
+			}
+
+			talkId = 0;
 
 			playerUpDown();
-			dia.show(name, diaUpDown, txt);
+			dia.show(name, txt);
 		}
 	}
 

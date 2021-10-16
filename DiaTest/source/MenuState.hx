@@ -20,7 +20,7 @@ class MenuState extends FlxState
 
 	var menu:String = "main";
 	var loadsave:Bool;
-	var place:String = "menu";
+
 
 	var ufo:FlxText;
 

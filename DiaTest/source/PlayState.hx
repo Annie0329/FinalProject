@@ -26,8 +26,9 @@ class PlayState extends FlxState
 	var dia:Dia;
 	var diaUpDown:String;
 	var name:String;
-	var bubble:FlxSprite;
 	var txt:Bool = true;
+	var talkYes:Bool = false;
+	var talkId:Int;
 
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
@@ -39,9 +40,10 @@ class PlayState extends FlxState
 	var monument:FlxSprite;
 
 	var ming:FlxSprite;
-	var archaeologist:FlxSprite;
-	var personCyan:FlxSprite;
-	var personBlue:FlxSprite;
+
+	var sbGreen:FlxSprite;
+	var sbRed:FlxSprite;
+	var sbBlue:FlxSprite;
 
 	var enemies:FlxTypedGroup<Enemy>;
 	var health:Int = 3;
@@ -51,6 +53,7 @@ class PlayState extends FlxState
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
 	var saveStone:FlxTypedGroup<FlxSprite> = null;
+	var saveStoneId:Int = 19;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -59,8 +62,6 @@ class PlayState extends FlxState
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 	var loadsave:Bool;
-
-	var place:String = "monument";
 
 	var talk:String = "none";
 	var getBag:Bool = false;
@@ -147,17 +148,17 @@ class PlayState extends FlxState
 		ming.immovable = true;
 		add(ming);
 
-		personCyan = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.CYAN);
-		personCyan.immovable = true;
-		add(personCyan);
+		sbRed = new FlxSprite(AssetPaths.sbRed__png);
+		sbRed.immovable = true;
+		add(sbRed);
 
-		personBlue = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.BLUE);
-		personBlue.immovable = true;
-		add(personBlue);
+		sbBlue = new FlxSprite(AssetPaths.sbBlue__png);
+		sbBlue.immovable = true;
+		add(sbBlue);
 
-		archaeologist = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.BROWN);
-		archaeologist.immovable = true;
-		add(archaeologist);
+		sbGreen = new FlxSprite(AssetPaths.sbGreen__png);
+		sbGreen.immovable = true;
+		add(sbGreen);
 
 		// 敵人
 		enemies = new FlxTypedGroup<Enemy>();
@@ -180,11 +181,6 @@ class PlayState extends FlxState
 		// 對話框
 		dia = new Dia();
 		add(dia);
-
-		// 泡泡
-		bubble = new FlxSprite(0, 0).loadGraphic(AssetPaths.bubble__png);
-		bubble.visible = false;
-		add(bubble);
 
 		// 包包介面
 		bag = new Bag();
@@ -238,30 +234,13 @@ class PlayState extends FlxState
 			name = AssetPaths.c1Opening__txt;
 			getBag = true;
 			playerUpDown();
-			dia.show(name, diaUpDown, true);
+			dia.show(name, true);
 		}
 
 		FlxG.mouse.visible = true;
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
 		super.create();
-	}
-
-	// 換成猩猩背包包的造型
-	function playerBagPic()
-	{
-		player.loadGraphic(AssetPaths.apeNew__png, true, 50, 64);
-		// 面向右邊時使用鏡像的左邊圖片
-		player.setFacingFlip(LEFT, false, false);
-		player.setFacingFlip(RIGHT, true, false);
-
-		// 走路動畫
-		player.animation.add("lr", [3, 4, 3, 5, 6, 7, 6, 5], 6, false);
-		player.animation.add("u", [9, 8, 10, 8], 6, false);
-		player.animation.add("d", [1, 0, 2, 0], 6, false);
-
-		player.setSize(50, 32);
-		player.offset.set(0, 32);
 	}
 
 	// 設位置
@@ -281,14 +260,14 @@ class PlayState extends FlxState
 			case "ming":
 				ming.setPosition(x, y);
 
-			case "personCyan":
-				personCyan.setPosition(x, y);
+			case "sbRed":
+				sbRed.setPosition(x, y);
 
-			case "personBlue":
-				personBlue.setPosition(x, y);
+			case "sbBlue":
+				sbBlue.setPosition(x, y);
 
-			case "history":
-				archaeologist.setPosition(x, y);
+			case "sbGreen":
+				sbGreen.setPosition(x, y);
 
 			// 把敵人移到地磚水平中心
 			case "enemy":
@@ -366,7 +345,7 @@ class PlayState extends FlxState
 						}
 						txt = false;
 						playerUpDown();
-						dia.show(name, diaUpDown, txt);
+						dia.show(name, txt);
 					}
 					else
 					{
@@ -391,18 +370,19 @@ class PlayState extends FlxState
 			FlxG.collide(player, walls);
 			FlxG.overlap(player, through);
 
-			FlxG.collide(player, doge, dogeTalk);
-			FlxG.overlap(player, banana, getBanana);
-			FlxG.collide(player, minerDoor, goToMiner);
-			FlxG.collide(player, ming, mingTalk);
-			FlxG.collide(player, personCyan, personCyanTalk);
-			FlxG.collide(player, personBlue, personBlueTalk);
-			FlxG.collide(player, archaeologist, archaeologistTalk);
+			FlxG.collide(player, doge, ultimateTalk);
+			FlxG.collide(player, ming, ultimateTalk);
+			FlxG.collide(player, sbRed, ultimateTalk);
+			FlxG.collide(player, sbBlue, ultimateTalk);
+			FlxG.collide(player, sbGreen, ultimateTalk);
 
-			FlxG.collide(player, lake, lakeTalk);
-			FlxG.collide(player, monument, monumentTalk);
-			FlxG.collide(player, shop, shopOpen);
+			FlxG.collide(player, lake, ultimateTalk);
+			FlxG.collide(player, monument, ultimateTalk);
 			FlxG.collide(player, saveStone, saveFile);
+			FlxG.overlap(player, banana, getBanana);
+
+			FlxG.collide(player, shop, shopOpen);
+			FlxG.collide(player, minerDoor, goToMiner);
 
 			FlxG.collide(enemies, walls);
 			FlxG.collide(enemies, road);
@@ -439,18 +419,11 @@ class PlayState extends FlxState
 			enemy.seesPlayer = false;
 	}
 
-	// 泡泡位置
-	function bubblePosition(bx, by:Float, bw:Float)
+	// 終極對話！
+	function ultimateTalk(player:Player, sprite:FlxSprite)
 	{
-		bubble.setPosition(bx + bw / 2 - bubble.width / 2, by - bubble.height);
-		bubble.visible = true;
-	}
-
-	// Doge對話
-	function dogeTalk(player:Player, doge:FlxSprite)
-	{
-		bubblePosition(doge.x, doge.y, doge.width);
-		talk = "doge";
+		talkYes = true;
+		talkId = sprite.ID;
 	}
 
 	// Kris get the banana
@@ -462,50 +435,11 @@ class PlayState extends FlxState
 		bag.updateBag();
 	}
 
-	// 湖對話
-	function lakeTalk(player:Player, lake:FlxSprite)
-	{
-		bubblePosition(lake.x, lake.y + lake.height / 2, lake.width);
-		talk = "lake";
-	}
-
-	// 紀念碑對話
-	function monumentTalk(player:Player, monument:FlxSprite)
-	{
-		bubblePosition(monument.x, monument.y + monument.height / 2, monument.width);
-		talk = "monument";
-	}
-
-	// 阿明對話
-	function mingTalk(player:Player, ming:FlxSprite)
-	{
-		bubblePosition(ming.x, ming.y + ming.height / 2, ming.width);
-		talk = "ming";
-	}
-
-	function personCyanTalk(player:Player, personCyan:FlxSprite)
-	{
-		bubblePosition(personCyan.x, personCyan.y + personCyan.height / 2, personCyan.width);
-		talk = "personCyan";
-	}
-
-	function personBlueTalk(player:Player, personBlue:FlxSprite)
-	{
-		bubblePosition(personBlue.x, personBlue.y + personBlue.height / 2, personBlue.width);
-		talk = "personBlue";
-	}
-
-	function archaeologistTalk(player:Player, archaelogist:FlxSprite)
-	{
-		bubblePosition(archaelogist.x, archaelogist.y + archaelogist.height / 2, archaelogist.width);
-		talk = "archaelogist";
-	}
-
 	// 存檔
 	function saveFile(player:Player, saveStone:FlxSprite)
 	{
-		bubblePosition(saveStone.x, saveStone.y, saveStone.width);
-		talk = "saveStone";
+		talkYes = true;
+		talkId = saveStoneId;
 	}
 
 	// 去礦場
@@ -538,71 +472,81 @@ class PlayState extends FlxState
 
 		// 如果玩家離開就不能對話
 		if (FlxG.keys.anyJustPressed([A, S, W, D, UP, DOWN, LEFT, RIGHT]))
-			bubble.visible = false;
+			talkYes = false;
 
-		// 如果有對話泡泡又按enter就對話
-		if (bubble.visible && enter && !bag.visible)
+		// 如果按enter就對話
+		if (talkYes && enter && !bag.visible)
 		{
-			bubble.visible = false;
-			switch (talk)
+			talkYes = false;
+			if (talkId == doge.ID)
 			{
-				// doge
-				case "doge":
-					// 紀念碑對話
-					if (getMing)
-						name = AssetPaths.dogeClue__txt;
-					else
-						name = AssetPaths.forestMission__txt;
+				if (getMing)
+				{
+					name = ":D:昨天的交易？嗯，我借給小綠20元。";
+					txt = false;
+				}
+				else
+				{
+					name = AssetPaths.forestMission__txt;
 					txt = true;
-
-				// 湖
-				case "lake":
-					name = AssetPaths.lakeTalking__txt;
-					txt = true;
-
-				// 紀念碑
-				case "monument":
-					name = ":N:裡面似乎有毀壞的記帳本。";
-					txt = false;
-
-				case "ming":
-					if (getMing)
-					{
-						name = AssetPaths.mingClue__txt;
-						dia.getPointer("ming");
-						txt = true;
-					}
-					else
-					{
-						name = AssetPaths.mingTalking__txt;
-						getMing = true;
-						txt = true;
-					}
-
-				case "personCyan":
-					name = ":N:我昨天忙翻了！交易？記不太清楚，但我確定沒借錢給Doge。";
-					txt = false;
-				case "personBlue":
-					name = ":N:交易...我記得我沒有借給藍錢。";
-					txt = false;
-				case "archaelogist":
-					name = ":N:交易啊？我借給靛30元喔。";
-					txt = false;
-				// 存檔點
-				case "saveStone":
-					save.data.bananaValue = bag.bananaCounter;
-					save.data.diamondValue = bag.diamondCounter;
-					save.data.playerBag = player.playerBag;
-					save.data.playerPos = player.getPosition();
-					save.data.place = place;
-					save.flush();
-					name = ":N:存檔成功！";
-					txt = false;
+				}
 			}
-			talk = "none";
+			if (talkId == lake.ID)
+			{
+				name = AssetPaths.lakeTalking__txt;
+				txt = true;
+			}
+			if (talkId == monument.ID)
+			{
+				name = ":N:裡面似乎有毀壞的記帳本。";
+				txt = false;
+			}
 
+			if (talkId == ming.ID)
+			{
+				if (getMing)
+				{
+					name = AssetPaths.mingClue__txt;
+					dia.getPointer("ming");
+					txt = true;
+				}
+				else
+				{
+					name = AssetPaths.mingTalking__txt;
+					getMing = true;
+					txt = true;
+				}
+			}
+			if (talkId == sbRed.ID)
+			{
+				name = ":SR:我昨天忙翻了！交易？記不太清楚，但我確定沒借錢給Doge。";
+				txt = false;
+			}
+			if (talkId == sbBlue.ID)
+			{
+				name = ":SB:交易...我記得我沒有借給小紅錢。";
+				txt = false;
+			}
+			if (talkId == sbGreen.ID)
+			{
+				name = ":SG:交易啊？我借給小藍30元喔。";
+				txt = false;
+			}
+			// 存檔點
+			if (talkId == saveStoneId)
+			{
+				save.data.bananaValue = bag.bananaCounter;
+				save.data.diamondValue = bag.diamondCounter;
+				save.data.playerBag = player.playerBag;
+				save.data.playerPos = player.getPosition();
+				save.data.place = "monument";
+				save.flush();
+				name = ":N:存檔成功！";
+				txt = false;
+			}
+			talkId = 0;
 			playerUpDown();
-			dia.show(name, diaUpDown, txt);
+			dia.show(name, txt);
 		}
 	}
 
@@ -646,9 +590,9 @@ class PlayState extends FlxState
 		// 這串偉大的公式是把玩家的世界座標轉成螢幕座標，感謝Kino大大
 		// https://kinocreates.io/tutorials/haxeflixel-screen-vs-world-position/
 		if (player.y - player.height / 2 - (FlxG.camera.scroll.y * player.scrollFactor.y) > FlxG.height / 2)
-			diaUpDown = "up";
+			dia.diaUpDown = "up";
 		else
-			diaUpDown = "down";
+			dia.diaUpDown = "down";
 	}
 
 	// 如果按esc鍵就回選單

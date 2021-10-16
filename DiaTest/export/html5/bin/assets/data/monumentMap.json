@@ -38,13 +38,13 @@
         {"name": "minerDoor", "id": 61, "_eid": "06343898", "x": 2040, "y": 760, "originX": 0, "originY": 0},
         {"name": "mei", "id": 62, "_eid": "04469671", "x": 1920, "y": 800, "originX": 0, "originY": 0},
         {"name": "ming", "id": 63, "_eid": "04473691", "x": 1400, "y": 1240, "originX": 0, "originY": 0},
-        {"name": "history", "id": 64, "_eid": "04478069", "x": 1680, "y": 1240, "originX": 0, "originY": 0},
         {"name": "enemy", "id": 65, "_eid": "26833738", "x": 1880, "y": 1520, "originX": 0, "originY": 0},
         {"name": "enemy", "id": 66, "_eid": "26833738", "x": 2280, "y": 1840, "originX": 0, "originY": 0},
         {"name": "enemy", "id": 67, "_eid": "26833738", "x": 2840, "y": 1440, "originX": 0, "originY": 0},
-        {"name": "personCyan", "id": 68, "_eid": "26998662", "x": 1480, "y": 1320, "originX": 0, "originY": 0},
-        {"name": "personBlue", "id": 69, "_eid": "26995153", "x": 1240, "y": 1320, "originX": 0, "originY": 0},
-        {"name": "boss", "id": 70, "_eid": "30686801", "x": 2640, "y": 1080, "originX": 0, "originY": 0}
+        {"name": "boss", "id": 70, "_eid": "30686801", "x": 2640, "y": 1080, "originX": 0, "originY": 0},
+        {"name": "sbGreen", "id": 71, "_eid": "04478069", "x": 1520, "y": 1280, "originX": 0, "originY": 0},
+        {"name": "sbRed", "id": 72, "_eid": "26998662", "x": 1280, "y": 1320, "originX": 0, "originY": 0},
+        {"name": "sbBlue", "id": 73, "_eid": "26995153", "x": 1520, "y": 1440, "originX": 0, "originY": 0}
       ]
     },
     {
