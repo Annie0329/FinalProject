@@ -475,7 +475,7 @@
       "exportID": "78347318",
       "name": "monumentDoor",
       "limit": -1,
-      "size": {"x": 80, "y": 80},
+      "size": {"x": 160, "y": 80},
       "origin": {"x": 0, "y": 0},
       "originAnchored": true,
       "shape": {
@@ -492,7 +492,7 @@
       "color": "#cececeff",
       "tileX": false,
       "tileY": false,
-      "tileSize": {"x": 80, "y": 80},
+      "tileSize": {"x": 160, "y": 80},
       "resizeableX": false,
       "resizeableY": false,
       "rotatable": false,

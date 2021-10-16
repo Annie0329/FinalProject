@@ -52,6 +52,7 @@ class PlayState extends FlxState
 
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
+	var minerOpen:Bool = false;
 	var saveStone:FlxTypedGroup<FlxSprite> = null;
 	var saveStoneId:Int = 19;
 
@@ -237,7 +238,7 @@ class PlayState extends FlxState
 			dia.show(name, true);
 		}
 
-		FlxG.mouse.visible = true;
+		FlxG.mouse.visible = false;
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
 		super.create();
@@ -313,7 +314,7 @@ class PlayState extends FlxState
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
-			ufo.visible = true;
+			// ufo.visible = true;
 			// save.erase();
 		}
 		if (inCombat)
@@ -325,36 +326,47 @@ class PlayState extends FlxState
 				// 如果被打死就扣錢
 				if (combatHud.outcome == DEFEAT)
 				{
-					bag.diamondCounter -= 50;
-					name = ":N:你失去了50元。";
+					combatHud.enemy.kill();
+					if (combatHud.enemy.type == BOSS)
+					{
+						bag.diamondCounter -= 100;
+						name = ":N:你失去了100元。";
+					}
+					else if (combatHud.enemy.type == REGULAR)
+					{
+						bag.diamondCounter -= 50;
+						name = ":N:你失去了50元。";
+					}
+
+					txt = false;
+					playerUpDown();
+					dia.show(name, txt);
+				}
+				else if (combatHud.outcome == VICTORY)
+				{
+					combatHud.enemy.kill();
+					if (combatHud.enemy.type == BOSS)
+					{
+						bag.diamondCounter += 200;
+						name = ":N:你獲得了200元！";
+					}
+					else if (combatHud.enemy.type == REGULAR)
+					{
+						bag.diamondCounter += 100;
+						name = ":N:你獲得了100元！";
+					}
+					txt = false;
+					playerUpDown();
+					dia.show(name, txt);
 				}
 				else
 				{
-					if (combatHud.outcome == VICTORY)
-					{
-						combatHud.enemy.kill();
-						if (combatHud.enemy.type == BOSS)
-						{
-							bag.diamondCounter += 200;
-							name = ":N:你獲得了200元！";
-						}
-						else if (combatHud.enemy.type == REGULAR)
-						{
-							bag.diamondCounter += 100;
-							name = ":N:你獲得了100元！";
-						}
-						txt = false;
-						playerUpDown();
-						dia.show(name, txt);
-					}
-					else
-					{
-						combatHud.enemy.flicker();
-					}
-					inCombat = false;
-					player.active = true;
-					enemies.active = true;
+					combatHud.enemy.flicker();
 				}
+
+				inCombat = false;
+				player.active = true;
+				enemies.active = true;
 				bag.updateBag();
 			}
 		}
@@ -445,15 +457,23 @@ class PlayState extends FlxState
 	// 去礦場
 	function goToMiner(player:Player, minerDoor:FlxSprite)
 	{
-		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		if (bag.diamondCounter >= 1)
 		{
-			save.data.bananaValue = bag.bananaCounter;
-			save.data.diamondValue = bag.diamondCounter;
-			save.data.playerBag = player.playerBag;
-			save.data.place = "monument";
-			save.flush();
-			FlxG.switchState(new MinerState(true));
-		});
+			name = ":N:跟你收1元過路費。:N:你給了傳送門1元。";
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+			bag.diamondCounter--;
+			bag.updateBag();
+			minerOpen = true;
+		}
+		else
+		{
+			name = ":N:你沒有1元過路費。";
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+		}
 	}
 
 	// 商店開門
@@ -519,17 +539,26 @@ class PlayState extends FlxState
 			}
 			if (talkId == sbRed.ID)
 			{
-				name = ":SR:我昨天忙翻了！交易？記不太清楚，但我確定沒借錢給Doge。";
+				if (getMing)
+					name = ":SR:我昨天忙翻了！交易？記不太清楚，但我確定沒借錢給Doge。";
+				else
+					name = ":SR:你好呀。";
 				txt = false;
 			}
 			if (talkId == sbBlue.ID)
 			{
-				name = ":SB:交易...我記得我沒有借給小紅錢。";
+				if (getMing)
+					name = ":SB:交易...我記得我沒有借給小紅錢。";
+				else
+					name = ":SB:今天天氣真好。";
 				txt = false;
 			}
 			if (talkId == sbGreen.ID)
 			{
-				name = ":SG:交易啊？我借給小藍30元喔。";
+				if (getMing)
+					name = ":SG:交易啊？我借給小藍30元喔。";
+				else
+					name = ":SG:汪汪。";
 				txt = false;
 			}
 			// 存檔點
@@ -540,6 +569,7 @@ class PlayState extends FlxState
 				save.data.playerBag = player.playerBag;
 				save.data.playerPos = player.getPosition();
 				save.data.place = "monument";
+				health = 3;
 				save.flush();
 				name = ":N:存檔成功！";
 				txt = false;
@@ -580,6 +610,20 @@ class PlayState extends FlxState
 				bag.updateBag();
 				dia.mingWin = false;
 				mingFinish = true;
+			}
+			// 有錢就開礦場門
+			if (minerOpen)
+			{
+				minerOpen = false;
+				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+				{
+					save.data.bananaValue = bag.bananaCounter;
+					save.data.diamondValue = bag.diamondCounter;
+					save.data.playerBag = player.playerBag;
+					save.data.place = "monument";
+					save.flush();
+					FlxG.switchState(new MinerState(true));
+				});
 			}
 		}
 	}

@@ -50,7 +50,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text = new FlxTypeText(120, background.y + 10, 340, "text", 28, true);
 		text.color = FlxColor.BLACK;
 		text.font = AssetPaths.silver__ttf;
-		text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
+		//text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
 		text.delay = 0.07;
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
@@ -176,7 +176,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 						}
 						else
 						{
-							name = ":M:不對喔。";
+							name = ":M:不對喔。:M:扣你20元。:N:";
 							txt = false;
 							mingWin = false;
 						}

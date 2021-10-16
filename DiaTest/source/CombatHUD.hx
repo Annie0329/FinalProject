@@ -369,7 +369,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 			case FLEE:
 				// 玩家有50%的機率可以逃跑
-				if (FlxG.random.bool(50))
+				if (FlxG.random.bool(100))
 				{
 					// 如果成功了就會淡入逃跑成功的字樣
 					outcome = ESCAPE;
@@ -395,7 +395,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	function enemyAttack()
 	{
 		// 敵人有30%的機率可以歐中玩家
-		if (FlxG.random.bool(30))
+		if (FlxG.random.bool(50))
 		{
 			FlxG.camera.flash(FlxColor.WHITE, .2); // 螢幕變白
 			FlxG.camera.shake(0.01, 0.2); // 螢幕搖晃

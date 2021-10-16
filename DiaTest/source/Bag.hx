@@ -83,11 +83,11 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		shopText.color = 0xff2D5925;
 		shopText.delay = 0.05;
 		shopText.skipKeys = ["X", "SHIFT"];
-		shopText.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
+		// shopText.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
 		shopText.font = AssetPaths.silver__ttf;
 		add(shopText);
 
-		dealText = new FlxText(85, 125, "Doge給猩猩一個包包！\n", 28, true);
+		dealText = new FlxText(85, 125, "目前並無交易紀錄\n", 28, true);
 		dealText.color = 0xff2D5925;
 		dealText.font = AssetPaths.silver__ttf;
 		add(dealText);
