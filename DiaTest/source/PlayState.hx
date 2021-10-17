@@ -129,8 +129,8 @@ class PlayState extends FlxState
 		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 80);
 		minerDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		minerDoor.immovable = true;
-		minerDoor.setSize(40, 20);
-		minerDoor.offset.set(60, 30);
+		minerDoor.setSize(40, 80);
+		minerDoor.offset.set(60, 0);
 		add(minerDoor);
 		minerDoor.animation.play("glow");
 
@@ -145,7 +145,7 @@ class PlayState extends FlxState
 		add(doge);
 
 		// 阿明
-		ming = new FlxSprite(0, 0).makeGraphic(80, 80, FlxColor.PURPLE);
+		ming = new FlxSprite(AssetPaths.sbWhite__png);
 		ming.immovable = true;
 		add(ming);
 
@@ -259,7 +259,7 @@ class PlayState extends FlxState
 				doge.setPosition(x, y);
 
 			case "ming":
-				ming.setPosition(x, y);
+				ming.setPosition(x + (80 - ming.width) / 2, y);
 
 			case "sbRed":
 				sbRed.setPosition(x, y);
@@ -291,7 +291,7 @@ class PlayState extends FlxState
 
 			case "saveStone":
 				var ss = new FlxSprite(x, y).loadGraphic(AssetPaths.saveStone__png, true, 80, 80);
-				ss.animation.add("shine", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 10, true);
+				ss.animation.add("shine", [0, 1, 2, 3, 4, 5], 5, true);
 				ss.animation.play("shine");
 				ss.immovable = true;
 				saveStone.add(ss);
@@ -524,17 +524,26 @@ class PlayState extends FlxState
 
 			if (talkId == ming.ID)
 			{
-				if (getMing)
+				if (dia.mingOutcome == win)
 				{
-					name = AssetPaths.mingClue__txt;
-					dia.getPointer("ming");
-					txt = true;
+					name = ":M:你想賺錢啊？聽說去跟龐龐怪打交道可以賺到錢喔。:M:但是風險似乎很高。";
+					txt = false;
 				}
 				else
 				{
-					name = AssetPaths.mingTalking__txt;
-					getMing = true;
-					txt = true;
+					if (getMing)
+					{
+						name = AssetPaths.mingClue__txt;
+						mingFinish = false;
+						dia.getPointer("ming");
+						txt = true;
+					}
+					else
+					{
+						name = AssetPaths.mingTalking__txt;
+						getMing = true;
+						txt = true;
+					}
 				}
 			}
 			if (talkId == sbRed.ID)
@@ -604,12 +613,20 @@ class PlayState extends FlxState
 				getBag = false;
 			}
 			// 答對誰是謊報者的題目
-			if (dia.mingWin && !mingFinish)
+			if (!mingFinish)
 			{
-				bag.diamondCounter += 50;
-				bag.updateBag();
-				dia.mingWin = false;
-				mingFinish = true;
+				if (dia.mingOutcome == win)
+				{
+					bag.diamondCounter += 50;
+					bag.updateBag();
+					mingFinish = true;
+				}
+				else if (dia.mingOutcome == lose)
+				{
+					bag.diamondCounter -= 20;
+					bag.updateBag();
+					mingFinish = true;
+				}
 			}
 			// 有錢就開礦場門
 			if (minerOpen)

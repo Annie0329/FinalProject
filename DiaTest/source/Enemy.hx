@@ -35,17 +35,17 @@ class Enemy extends FlxSprite
 		this.type = type;
 
 		// 呼叫敵人或魔王的圖片
-		var graphic = if (type == BOSS) AssetPaths.boss__png else AssetPaths.enemy__png;
-		loadGraphic(graphic, true, 64, 64);
+		var graphic = if (type == BOSS) AssetPaths.ponziBad__png else AssetPaths.ponzi__png;
+		loadGraphic(graphic);
 
-		// 面向右邊時使用鏡像的左邊圖片
-		setFacingFlip(FlxObject.LEFT, false, false);
-		setFacingFlip(FlxObject.RIGHT, true, false);
+		// // 面向右邊時使用鏡像的左邊圖片
+		// setFacingFlip(FlxObject.LEFT, false, false);
+		// setFacingFlip(FlxObject.RIGHT, true, false);
 
-		// 走路動畫
-		animation.add("lr", [4, 3, 5, 3], 6, false);
-		animation.add("u", [7, 6, 8, 6], 6, false);
-		animation.add("d", [1, 0, 2, 0], 6, false);
+		// // 走路動畫
+		// animation.add("lr", [4, 3, 5, 3], 6, false);
+		// animation.add("u", [7, 6, 8, 6], 6, false);
+		// animation.add("d", [1, 0, 2, 0], 6, false);
 
 		// 滑壘強度
 		drag.x = drag.y = 10;
@@ -114,7 +114,7 @@ class Enemy extends FlxSprite
 		if (this.type != type)
 		{
 			this.type = type;
-			var graphic = if (type == BOSS) AssetPaths.boss__png else AssetPaths.enemy__png;
+			var graphic = if (type == BOSS) AssetPaths.ponziBad__png else AssetPaths.ponzi__png;
 			loadGraphic(graphic, true, 64, 64);
 		}
 	}
@@ -122,34 +122,34 @@ class Enemy extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		// 如果敵人在動的話
-		if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE)
-		{
-			// 什麼時候臉該面向哪邊，以x、y的速度方向判斷
-			if (Math.abs(velocity.x) > Math.abs(velocity.y))
+		/*if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE)
 			{
-				if (velocity.x < 0)
-					facing = LEFT;
+				// 什麼時候臉該面向哪邊，以x、y的速度方向判斷
+				if (Math.abs(velocity.x) > Math.abs(velocity.y))
+				{
+					if (velocity.x < 0)
+						facing = LEFT;
+					else
+						facing = RIGHT;
+				}
 				else
-					facing = RIGHT;
-			}
-			else
-			{
-				if (velocity.y < 0)
-					facing = UP;
-				else
-					facing = DOWN;
-			}
-			switch (facing)
-			{
-				case LEFT, RIGHT:
-					animation.play("lr");
-				case UP:
-					animation.play("u");
-				case DOWN:
-					animation.play("d");
-				case _:
-			}
-		}
+				{
+					if (velocity.y < 0)
+						facing = UP;
+					else
+						facing = DOWN;
+				}
+				switch (facing)
+				{
+					case LEFT, RIGHT:
+						animation.play("lr");
+					case UP:
+						animation.play("u");
+					case DOWN:
+						animation.play("d");
+					case _:
+				}
+		}*/
 		if (this.isFlickering())
 			return;
 		brain.update(elapsed);

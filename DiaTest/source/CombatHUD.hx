@@ -99,9 +99,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		// 加入敵人的人形立牌
 		enemySprite = new Enemy(0, 0, REGULAR);
 		enemySprite.setPosition(background.x + 152, background.y);
-		enemySprite.animation.frameIndex = 3;
+		// enemySprite.animation.frameIndex = 3;
 		enemySprite.active = false;
-		enemySprite.facing = FlxObject.LEFT;
+		// enemySprite.facing = FlxObject.LEFT;
 		add(enemySprite);
 
 		// 加入玩家的血量

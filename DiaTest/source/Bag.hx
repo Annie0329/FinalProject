@@ -37,11 +37,15 @@ class Bag extends FlxTypedGroup<FlxSprite>
 
 	var dilog_boxes:Array<String>;
 	var name:String;
+	var txt:Bool = true;
 	var i:Int = 1;
 	var textRunDone:Bool = false;
 
 	var dealText:FlxText;
-	var j:Int = 1;
+
+	var sellCho:String = "   1元\n原本世界的錢\n離開";
+	var buyCho:String = "   2元\n離開";
+	var talkCho:String = "為什麼要對著包包大吼大叫\n離開";
 
 	public var shopChoice(default, null):ShopChoice;
 
@@ -108,6 +112,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		background.loadGraphic(AssetPaths.bagItem__png);
 		background.y = 10;
 		bananaCounterIcon.setPosition(65, 120);
+		bananaCounterIcon.setGraphicSize(40, 40);
+		bananaCounterIcon.updateHitbox();
 		diamondCounterText.setPosition(370, 265);
 		visible = true;
 		active = true;
@@ -138,6 +144,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		shopText.setPosition(200, background.y + 20);
 		shopCho.setPosition(background.x + 10 + pointer.width + 10, background.y + 20);
 		diamondCounterText.setPosition(80, 310);
+		bananaCounterIcon.setGraphicSize(30, 30);
+		bananaCounterIcon.updateHitbox();
 
 		mainTalk = "歡迎來到我的店！";
 		setMainShop(mainTalk);
@@ -230,33 +238,33 @@ class Bag extends FlxTypedGroup<FlxSprite>
 					// 買
 					if (pointer.y == pointer.start)
 					{
-						shopText.resetText("      " + "2元" + "\n\n離開");
+						shopText.resetText(buyCho);
 						shopText.start(false, false);
 						shopText.skip();
 						shopChoice = buy;
-						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 60, 2, "ud");
+						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 30, 2, "ud");
 						bananaCounterIcon.visible = true;
 						bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
 					}
 					// 賣
 					else if (pointer.y == pointer.start + pointer.bar)
 					{
-						shopText.resetText("      " + Std.string(bananaCounter) + "   1元" + "\n\n離開");
+						shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
 						shopText.start(false, false);
 						shopText.skip();
 						shopChoice = sell;
-						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 60, 2, "ud");
+						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 30, 3, "ud");
 						bananaCounterIcon.visible = true;
 						bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
 					}
 					// 聊天
 					else if (pointer.y == pointer.start + pointer.bar * 2)
 					{
-						shopText.resetText("為什麼要對著包包大吼大叫\n離開");
+						shopText.resetText(talkCho);
 						shopText.start(false, false);
 						shopText.skip();
 						shopChoice = talk;
-						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 28, 2, "ud");
+						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 30, 2, "ud");
 					}
 					// 離開
 					else
@@ -281,7 +289,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 							bananaCounter++;
 							bananaSell++;
 							diamondCounter -= 2;
-							shopText.resetText("      " + "2元" + "\n\n離開");
+							shopText.resetText(buyCho);
 							shopText.start(false, false);
 							shopText.skip();
 							updateBag();
@@ -294,9 +302,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						else
 						{
 							mainTalk = "猩猩給老闆" + Std.string(bananaSell * 2) + "個能量石！\n老闆給猩猩" + Std.string(bananaSell) + "片香蕉葉！";
-							if (j < 2)
-								dealText.text += mainTalk + "\n";
-							j++;
+							dealText.text = mainTalk + "\n";
 						}
 						bananaSell = 0;
 						bananaCounterIcon.visible = false;
@@ -314,11 +320,18 @@ class Bag extends FlxTypedGroup<FlxSprite>
 							bananaCounter--;
 							bananaSell++;
 							diamondCounter++;
-							shopText.resetText("      " + Std.string(bananaCounter) + "   1元" + "\n\n離開");
+							shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
 							shopText.start(false, false);
 							shopText.skip();
 							updateBag();
 						}
+					}
+					else if (pointer.y == pointer.start + pointer.bar)
+					{
+						name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";
+						txt = false;
+						shopTalkStart(name, txt);
+						pointer.visible = false;
 					}
 					else
 					{
@@ -327,9 +340,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						else
 						{
 							mainTalk = "猩猩給老闆" + Std.string(bananaSell) + "片香蕉葉！\n老闆給猩猩" + Std.string(bananaSell) + "個能量石！";
-							if (j < 2)
-								dealText.text += mainTalk + "\n";
-							j++;
+							dealText.text = mainTalk + "\n";
 						}
 						bananaSell = 0;
 						bananaCounterIcon.visible = false;
@@ -343,8 +354,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 					if (pointer.y == pointer.start)
 					{
 						name = AssetPaths.shopTalk__txt;
-						shopTalkStart(name);
-						pointer.visible = false;
+						txt = true;
+						shopTalkStart(name, txt);
 					}
 					if (pointer.y == pointer.start + pointer.bar)
 					{
@@ -360,11 +371,20 @@ class Bag extends FlxTypedGroup<FlxSprite>
 				// 對話結束就離開
 				if (i >= dilog_boxes.length)
 				{
+					if (shopChoice == talk)
+					{
+						shopText.resetText(talkCho);
+						shopText.start(false, false);
+						shopText.skip();
+					}
+					else if (shopChoice == sell)
+					{
+						shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
+						shopText.start(false, false);
+						shopText.skip();
+						bananaCounterIcon.visible = true;
+					}
 					pointer.visible = true;
-					shopText.resetText("為什麼要對著包包大吼大叫\n離開");
-					shopText.start(false, false);
-					shopText.skip();
-					shopChoice = talk;
 				}
 				else
 				{
@@ -380,11 +400,12 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	}
 
 	// 聊天準備事項
-	function shopTalkStart(name)
+	function shopTalkStart(name, txt)
 	{
-		dilog_boxes = openfl.Assets.getText(name).split(":");
+		dilog_boxes = if (txt) openfl.Assets.getText(name).split(":") else name.split(":");
 		i = 1;
-
+		pointer.visible = false;
+		bananaCounterIcon.visible = false;
 		textRunDone = false;
 		shopText.resetText(dilog_boxes[i]);
 		shopText.start(false, false, function()

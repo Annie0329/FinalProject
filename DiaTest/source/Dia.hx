@@ -11,6 +11,13 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 
+enum MingOutcome
+{
+	win;
+	lose;
+	none;
+}
+
 class Dia extends FlxTypedGroup<FlxSprite>
 {
 	var i:Int = 2;
@@ -35,7 +42,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	var textRunDone:Bool = false;
 
-	public var mingWin:Bool = false;
+	public var mingOutcome(default, null):MingOutcome;
 
 	public function new()
 	{
@@ -50,7 +57,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text = new FlxTypeText(120, background.y + 10, 340, "text", 28, true);
 		text.color = FlxColor.BLACK;
 		text.font = AssetPaths.silver__ttf;
-		//text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
+		// text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
 		text.delay = 0.07;
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
@@ -94,17 +101,18 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		switch (dilog_boxes[profile])
 		{
-			case "D":
-				profilePic = AssetPaths.diaDoge__png;
 			case "A":
 				profilePic = AssetPaths.diaApe__png;
+			case "D":
+				profilePic = AssetPaths.diaDoge__png;
 			case "S":
 				profilePic = AssetPaths.diaSpartan__png;
 			case "L":
 				profilePic = AssetPaths.diaLake__png;
-			case "N", "M":
+			case "N":
 				profilePic = AssetPaths.diaNull__png;
-
+			case "M":
+				profilePic = AssetPaths.diaMing__png;
 			case "SR":
 				profilePic = AssetPaths.diaSbRed__png;
 			case "SG":
@@ -166,19 +174,19 @@ class Dia extends FlxTypedGroup<FlxSprite>
 						{
 							name = AssetPaths.mingHint__txt;
 							txt = true;
-							mingWin = false;
+							mingOutcome = none;
 						}
 						else if (pointer.x == pointer.start + pointer.bar * 2)
 						{
-							name = ":M:答對了！給你50元。:N:你得到了50元";
+							name = ":M:答對了！給你50元。:N:你得到了50元！";
 							txt = false;
-							mingWin = true;
+							mingOutcome = win;
 						}
 						else
 						{
-							name = ":M:不對喔。:M:扣你20元。:N:";
+							name = ":M:不對喔。:M:扣你20元。:N:你失去了20元。";
 							txt = false;
-							mingWin = false;
+							mingOutcome = lose;
 						}
 				}
 				show(name, txt);
