@@ -28,6 +28,7 @@ class Enemy extends FlxSprite
 	public var type(default, null):EnemyType;
 	public var seesPlayer:Bool;
 	public var playerPosition:FlxPoint;
+	public var onFire:Bool = false;
 
 	public function new(x:Float, y:Float, type:EnemyType)
 	{
@@ -61,11 +62,22 @@ class Enemy extends FlxSprite
 		playerPosition = FlxPoint.get();
 	}
 
+	// 燃燒的錢
+	public function enemyFire()
+	{
+		loadGraphic(AssetPaths.ponziFire__png, true, 80, 80);
+		// 面向右邊時使用鏡像的左邊圖片
+
+		// 走路動畫
+
+		animation.add("fire", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
+	}
+
 	// 閒閒狀態
 	function idle(elapsed:Float)
 	{
 		// 如果看見玩家就變成追趕狀態
-		if (seesPlayer)
+		if (seesPlayer && alive)
 			brain.activeState = chase;
 		else if (idleTimer <= 0)
 		{
@@ -150,6 +162,10 @@ class Enemy extends FlxSprite
 					case _:
 				}
 		}*/
+		if (onFire && animation.finished)
+		{
+			exists = false;
+		}
 		if (this.isFlickering())
 			return;
 		brain.update(elapsed);

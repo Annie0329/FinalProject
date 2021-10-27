@@ -46,7 +46,7 @@ class PlayState extends FlxState
 	var sbBlue:FlxSprite;
 
 	var enemies:FlxTypedGroup<Enemy>;
-	var health:Int = 3;
+	var health:Int = 0;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
 
@@ -126,7 +126,7 @@ class PlayState extends FlxState
 		add(saveStone);
 
 		// 礦場門
-		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 80);
+		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 80, 80);
 		minerDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		minerDoor.immovable = true;
 		minerDoor.setSize(40, 80);
@@ -310,11 +310,11 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		// 除錯大隊
-		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(FlxG.width) + "+" + Std.string(FlxG.height); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
-			// ufo.visible = true;
+			ufo.visible = true;
 			// save.erase();
 		}
 		if (inCombat)
@@ -326,7 +326,10 @@ class PlayState extends FlxState
 				// 如果被打死就扣錢
 				if (combatHud.outcome == DEFEAT)
 				{
-					combatHud.enemy.kill();
+					combatHud.enemy.alive = false;
+					combatHud.enemy.enemyFire();
+					combatHud.enemy.animation.play("fire");
+					combatHud.enemy.onFire = true;
 					if (combatHud.enemy.type == BOSS)
 					{
 						bag.diamondCounter -= 100;
@@ -376,6 +379,7 @@ class PlayState extends FlxState
 			updateTalking();
 			updateEsc();
 			updateC();
+
 			// 碰撞爆
 			FlxG.overlap(player, ground);
 			FlxG.overlap(player, road);
@@ -399,10 +403,11 @@ class PlayState extends FlxState
 			FlxG.collide(enemies, walls);
 			FlxG.collide(enemies, road);
 			enemies.forEachAlive(checkEnemyVision);
-			FlxG.overlap(player, enemies, playerTouchEnemy);
+			FlxG.collide(player, enemies, playerTouchEnemy);
 		}
 	}
 
+	// 如果你碰了敵人，就代表敵人碰了你
 	function playerTouchEnemy(player:Player, enemy:Enemy)
 	{
 		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
@@ -419,9 +424,10 @@ class PlayState extends FlxState
 		combatHud.initCombat(health, enemy);
 	}
 
+	// 檢查敵人視野
 	function checkEnemyVision(enemy:Enemy)
 	{
-		if (walls.ray(enemy.getMidpoint(), player.getMidpoint()))
+		if (enemy.alive && walls.ray(enemy.getMidpoint(), player.getMidpoint()) && road.ray(enemy.getMidpoint(), player.getMidpoint()))
 		{
 			enemy.seesPlayer = true;
 			// ！！是在這裡定位玩家位置的！
@@ -531,43 +537,23 @@ class PlayState extends FlxState
 				}
 				else
 				{
-					if (getMing)
-					{
-						name = AssetPaths.mingClue__txt;
-						mingFinish = false;
-						dia.getPointer("ming");
-						txt = true;
-					}
-					else
-					{
-						name = AssetPaths.mingTalking__txt;
-						getMing = true;
-						txt = true;
-					}
+					name = AssetPaths.mingTalking__txt;
+					txt = true;
 				}
 			}
 			if (talkId == sbRed.ID)
 			{
-				if (getMing)
-					name = ":SR:我昨天忙翻了！交易？記不太清楚，但我確定沒借錢給Doge。";
-				else
-					name = ":SR:你好呀。";
+				name = ":SR:你問我在做什麼？哼哼，我怎麼可能會告訴你我在竄改島上的交易紀錄呢？這次我一定可以做到的！";
 				txt = false;
 			}
 			if (talkId == sbBlue.ID)
 			{
-				if (getMing)
-					name = ":SB:交易...我記得我沒有借給小紅錢。";
-				else
-					name = ":SB:今天天氣真好。";
+				name = ":SB:在迪拜島上，想更改交易紀錄，除非同時把一半以上的島民手中的交易紀錄改掉，不然是不可能成功的。";
 				txt = false;
 			}
 			if (talkId == sbGreen.ID)
 			{
-				if (getMing)
-					name = ":SG:交易啊？我借給小藍30元喔。";
-				else
-					name = ":SG:汪汪。";
+				name = ":SG:你遇到那隻紅領巾的笨狗了嗎？他又在做竄改交易紀錄的白日夢了。";
 				txt = false;
 			}
 			// 存檔點

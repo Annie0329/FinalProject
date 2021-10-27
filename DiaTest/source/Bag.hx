@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 
 enum ShopChoice
@@ -60,10 +61,11 @@ class Bag extends FlxTypedGroup<FlxSprite>
 
 		// 背景
 		background = new FlxSprite(10, 10);
+		background.screenCenter(FlxAxes.X);
 		add(background);
 
 		// 香蕉圖示
-		bananaCounterIcon = new FlxSprite(65, 120).loadGraphic(AssetPaths.bananaIcon__png);
+		bananaCounterIcon = new FlxSprite(background.x + 65, 120).loadGraphic(AssetPaths.bananaIcon__png);
 		add(bananaCounterIcon);
 
 		// 香蕉數目
@@ -91,7 +93,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		shopText.font = AssetPaths.silver__ttf;
 		add(shopText);
 
-		dealText = new FlxText(85, 125, "目前並無交易紀錄\n", 28, true);
+		// 交易紀錄
+		dealText = new FlxText(background.x + 85, 125, "目前並無交易紀錄\n", 28, true);
 		dealText.color = 0xff2D5925;
 		dealText.font = AssetPaths.silver__ttf;
 		add(dealText);
@@ -110,11 +113,14 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	public function bagUi()
 	{
 		background.loadGraphic(AssetPaths.bagItem__png);
+		background.screenCenter(FlxAxes.X);
 		background.y = 10;
-		bananaCounterIcon.setPosition(65, 120);
+		bananaCounterIcon.setPosition(background.x + 65, 120);
 		bananaCounterIcon.setGraphicSize(40, 40);
 		bananaCounterIcon.updateHitbox();
-		diamondCounterText.setPosition(370, 265);
+		bananaCounterText.x = bananaCounterIcon.x + bananaCounterIcon.width;
+		diamondCounterText.setPosition(background.x + 370, 265);
+		dealText.setPosition(background.x + 85, 125);
 		visible = true;
 		active = true;
 		if (bananaCounter > 0)
@@ -138,12 +144,13 @@ class Bag extends FlxTypedGroup<FlxSprite>
 
 	public function buyAndSell()
 	{
-		background.setPosition(0, 172);
 		background.loadGraphic(AssetPaths.shopUi__png);
+		background.setPosition(0, 172);
+		background.screenCenter(FlxAxes.X);
 
-		shopText.setPosition(200, background.y + 20);
+		shopText.setPosition(background.x + 200, background.y + 20);
 		shopCho.setPosition(background.x + 10 + pointer.width + 10, background.y + 20);
-		diamondCounterText.setPosition(80, 310);
+		diamondCounterText.setPosition(background.x + 80, 310);
 		bananaCounterIcon.setGraphicSize(30, 30);
 		bananaCounterIcon.updateHitbox();
 
@@ -227,7 +234,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 		// 按enter了
-		if (enter && shopkeeper.visible)
+		if (enter && shopkeeper.visible && textRunDone)
 		{
 			// 有箭頭
 			if (pointer.visible)
@@ -241,6 +248,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						shopText.resetText(buyCho);
 						shopText.start(false, false);
 						shopText.skip();
+						textRunDone = true;
 						shopChoice = buy;
 						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 30, 2, "ud");
 						bananaCounterIcon.visible = true;
@@ -252,6 +260,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
 						shopText.start(false, false);
 						shopText.skip();
+						textRunDone = true;
 						shopChoice = sell;
 						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 30, 3, "ud");
 						bananaCounterIcon.visible = true;
@@ -260,8 +269,12 @@ class Bag extends FlxTypedGroup<FlxSprite>
 					// 聊天
 					else if (pointer.y == pointer.start + pointer.bar * 2)
 					{
+						textRunDone = false;
 						shopText.resetText(talkCho);
-						shopText.start(false, false);
+						shopText.start(false, false, function()
+						{
+							textRunDone = true;
+						});
 						shopText.skip();
 						shopChoice = talk;
 						pointer.setPointer(shopText.y + 3, shopText.x - pointer.width - 10, 30, 2, "ud");
@@ -292,6 +305,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 							shopText.resetText(buyCho);
 							shopText.start(false, false);
 							shopText.skip();
+							textRunDone = true;
 							updateBag();
 						}
 					}
@@ -323,6 +337,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 							shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
 							shopText.start(false, false);
 							shopText.skip();
+							textRunDone = true;
 							updateBag();
 						}
 					}
@@ -376,12 +391,14 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						shopText.resetText(talkCho);
 						shopText.start(false, false);
 						shopText.skip();
+						textRunDone = true;
 					}
 					else if (shopChoice == sell)
 					{
 						shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
 						shopText.start(false, false);
 						shopText.skip();
+						textRunDone = true;
 						bananaCounterIcon.visible = true;
 					}
 					pointer.visible = true;

@@ -54,7 +54,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 字
-		text = new FlxTypeText(120, background.y + 10, 340, "text", 28, true);
+		text = new FlxTypeText(background.x + 110, background.y + 10, 340, "text", 28, true);
 		text.color = FlxColor.BLACK;
 		text.font = AssetPaths.silver__ttf;
 		// text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
@@ -93,6 +93,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.start(false, false, function()
 		{
 			textRunDone = true;
+			if (pointerQ != "none")
+				pointer.visible = true;
 		});
 	}
 
@@ -144,8 +146,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		{
 			case "ming":
 				pointer.setPointer(130, 85, 58, 5, "lr");
-
-				pointer.visible = true;
 		}
 	}
 
@@ -162,33 +162,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	function updateEnter()
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
-		if (enter) // && textRunDone)
+		if (enter && textRunDone)
 		{
 			// 箭頭選擇
 			if (pointer.visible)
 			{
-				switch (pointerQ)
-				{
-					case "ming":
-						if (pointer.x == pointer.start)
-						{
-							name = AssetPaths.mingHint__txt;
-							txt = true;
-							mingOutcome = none;
-						}
-						else if (pointer.x == pointer.start + pointer.bar * 2)
-						{
-							name = ":M:答對了！給你50元。:N:你得到了50元！";
-							txt = false;
-							mingOutcome = win;
-						}
-						else
-						{
-							name = ":M:不對喔。:M:扣你20元。:N:你失去了20元。";
-							txt = false;
-							mingOutcome = lose;
-						}
-				}
+				switch (pointerQ) {}
 				show(name, txt);
 				pointer.visible = false;
 				pointerQ = "none";
@@ -197,7 +176,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			{
 				profile += 2;
 				changeProfile();
-
 				i += 2;
 
 				// 對話結束就離開
