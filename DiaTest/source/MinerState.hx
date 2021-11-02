@@ -94,11 +94,9 @@ class MinerState extends FlxState
 		add(saveStone);
 
 		// 礦場門
-		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 80);
+		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 160);
 		monumentDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		monumentDoor.immovable = true;
-		monumentDoor.setSize(40, 20);
-		monumentDoor.offset.set(60, 30);
 		add(monumentDoor);
 		monumentDoor.animation.play("glow");
 
@@ -144,7 +142,7 @@ class MinerState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		// 儲存資料的元件
+		// 儲存資料的能量幣件
 		save = new FlxSave();
 		save.bind("DiaTest");
 		if (loadsave)
@@ -179,6 +177,11 @@ class MinerState extends FlxState
 		}
 
 		FlxG.mouse.visible = false;
+
+		name = ":N:恭喜你到了礦場，送你1能量幣。:N:你得到了1能量幣";
+		txt = false;
+		playerUpDown();
+		dia.show(name, txt);
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 

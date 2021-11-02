@@ -271,11 +271,12 @@ class PlayState extends FlxState
 				sbGreen.setPosition(x, y);
 
 			// 把敵人移到地磚水平中心
-			case "enemy":
+			case "ponzi":
 				enemies.add(new Enemy(x + 4, y, REGULAR));
-			case "boss":
+			case "ponziBad":
 				enemies.add(new Enemy(x + 4, y, BOSS));
-
+			case "shibaCoin":
+				enemies.add(new Enemy(x + 4, y, shibaCoin));
 			case "banana":
 				var b = new FlxSprite(x + 20, y + 20).loadGraphic(AssetPaths.banana__png, true, 40, 40);
 				b.animation.add("spin", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 5, true);
@@ -310,100 +311,58 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		// 除錯大隊
-		ufo.text = Std.string(FlxG.width) + "+" + Std.string(FlxG.height); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(combatHud.choice) + Std.string(inCombat); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
 			ufo.visible = true;
-			// save.erase();
 		}
+		updateInCombat();
+		updateWhenDiaInvisible();
+		updateTalking();
+		updateEsc();
+		updateC();
+
+		// 碰撞爆
+		FlxG.overlap(player, ground);
+		FlxG.overlap(player, road);
+		FlxG.collide(player, walls);
+		FlxG.overlap(player, through);
+
+		FlxG.collide(player, doge, ultimateTalk);
+		FlxG.collide(player, ming, ultimateTalk);
+		FlxG.collide(player, sbRed, ultimateTalk);
+		FlxG.collide(player, sbBlue, ultimateTalk);
+		FlxG.collide(player, sbGreen, ultimateTalk);
+
+		FlxG.collide(player, lake, ultimateTalk);
+		FlxG.collide(player, monument, ultimateTalk);
+		FlxG.collide(player, saveStone, saveFile);
+		FlxG.overlap(player, banana, getBanana);
+
+		FlxG.collide(player, shop, shopOpen);
+		FlxG.collide(player, minerDoor, goToMiner);
+
+		FlxG.collide(enemies, walls);
+		FlxG.collide(enemies, road);
+		enemies.forEachAlive(checkEnemyVision);
+		FlxG.collide(player, enemies, playerTouchEnemy);
+	}
+
+	function updateInCombat()
+	{
 		if (inCombat)
 		{
 			if (!combatHud.visible)
 			{
-				health = combatHud.playerHealth;
-
-				// 如果被打死就扣錢
-				if (combatHud.outcome == DEFEAT)
+				if (combatHud.choice == YES)
 				{
-					combatHud.enemy.alive = false;
 					combatHud.enemy.enemyFire();
-					combatHud.enemy.animation.play("fire");
-					combatHud.enemy.onFire = true;
-					if (combatHud.enemy.type == BOSS)
-					{
-						bag.diamondCounter -= 100;
-						name = ":N:你失去了100元。";
-					}
-					else if (combatHud.enemy.type == REGULAR)
-					{
-						bag.diamondCounter -= 50;
-						name = ":N:你失去了50元。";
-					}
-
-					txt = false;
-					playerUpDown();
-					dia.show(name, txt);
-				}
-				else if (combatHud.outcome == VICTORY)
-				{
-					combatHud.enemy.kill();
-					if (combatHud.enemy.type == BOSS)
-					{
-						bag.diamondCounter += 200;
-						name = ":N:你獲得了200元！";
-					}
-					else if (combatHud.enemy.type == REGULAR)
-					{
-						bag.diamondCounter += 100;
-						name = ":N:你獲得了100元！";
-					}
-					txt = false;
-					playerUpDown();
-					dia.show(name, txt);
 				}
 				else
-				{
 					combatHud.enemy.flicker();
-				}
-
 				inCombat = false;
-				player.active = true;
-				enemies.active = true;
-				bag.updateBag();
 			}
-		}
-		else
-		{
-			updateWhenDiaInvisible();
-			updateTalking();
-			updateEsc();
-			updateC();
-
-			// 碰撞爆
-			FlxG.overlap(player, ground);
-			FlxG.overlap(player, road);
-			FlxG.collide(player, walls);
-			FlxG.overlap(player, through);
-
-			FlxG.collide(player, doge, ultimateTalk);
-			FlxG.collide(player, ming, ultimateTalk);
-			FlxG.collide(player, sbRed, ultimateTalk);
-			FlxG.collide(player, sbBlue, ultimateTalk);
-			FlxG.collide(player, sbGreen, ultimateTalk);
-
-			FlxG.collide(player, lake, ultimateTalk);
-			FlxG.collide(player, monument, ultimateTalk);
-			FlxG.collide(player, saveStone, saveFile);
-			FlxG.overlap(player, banana, getBanana);
-
-			FlxG.collide(player, shop, shopOpen);
-			FlxG.collide(player, minerDoor, goToMiner);
-
-			FlxG.collide(enemies, walls);
-			FlxG.collide(enemies, road);
-			enemies.forEachAlive(checkEnemyVision);
-			FlxG.collide(player, enemies, playerTouchEnemy);
 		}
 	}
 
@@ -579,7 +538,7 @@ class PlayState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.visible)
+		if (dia.visible || bag.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemies.active = false;

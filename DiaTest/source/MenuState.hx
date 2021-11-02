@@ -21,7 +21,6 @@ class MenuState extends FlxState
 	var menu:String = "main";
 	var loadsave:Bool;
 
-
 	var ufo:FlxText;
 
 	var save:FlxSave;
@@ -46,7 +45,7 @@ class MenuState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		// 存檔元件
+		// 存檔能量幣件
 		save = new FlxSave();
 		save.bind("DiaTest");
 
@@ -107,8 +106,7 @@ class MenuState extends FlxState
 				{
 					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 					{
-						loadsave = false;
-						FlxG.switchState(new PlayState(loadsave));
+						FlxG.switchState(new OpeningState());
 					});
 				}
 

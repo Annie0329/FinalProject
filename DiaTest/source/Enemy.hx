@@ -14,6 +14,7 @@ enum EnemyType
 {
 	REGULAR;
 	BOSS;
+	shibaCoin;
 }
 
 class Enemy extends FlxSprite
@@ -36,7 +37,16 @@ class Enemy extends FlxSprite
 		this.type = type;
 
 		// 呼叫敵人或魔王的圖片
-		var graphic = if (type == BOSS) AssetPaths.ponziBad__png else AssetPaths.ponzi__png;
+		var graphic:String;
+		switch (type)
+		{
+			case REGULAR:
+				graphic = AssetPaths.ponzi__png;
+			case BOSS:
+				graphic = AssetPaths.ponziBad__png;
+			case shibaCoin:
+				graphic = AssetPaths.shibaCoin__png;
+		}
 		loadGraphic(graphic);
 
 		// // 面向右邊時使用鏡像的左邊圖片
@@ -65,12 +75,11 @@ class Enemy extends FlxSprite
 	// 燃燒的錢
 	public function enemyFire()
 	{
-		loadGraphic(AssetPaths.ponziFire__png, true, 80, 80);
-		// 面向右邊時使用鏡像的左邊圖片
-
-		// 走路動畫
-
+		onFire = true;
+		alive = false;
+		loadGraphic(AssetPaths.ponziFire__png, true, 64, 64);
 		animation.add("fire", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
+		animation.play("fire");
 	}
 
 	// 閒閒狀態
@@ -126,7 +135,16 @@ class Enemy extends FlxSprite
 		if (this.type != type)
 		{
 			this.type = type;
-			var graphic = if (type == BOSS) AssetPaths.ponziBad__png else AssetPaths.ponzi__png;
+			var graphic:String;
+			switch (type)
+			{
+				case REGULAR:
+					graphic = AssetPaths.ponzi__png;
+				case BOSS:
+					graphic = AssetPaths.ponziBad__png;
+				case shibaCoin:
+					graphic = AssetPaths.shibaCoin__png;
+			}
 			loadGraphic(graphic, true, 64, 64);
 		}
 	}

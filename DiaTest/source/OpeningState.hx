@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxAxes;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -22,6 +23,7 @@ class OpeningState extends FlxState
 		// 開場動畫
 		openingAnimation = new FlxSprite();
 		openingAnimation.loadGraphic(AssetPaths.openingAnimation__png, true, 480, 360);
+		openingAnimation.screenCenter(FlxAxes.X);
 		openingAnimation.animation.add("oa", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 0.5, false);
 		add(openingAnimation);
 
@@ -43,7 +45,7 @@ class OpeningState extends FlxState
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
-				FlxG.switchState(new MenuState());
+				FlxG.switchState(new PlayState(false));
 			});
 		}
 		if (openingAnimation.animation.finished)

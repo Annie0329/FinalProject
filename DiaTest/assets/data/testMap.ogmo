@@ -583,7 +583,7 @@
     },
     {
       "exportID": "26833738",
-      "name": "enemy",
+      "name": "ponzi",
       "limit": -1,
       "size": {"x": 80, "y": 80},
       "origin": {"x": 0, "y": 0},
@@ -733,7 +733,7 @@
     },
     {
       "exportID": "30686801",
-      "name": "boss",
+      "name": "ponziBad",
       "limit": -1,
       "size": {"x": 80, "y": 80},
       "origin": {"x": 0, "y": 0},
@@ -766,6 +766,44 @@
       "nodeGhost": true,
       "tags": [],
       "values": []
+    },
+    {
+      "exportID": "86208261",
+      "name": "shibaCoin",
+      "limit": -1,
+      "size": {"x": 80, "y": 80},
+      "origin": {"x": 0, "y": 0},
+      "originAnchored": true,
+      "shape": {
+        "label": "Rectangle",
+        "points": [
+          {"x": -1, "y": -1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": 1}
+        ]
+      },
+      "color": "#ff0000ff",
+      "tileX": false,
+      "tileY": false,
+      "tileSize": {"x": 80, "y": 80},
+      "resizeableX": false,
+      "resizeableY": false,
+      "rotatable": false,
+      "rotationDegrees": 360,
+      "canFlipX": false,
+      "canFlipY": false,
+      "canSetColor": false,
+      "hasNodes": false,
+      "nodeLimit": 0,
+      "nodeDisplay": 0,
+      "nodeGhost": true,
+      "tags": [],
+      "values": [],
+      "texture": "../images/shibaCoin.png",
+      "textureImage": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAFxGAABcRgEUlENBAAACGUlEQVR4nO2azVEDMQyFvUzogYECoBvSBDnkBpfUwAVuHEIToRsoAIYewow5BA2MWEWSpV1vYr1L/hzZ4/dZlne3S0qtNzn//byYd502hqes4znxHc7haWYNIHVgdvmQ+76n9PV21xsH92dVEGAN8P7xmVJK6eL8LKX069By9WiKi4l5ur/d22+pggCvQNgRcAxIwA5yov4H/XipeQKK93BY65Qj1rWJxfVTWo80T4A6B1D7ubfjXHxMBIyLqh8oBQHWAJTzN9e71+cXW3wqjhdxzRMgXi/U2sf7NDiGpSVBGoeqOKW5IAiQNuRq89rCJAQBQrG7gPQcv5j3T/h6Yzu+l8aV1gVBgFcgyhHsIOectr1VzRPAZsqpZ38s7W7QPAFuOUAqqsIDWc8OWgUBY3XEOY/bjUVCEKD9g3YN4/Ydc+ku/9z4oUjg+l+u9v+O1TwB6tPg9tWnDsAkZKdbfqdXuzogToNCqXMAzLCVBC/HQTAurZon4N860d7Hl5LAZX8sKSFa53FuCAK0jlPiSAACOGel7UrXPFYQ4EUAlle9APJyHCsIGIoALC0RQzmOFQSMRcBUFQTAGykJ2icwrIQN1R/EbZ6Awa8Jah0cW0EAvAGnjn1XiNMgUkxA7QHUFpmhuVwwtexeOt7mCYgJqD2A2iIrwWOpC+IJEUYkAYfuPIh7XrB5AsxXhGrXA9bxN09ATEDtAdTWN/Yt4JpeW68mAAAAAElFTkSuQmCC"
     }
   ],
   "tilesets": [

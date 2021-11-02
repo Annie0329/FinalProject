@@ -44,8 +44,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 
 	var dealText:FlxText;
 
-	var sellCho:String = "   1元\n原本世界的錢\n離開";
-	var buyCho:String = "   2元\n離開";
+	var sellCho:String = "   1能量幣\n原本世界的錢\n離開";
+	var buyCho:String = "   2能量幣\n離開";
 	var talkCho:String = "為什麼要對著包包大吼大叫\n離開";
 
 	public var shopChoice(default, null):ShopChoice;
