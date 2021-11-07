@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxAxes;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -10,9 +11,10 @@ import flixel.util.FlxSave;
 class MenuState extends FlxState
 {
 	var menuBackground:FlxSprite;
+	var about:FlxSprite;
 
-	var pointerStart:Int = 215;
-	var pointerAnoPos:Int = 170;
+	var pointerY:Int = 210;
+	var pointerX:Int = 260;
 	var pointerBar:Int = 50;
 	var pointerChoNum:Int = 3;
 	var pointerDir:String = "ud";
@@ -34,25 +36,29 @@ class MenuState extends FlxState
 		// 箭頭
 		pointer = new Pointer();
 		add(pointer);
-		pointer.setPointer(215, 170, 50, 3, "ud");
+		pointer.setPointer(260, 210, 50, 3, "ud");
+
+		about = new FlxSprite(0, 0, AssetPaths.menuAbout__png);
+		about.screenCenter(FlxAxes.X);
+		add(about);
+		about.visible = false;
 
 		// 除錯ufo
 		ufo = new FlxText(0, 0, "ufo", 20);
 		ufo.borderColor = FlxColor.BLACK;
 		ufo.borderSize = 1;
-		ufo.scrollFactor.set(0, 0);
 		ufo.color = FlxColor.BLACK;
 		add(ufo);
 		ufo.visible = false;
 
-		// 存檔能量幣件
+		// 存檔元件
 		save = new FlxSave();
 		save.bind("DiaTest");
 
 		if (save.data.bananaValue != null)
-			pointer.y = pointerStart;
+			pointer.y = pointerY;
 		else
-			pointer.y = pointerStart + pointerBar;
+			pointer.y = pointerY + pointerBar;
 
 		FlxG.mouse.visible = false;
 
@@ -113,8 +119,7 @@ class MenuState extends FlxState
 				// 關於
 				else
 				{
-					pointer.visible = false;
-					menuBackground.loadGraphic(AssetPaths.menuAbout__png);
+					about.visible = true;
 					menu = "about";
 				}
 			}
@@ -123,13 +128,7 @@ class MenuState extends FlxState
 		// 回主選單
 		if (x)
 		{
-			menuBackground.loadGraphic(AssetPaths.menuMain__png);
-			pointer.visible = true;
-			pointerBar = 50;
-			pointerStart = 215;
-
-			pointer.y = pointerStart + pointerBar * 2;
-
+			about.visible = false;
 			menu = "main";
 		}
 	}

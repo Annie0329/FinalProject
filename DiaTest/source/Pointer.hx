@@ -23,22 +23,22 @@ class Pointer extends FlxSprite
 		movePointer();
 	}
 
-	public function setPointer(pointerStart, pointerAnoPos, pointerBar, pointerChoNum, pointerDir)
+	public function setPointer(pointerX, pointerY, pointerBar, pointerChoNum, pointerDir)
 	{
-		start = pointerStart;
-		anoPos = pointerAnoPos;
+		x = pointerX;
+		y = pointerY;
 		bar = pointerBar;
 		choNum = pointerChoNum - 1;
 		dir = pointerDir;
 		if (dir == "ud")
 		{
-			x = anoPos;
-			y = start;
+			anoPos = x;
+			start = y;
 		}
 		else
 		{
-			x = start;
-			y = anoPos;
+			start = x;
+			anoPos = y;
 		}
 	}
 

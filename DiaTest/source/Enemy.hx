@@ -61,11 +61,6 @@ class Enemy extends FlxSprite
 		// 滑壘強度
 		drag.x = drag.y = 10;
 
-		// width = 8;
-		// height = 14;
-		// offset.x = 4;
-		// offset.y = 2;
-
 		// 腦
 		brain = new FSM(idle);
 		idleTimer = 0;

@@ -35,20 +35,17 @@ class PlayState extends FlxState
 	var bananaSound:FlxSound;
 
 	// 其他角色
-	var doge:FlxSprite;
 	var lake:FlxSprite;
-	var monument:FlxSprite;
 
-	var ming:FlxSprite;
-
-	var sbGreen:FlxSprite;
-	var sbRed:FlxSprite;
-	var sbBlue:FlxSprite;
-
+	// 敵人
 	var enemies:FlxTypedGroup<Enemy>;
 	var health:Int = 0;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
+
+	// NPC
+	var npc:FlxTypedGroup<NPC>;
+	var npcType:NPC.NpcType;
 
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
@@ -66,10 +63,6 @@ class PlayState extends FlxState
 
 	var talk:String = "none";
 	var getBag:Bool = false;
-
-	// 之後記得存起來
-	var getMing:Bool = false;
-	var mingFinish:Bool = false;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -116,11 +109,6 @@ class PlayState extends FlxState
 		lake.immovable = true;
 		add(lake);
 
-		// 紀念碑
-		monument = new FlxSprite(AssetPaths.monument__png);
-		monument.immovable = true;
-		add(monument);
-
 		// 存檔點
 		saveStone = new FlxTypedGroup<FlxSprite>();
 		add(saveStone);
@@ -139,27 +127,8 @@ class PlayState extends FlxState
 		shop.immovable = true;
 		add(shop);
 
-		// Doge
-		doge = new FlxSprite(AssetPaths.doge__png);
-		doge.immovable = true;
-		add(doge);
-
-		// 阿明
-		ming = new FlxSprite(AssetPaths.sbWhite__png);
-		ming.immovable = true;
-		add(ming);
-
-		sbRed = new FlxSprite(AssetPaths.sbRed__png);
-		sbRed.immovable = true;
-		add(sbRed);
-
-		sbBlue = new FlxSprite(AssetPaths.sbBlue__png);
-		sbBlue.immovable = true;
-		add(sbBlue);
-
-		sbGreen = new FlxSprite(AssetPaths.sbGreen__png);
-		sbGreen.immovable = true;
-		add(sbGreen);
+		npc = new FlxTypedGroup<NPC>();
+		add(npc);
 
 		// 敵人
 		enemies = new FlxTypedGroup<Enemy>();
@@ -237,7 +206,6 @@ class PlayState extends FlxState
 			playerUpDown();
 			dia.show(name, true);
 		}
-
 		FlxG.mouse.visible = false;
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
@@ -256,19 +224,19 @@ class PlayState extends FlxState
 				player.setPosition(x, y + 32);
 
 			case "guy":
-				doge.setPosition(x, y);
+				npc.add(new NPC(x, y, doge));
 
 			case "ming":
-				ming.setPosition(x + (80 - ming.width) / 2, y);
+				npc.add(new NPC(x, y, ming));
 
 			case "sbRed":
-				sbRed.setPosition(x, y);
+				npc.add(new NPC(x, y, sbRed));
 
 			case "sbBlue":
-				sbBlue.setPosition(x, y);
+				npc.add(new NPC(x, y, sbBlue));
 
 			case "sbGreen":
-				sbGreen.setPosition(x, y);
+				npc.add(new NPC(x, y, sbGreen));
 
 			// 把敵人移到地磚水平中心
 			case "ponzi":
@@ -288,7 +256,7 @@ class PlayState extends FlxState
 				lake.setPosition(x, y);
 
 			case "monument":
-				monument.setPosition(x, y);
+				npc.add(new NPC(x, y, monument));
 
 			case "saveStone":
 				var ss = new FlxSprite(x, y).loadGraphic(AssetPaths.saveStone__png, true, 80, 80);
@@ -311,7 +279,7 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		// 除錯大隊
-		ufo.text = Std.string(combatHud.choice) + Std.string(inCombat); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string("oui"); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -329,14 +297,9 @@ class PlayState extends FlxState
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, through);
 
-		FlxG.collide(player, doge, ultimateTalk);
-		FlxG.collide(player, ming, ultimateTalk);
-		FlxG.collide(player, sbRed, ultimateTalk);
-		FlxG.collide(player, sbBlue, ultimateTalk);
-		FlxG.collide(player, sbGreen, ultimateTalk);
+		FlxG.collide(player, npc, npcTalk);
 
 		FlxG.collide(player, lake, ultimateTalk);
-		FlxG.collide(player, monument, ultimateTalk);
 		FlxG.collide(player, saveStone, saveFile);
 		FlxG.overlap(player, banana, getBanana);
 
@@ -349,6 +312,7 @@ class PlayState extends FlxState
 		FlxG.collide(player, enemies, playerTouchEnemy);
 	}
 
+	// 打架結束囉
 	function updateInCombat()
 	{
 		if (inCombat)
@@ -357,10 +321,12 @@ class PlayState extends FlxState
 			{
 				if (combatHud.choice == YES)
 				{
-					combatHud.enemy.enemyFire();
+					combatHud.enemy.kill();
 				}
 				else
-					combatHud.enemy.flicker();
+					combatHud.enemy.enemyFire();
+				bag.diamondCounter = combatHud.diamond;
+				bag.updateBag();
 				inCombat = false;
 			}
 		}
@@ -380,7 +346,7 @@ class PlayState extends FlxState
 		inCombat = true;
 		player.active = false;
 		enemies.active = false;
-		combatHud.initCombat(health, enemy);
+		combatHud.initCombat(bag.diamondCounter, enemy);
 	}
 
 	// 檢查敵人視野
@@ -401,6 +367,12 @@ class PlayState extends FlxState
 	{
 		talkYes = true;
 		talkId = sprite.ID;
+	}
+
+	function npcTalk(player:Player, npc:NPC)
+	{
+		talkYes = true;
+		npcType = npc.type;
 	}
 
 	// Kris get the banana
@@ -463,58 +435,14 @@ class PlayState extends FlxState
 		if (talkYes && enter && !bag.visible)
 		{
 			talkYes = false;
-			if (talkId == doge.ID)
-			{
-				if (getMing)
-				{
-					name = ":D:昨天的交易？嗯，我借給小綠20元。";
-					txt = false;
-				}
-				else
-				{
-					name = AssetPaths.forestMission__txt;
-					txt = true;
-				}
-			}
-			if (talkId == lake.ID)
-			{
-				name = AssetPaths.lakeTalking__txt;
-				txt = true;
-			}
-			if (talkId == monument.ID)
-			{
-				name = ":N:裡面似乎有毀壞的記帳本。";
-				txt = false;
-			}
+			playerUpDown();
 
-			if (talkId == ming.ID)
-			{
-				if (dia.mingOutcome == win)
-				{
-					name = ":M:你想賺錢啊？聽說去跟龐龐怪打交道可以賺到錢喔。:M:但是風險似乎很高。";
-					txt = false;
-				}
-				else
-				{
-					name = AssetPaths.mingTalking__txt;
-					txt = true;
-				}
-			}
-			if (talkId == sbRed.ID)
-			{
-				name = ":SR:你問我在做什麼？哼哼，我怎麼可能會告訴你我在竄改島上的交易紀錄呢？這次我一定可以做到的！";
-				txt = false;
-			}
-			if (talkId == sbBlue.ID)
-			{
-				name = ":SB:在迪拜島上，想更改交易紀錄，除非同時把一半以上的島民手中的交易紀錄改掉，不然是不可能成功的。";
-				txt = false;
-			}
-			if (talkId == sbGreen.ID)
-			{
-				name = ":SG:你遇到那隻紅領巾的笨狗了嗎？他又在做竄改交易紀錄的白日夢了。";
-				txt = false;
-			}
+			// if (talkId == lake.ID)
+			// {
+			// 	name = AssetPaths.lakeTalking__txt;
+			// 	txt = true;
+			// }
+
 			// 存檔點
 			if (talkId == saveStoneId)
 			{
@@ -527,10 +455,11 @@ class PlayState extends FlxState
 				save.flush();
 				name = ":N:存檔成功！";
 				txt = false;
+				talkId = 0;
+				dia.show(name, txt);
 			}
-			talkId = 0;
-			playerUpDown();
-			dia.show(name, txt);
+			else
+				dia.context(npcType);
 		}
 	}
 
@@ -556,22 +485,6 @@ class PlayState extends FlxState
 			{
 				player.playerBagPic();
 				getBag = false;
-			}
-			// 答對誰是謊報者的題目
-			if (!mingFinish)
-			{
-				if (dia.mingOutcome == win)
-				{
-					bag.diamondCounter += 50;
-					bag.updateBag();
-					mingFinish = true;
-				}
-				else if (dia.mingOutcome == lose)
-				{
-					bag.diamondCounter -= 20;
-					bag.updateBag();
-					mingFinish = true;
-				}
 			}
 			// 有錢就開礦場門
 			if (minerOpen)

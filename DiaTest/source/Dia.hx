@@ -4,19 +4,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.keyboard.FlxKey;
-import flixel.system.FlxSound;
-import flixel.text.FlxText;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
-
-enum MingOutcome
-{
-	win;
-	lose;
-	none;
-}
 
 class Dia extends FlxTypedGroup<FlxSprite>
 {
@@ -41,8 +30,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var profilePic:String;
 
 	var textRunDone:Bool = false;
-
-	public var mingOutcome(default, null):MingOutcome;
 
 	public function new()
 	{
@@ -138,14 +125,49 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.y = background.y + 10;
 	}
 
+	// 對話大滿貫
+	public function context(npcType:NPC.NpcType)
+	{
+		if (npcType == doge)
+		{
+			name = AssetPaths.forestMission__txt;
+			txt = true;
+		}
+		if (npcType == ming)
+		{
+			name = AssetPaths.mingTalking__txt;
+			txt = true;
+		}
+		if (npcType == sbRed)
+		{
+			name = ":SR:你問我在做什麼？哼哼，我怎麼可能會告訴你我在竄改島上的交易紀錄呢？這次我一定可以做到的！";
+			txt = false;
+		}
+		if (npcType == sbBlue)
+		{
+			name = ":SB:在迪拜島上，想更改交易紀錄，除非同時把一半以上的島民手中的交易紀錄改掉，不然是不可能成功的。";
+			txt = false;
+		}
+		if (npcType == sbGreen)
+		{
+			name = ":SG:你遇到那隻紅領巾的笨狗了嗎？他又在做竄改交易紀錄的白日夢了。";
+			txt = false;
+		}
+		if (npcType == monument)
+		{
+			name = ":N:裡面似乎有毀壞的記帳本。";
+			txt = false;
+		}
+		show(name, txt);
+	}
+
 	// 呼叫箭頭
 	public function getPointer(quest:String)
 	{
 		pointerQ = quest;
 		switch (pointerQ)
 		{
-			case "ming":
-				pointer.setPointer(130, 85, 58, 5, "lr");
+			
 		}
 	}
 

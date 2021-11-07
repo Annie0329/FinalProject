@@ -8,7 +8,7 @@ import flixel.math.FlxPoint;
 class Player extends FlxSprite
 {
 	// 跑多快
-	static inline var SPEED:Float = 200;
+	var SPEED:Float = 200;
 
 	public var playerBag:Bool = false;
 
@@ -119,6 +119,11 @@ class Player extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		updateMovement();
+		var shift = FlxG.keys.anyPressed([SHIFT]);
+		if (shift)
+			SPEED = 400;
+		else
+			SPEED = 200;
 		super.update(elapsed);
 	}
 }

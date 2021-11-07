@@ -8,6 +8,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 
 using flixel.util.FlxSpriteUtil; // drawRect需要這個
@@ -35,7 +36,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	// 這些是hud的素材
 	var background:FlxSprite; // 背景
-	var playerSprite:Player; // 玩家
 	var enemySprite:Enemy; // 敵人
 
 	var pointer:FlxSprite; // 那個選擇打或逃的箭頭
@@ -49,6 +49,14 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var txt:Bool = true;
 	var i:Int = 1;
 	var textRunDone:Bool = false;
+	var investNumText:FlxText;
+
+	var investNum:Int = 0;
+
+	var enemyNameText:FlxText;
+	var diamondText:FlxText;
+
+	public var diamond:Int = 0;
 
 	var alpha:Float = 0; // 淡入淡出的效果，alpha就是透明度啦
 	var wait:Bool = true; // 當我們不准玩家動時就把這個設為true
@@ -64,24 +72,17 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		background.screenCenter();
 		add(background);
 
-		// 加入玩家的人形立牌，這東東沒辦法被操控
-		playerSprite = new Player();
-		playerSprite.setPosition(background.x + 36, background.y + 35);
-		playerSprite.animation.frameIndex = 3;
-		playerSprite.active = false;
-		playerSprite.facing = FlxObject.RIGHT;
-		add(playerSprite);
-
 		// 加入敵人的人形立牌
 		enemySprite = new Enemy(0, 0, REGULAR);
-		enemySprite.setPosition(background.x + 152, background.y);
+		enemySprite.setPosition(0, background.y);
+		enemySprite.screenCenter(FlxAxes.X);
 		// enemySprite.animation.frameIndex = 3;
 		enemySprite.active = false;
 		// enemySprite.facing = FlxObject.LEFT;
 		add(enemySprite);
 
 		// 字
-		combatText = new FlxTypeText(background.x, background.y, 200, "你想要買奇怪的柴犬幣嗎？", 28, true);
+		combatText = new FlxTypeText(background.x, background.y, 200, "text", 28, true);
 		combatText.color = 0xff2D5925;
 		combatText.font = AssetPaths.silver__ttf;
 		// text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
@@ -97,6 +98,22 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		choices[NO].color = 0xff2D5925;
 		add(choices[YES]);
 		add(choices[NO]);
+
+		// 投資多少錢
+		investNumText = new FlxText(background.x + 60, background.y + 96, 170, "0", 44);
+		investNumText.color = 0xff2D5925;
+		add(investNumText);
+		investNumText.visible = false;
+
+		// 敵人名字
+		enemyNameText = new FlxText(background.x + 60, background.y - 50, "enemyName", 44);
+		enemyNameText.color = 0xff2D5925;
+		add(enemyNameText);
+
+		// 錢的數量
+		diamondText = new FlxText(background.x + background.width, background.y + 100, "0", 44);
+		diamondText.color = 0xff2D5925;
+		add(diamondText);
 
 		// 那隻箭頭
 		pointer = new FlxSprite(background.x + 40, choices[YES].y + (choices[YES].height / 2) - 16, AssetPaths.combatPointer__png);
@@ -115,11 +132,14 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	/**
 		*當打架開始時PlayerState會啟動這個功能。這會架好螢幕，讓一切都準備好
+		*@param diamond
 		*@param enemy 我們打的是哪種敵人，這樣才能叫出正確的類型
+
 	 */
-	public function initCombat(playerHealth:Int, enemy:Enemy)
+	public function initCombat(diamond:Int, enemy:Enemy)
 	{
 		this.enemy = enemy; // 把這裡的敵人設成我們在別地方拿到的敵人
+		this.diamond = diamond;
 
 		enemySprite.changeType(enemy.type); // 換成普通敵人或是魔王
 
@@ -128,6 +148,17 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		pointer.visible = false;
 		selected = YES;
 		movePointer();
+		choices[YES].visible = true;
+		choices[NO].visible = true;
+		switch (enemy.type)
+		{
+			case REGULAR:
+			case BOSS:
+			case shibaCoin:
+				enemyNameText.text = "柴犬幣";
+				combatText.resetText("要不要買點狗狗幣啊？誰不喜歡可愛的狗狗呢？");
+		}
+		diamondText.text = Std.string(diamond);
 
 		visible = true; // 讓打架介面出現
 
@@ -140,9 +171,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	{
 		this.alpha = alpha;
 		forEach(function(sprite) sprite.alpha = alpha);
-		// 謎樣的程式
-		// 根據我的了解，this好像是用來區分本來就在的變數跟外來的變數
-		// 有加this的是本地變數
 	}
 
 	// 淡入後就啟用hud
@@ -151,7 +179,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		active = true;
 		wait = false;
 		textRunDone = false;
-		combatText.resetText("你想要買奇怪的柴犬幣嗎？");
+
 		combatText.start(false, false, function()
 		{
 			textRunDone = true;
@@ -172,10 +200,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	override public function update(elapsed:Float)
 	{
-		if (!wait) // 如果在等待的話就不要更新按鍵狀態(也就是不能用按鍵)
-		{
-			updateKeyboardInput();
-		}
+		updateKeyboardInput();
+
 		super.update(elapsed);
 	}
 
@@ -184,6 +210,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		// 看看哪個按鍵被按下的變數
 		var up:Bool = false;
 		var down:Bool = false;
+		var left:Bool = false;
+		var right:Bool = false;
 		var fire:Bool = false;
 
 		if (FlxG.keys.anyJustReleased([SPACE, X, ENTER]))
@@ -198,11 +226,49 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			down = true;
 		}
+		else if (FlxG.keys.anyJustReleased([A, LEFT]))
+		{
+			left = true;
+		}
+		else if (FlxG.keys.anyJustReleased([D, RIGHT]))
+		{
+			right = true;
+		}
 
 		// 根據按鍵做不同反應
 		if (fire)
 		{
-			makeChoice(); // 我們選擇完成後會啟動的功能
+			// 選YES或NO
+			if (choices[YES].visible)
+				makeChoice();
+			else
+			{
+				switch (enemy.type)
+				{
+					case REGULAR:
+					case BOSS:
+					case shibaCoin:
+						// 確定投資多少錢
+						if (investNumText.visible)
+						{
+							if (FlxG.random.bool(70))
+							{
+								diamond += investNum;
+								combatText.resetText("你賺到" + Std.string(investNum) + "能量幣！");
+							}
+							else
+							{
+								diamond -= investNum;
+								combatText.resetText("狗狗幣虧了。你什麼都沒得到。");
+							}
+							combatText.start(false, false);
+							investNumText.visible = false;
+							diamondText.text = Std.string(diamond);
+						}
+						else
+							doneResultsIn();
+				}
+			}
 		}
 		else if (up || down)
 		{
@@ -210,6 +276,14 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// 聰明的寫法
 			selected = if (selected == YES) NO else YES;
 			movePointer();
+		}
+		else if ((left || right) && investNumText.visible)
+		{
+			if (left && investNum != 0)
+				investNum -= 50;
+			else if (right && investNum / 50 != Std.int(diamond / 50))
+				investNum += 50;
+			investNumText.text = Std.string(investNum);
 		}
 	}
 
@@ -229,12 +303,28 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			case YES:
 				// 如果我們選擇打架，我們會有85%的機率可以打中敵人
 				choice = YES;
-				doneResultsIn();
+				textRunDone = false;
+				choices[YES].visible = false;
+				choices[NO].visible = false;
+				investNumText.visible = true;
+				switch (enemy.type)
+				{
+					case REGULAR:
+					case BOSS:
+					case shibaCoin:
+						combatText.resetText("請選擇你要投資多少錢？最少50元。好了就按enter。");
+				}
+
+				combatText.start(false, false, function()
+				{
+					textRunDone = true;
+				});
 
 			case NO:
 				choice = NO;
 				doneResultsIn();
 		}
+
 		// 在這些事發生時我們要讓玩家等待，以免出錯
 		wait = true;
 	}
@@ -242,6 +332,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	// 如果結果淡入完成玩家又沒被打敗，就淡出整的打架介面
 	function doneResultsIn()
 	{
+		investNum = 0;
+		investNumText.text = Std.string(investNum);
 		FlxTween.num(1, 0, .66, {ease: FlxEase.circOut, onComplete: finishFadeOut}, updateAlpha);
 	}
 }
