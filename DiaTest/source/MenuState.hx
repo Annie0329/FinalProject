@@ -1,10 +1,10 @@
 package;
 
-import flixel.util.FlxAxes;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
+import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 
@@ -35,6 +35,7 @@ class MenuState extends FlxState
 
 		// 箭頭
 		pointer = new Pointer();
+		pointer.color = 0xffCC9709;
 		add(pointer);
 		pointer.setPointer(260, 210, 50, 3, "ud");
 

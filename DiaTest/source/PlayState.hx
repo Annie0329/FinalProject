@@ -32,14 +32,9 @@ class PlayState extends FlxState
 
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
-	var bananaSound:FlxSound;
-
-	// 其他角色
-	var lake:FlxSprite;
 
 	// 敵人
 	var enemies:FlxTypedGroup<Enemy>;
-	var health:Int = 0;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
 
@@ -50,8 +45,6 @@ class PlayState extends FlxState
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
 	var minerOpen:Bool = false;
-	var saveStone:FlxTypedGroup<FlxSprite> = null;
-	var saveStoneId:Int = 19;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -61,7 +54,6 @@ class PlayState extends FlxState
 	var ground:FlxTilemap;
 	var loadsave:Bool;
 
-	var talk:String = "none";
 	var getBag:Bool = false;
 
 	// 除錯ufo
@@ -102,23 +94,13 @@ class PlayState extends FlxState
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
 		add(banana);
-		bananaSound = FlxG.sound.load(AssetPaths.getBanana__wav);
-
-		// 湖
-		lake = new FlxSprite().makeGraphic(80, 160, FlxColor.TRANSPARENT);
-		lake.immovable = true;
-		add(lake);
-
-		// 存檔點
-		saveStone = new FlxTypedGroup<FlxSprite>();
-		add(saveStone);
 
 		// 礦場門
-		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 80, 80);
+		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 160);
 		minerDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		minerDoor.immovable = true;
-		minerDoor.setSize(40, 80);
-		minerDoor.offset.set(60, 0);
+		minerDoor.setSize(160, 80);
+		minerDoor.offset.set(0, 80);
 		add(minerDoor);
 		minerDoor.animation.play("glow");
 
@@ -161,7 +143,7 @@ class PlayState extends FlxState
 
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 200, "ufo", 20);
-		ufo.color = FlxColor.BLACK;
+		// ufo.color = FlxColor.BLACK;
 		ufo.scrollFactor.set(0, 0);
 		add(ufo);
 		ufo.visible = false;
@@ -189,7 +171,7 @@ class PlayState extends FlxState
 					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 				else if (save.data.place == "miner")
 				{
-					player.setPosition(minerDoor.x - 100, minerDoor.y + 32);
+					player.setPosition(minerDoor.x, minerDoor.y);
 					save.data.bananaValue = bag.bananaCounter;
 					save.data.diamondValue = bag.diamondCounter;
 					save.data.playerBag = player.playerBag;
@@ -253,17 +235,13 @@ class PlayState extends FlxState
 				banana.add(b);
 
 			case "lake":
-				lake.setPosition(x, y);
+				npc.add(new NPC(x, y, lake));
 
 			case "monument":
 				npc.add(new NPC(x, y, monument));
 
 			case "saveStone":
-				var ss = new FlxSprite(x, y).loadGraphic(AssetPaths.saveStone__png, true, 80, 80);
-				ss.animation.add("shine", [0, 1, 2, 3, 4, 5], 5, true);
-				ss.animation.play("shine");
-				ss.immovable = true;
-				saveStone.add(ss);
+				npc.add(new NPC(x, y, saveStone));
 
 			case "minerDoor":
 				minerDoor.setPosition(x, y);
@@ -279,11 +257,12 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		// 除錯大隊
-		ufo.text = Std.string("oui"); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
 			ufo.visible = true;
+			FlxG.mouse.visible = true;
 		}
 		updateInCombat();
 		updateWhenDiaInvisible();
@@ -299,8 +278,6 @@ class PlayState extends FlxState
 
 		FlxG.collide(player, npc, npcTalk);
 
-		FlxG.collide(player, lake, ultimateTalk);
-		FlxG.collide(player, saveStone, saveFile);
 		FlxG.overlap(player, banana, getBanana);
 
 		FlxG.collide(player, shop, shopOpen);
@@ -379,16 +356,8 @@ class PlayState extends FlxState
 	function getBanana(player:Player, banana:FlxSprite)
 	{
 		banana.kill();
-		bananaSound.play(true);
 		bag.bananaCounter++;
 		bag.updateBag();
-	}
-
-	// 存檔
-	function saveFile(player:Player, saveStone:FlxSprite)
-	{
-		talkYes = true;
-		talkId = saveStoneId;
 	}
 
 	// 去礦場
@@ -437,29 +406,18 @@ class PlayState extends FlxState
 			talkYes = false;
 			playerUpDown();
 
-			// if (talkId == lake.ID)
-			// {
-			// 	name = AssetPaths.lakeTalking__txt;
-			// 	txt = true;
-			// }
-
 			// 存檔點
-			if (talkId == saveStoneId)
+			if (npcType == saveStone)
 			{
 				save.data.bananaValue = bag.bananaCounter;
 				save.data.diamondValue = bag.diamondCounter;
 				save.data.playerBag = player.playerBag;
 				save.data.playerPos = player.getPosition();
 				save.data.place = "monument";
-				health = 3;
 				save.flush();
-				name = ":N:存檔成功！";
-				txt = false;
-				talkId = 0;
-				dia.show(name, txt);
 			}
-			else
-				dia.context(npcType);
+
+			dia.context(npcType);
 		}
 	}
 

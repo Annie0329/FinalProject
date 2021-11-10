@@ -1,6 +1,7 @@
 package;
 
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 
 enum NpcType
 {
@@ -10,6 +11,8 @@ enum NpcType
 	sbBlue;
 	sbGreen;
 	monument;
+	lake;
+	saveStone;
 }
 
 class NPC extends FlxSprite
@@ -21,25 +24,29 @@ class NPC extends FlxSprite
 		super(x, y);
 		this.type = type;
 
-		var graphic:String;
 		switch (type)
 		{
 			case doge:
-				graphic = AssetPaths.doge__png;
+				loadGraphic(AssetPaths.doge__png);
 
 			case ming:
-				graphic = AssetPaths.sbWhite__png;
+				loadGraphic(AssetPaths.sbWhite__png);
 			case sbRed:
-				graphic = AssetPaths.sbRed__png;
+				loadGraphic(AssetPaths.sbRed__png);
 			case sbBlue:
-				graphic = AssetPaths.sbBlue__png;
+				loadGraphic(AssetPaths.sbBlue__png);
 			case sbGreen:
-				graphic = AssetPaths.sbGreen__png;
+				loadGraphic(AssetPaths.sbGreen__png);
 
 			case monument:
-				graphic = AssetPaths.monument__png;
+				loadGraphic(AssetPaths.monument__png);
+			case lake:
+				makeGraphic(80, 160, FlxColor.TRANSPARENT);
+			case saveStone:
+				loadGraphic(AssetPaths.saveStone__png, true, 80, 80);
+				animation.add("shine", [0, 1, 2, 3, 4, 5], 5, true);
+				animation.play("shine");
 		}
-		loadGraphic(graphic);
 		immovable = true;
 	}
 

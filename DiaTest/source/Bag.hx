@@ -56,7 +56,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	{
 		super();
 		// 老闆
-		shopkeeper = new FlxSprite(0, 0,AssetPaths.shopkeeper__png);
+		shopkeeper = new FlxSprite(0, 0, AssetPaths.shopkeeper__png);
 		add(shopkeeper);
 
 		// 背景
@@ -65,7 +65,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 香蕉圖示
-		bananaCounterIcon = new FlxSprite(background.x + 65, 120,AssetPaths.bananaIcon__png);
+		bananaCounterIcon = new FlxSprite(background.x + 65, 120, AssetPaths.bananaIcon__png);
 		add(bananaCounterIcon);
 
 		// 香蕉數目
@@ -101,7 +101,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 
 		// 箭頭
 		pointer = new Pointer();
-		pointer.loadGraphic(AssetPaths.shopPointer__png);
+		pointer.color = 0xffF0433D;
 		add(pointer);
 
 		forEach(function(sprite) sprite.scrollFactor.set(0, 0));
@@ -261,7 +261,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						shopText.skip();
 						textRunDone = true;
 						shopChoice = sell;
-						pointer.setPointer(shopText.x - pointer.width - 10,shopText.y + 3,  30, 3, "ud");
+						pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, 3, "ud");
 						bananaCounterIcon.visible = true;
 						bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
 					}

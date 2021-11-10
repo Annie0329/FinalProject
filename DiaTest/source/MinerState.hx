@@ -172,16 +172,15 @@ class MinerState extends FlxState
 					save.data.playerPos = player.getPosition();
 					save.data.place = "miner";
 					save.flush();
+					name = ":N:恭喜你到了礦場，送你1能量幣。:N:你得到了1能量幣";
+					txt = false;
+					playerUpDown();
+					dia.show(name, txt);
 				}
 			}
 		}
 
 		FlxG.mouse.visible = false;
-
-		name = ":N:恭喜你到了礦場，送你1能量幣。:N:你得到了1能量幣";
-		txt = false;
-		playerUpDown();
-		dia.show(name, txt);
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 
@@ -320,19 +319,17 @@ class MinerState extends FlxState
 			boxCounter++;
 			player.active = false;
 			box.loadGraphic(AssetPaths.boxFull__png);
+			bag.diamondCounter++;
+			bag.updateBag();
+			name = ":N:你得到了1顆能量石！";
+			playerUpDown();
+			txt = false;
+			dia.show(name, txt);
 			FlxTween.tween(box, {y: box.y + 360}, 2, {
 				onComplete: function(_)
 				{
 					box.loadGraphic(AssetPaths.boxEmpty__png);
 					map.loadEntities(restartStone, "entities");
-
-					bag.diamondCounter++;
-					bag.updateBag();
-
-					name = ":N:你得到了1顆能量石！";
-					playerUpDown();
-					txt = false;
-					dia.show(name, txt);
 				}
 			});
 		}

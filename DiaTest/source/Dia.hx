@@ -158,6 +158,16 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			name = ":N:裡面似乎有毀壞的記帳本。";
 			txt = false;
 		}
+		if (npcType == lake)
+		{
+			name = AssetPaths.lakeTalking__txt;
+			txt = true;
+		}
+		if (npcType == saveStone)
+		{
+			name = ":N:存檔成功！";
+			txt = false;
+		}
 		show(name, txt);
 	}
 
@@ -165,10 +175,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public function getPointer(quest:String)
 	{
 		pointerQ = quest;
-		switch (pointerQ)
-		{
-			
-		}
+		switch (pointerQ) {}
 	}
 
 	// 更新啦

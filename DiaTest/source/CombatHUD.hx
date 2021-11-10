@@ -66,15 +66,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		super();
 
 		// hud的背景
-		background = new FlxSprite().makeGraphic(240, 240, 0xff2D5925);
-		background.drawRect(2, 2, 236, 88, 0xffB6E3AD);
-		background.drawRect(2, 92, 236, 146, 0xffB6E3AD);
-		background.screenCenter();
+		background = new FlxSprite(0, 0, AssetPaths.combatBackground__png);
 		add(background);
 
 		// 加入敵人的人形立牌
-		enemySprite = new Enemy(0, 0, REGULAR);
-		enemySprite.setPosition(0, background.y);
+		enemySprite = new Enemy(0, 100, REGULAR);
 		enemySprite.screenCenter(FlxAxes.X);
 		// enemySprite.animation.frameIndex = 3;
 		enemySprite.active = false;
@@ -82,41 +78,36 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(enemySprite);
 
 		// 字
-		combatText = new FlxTypeText(background.x, background.y, 200, "text", 28, true);
-		combatText.color = 0xff2D5925;
+		combatText = new FlxTypeText(160, 235, 200, "text", 28, true);
 		combatText.font = AssetPaths.silver__ttf;
-		// text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
 		combatText.delay = 0.07;
+		combatText.color = FlxColor.BLACK;
 		combatText.skipKeys = ["X", "SHIFT"];
 		add(combatText);
 
 		// 加入選項
 		choices = new Map();
-		choices[YES] = new FlxText(background.x + 60, background.y + 96, 170, "YES", 44);
-		choices[YES].color = 0xff2D5925;
-		choices[NO] = new FlxText(background.x + 60, choices[YES].y + choices[YES].height + 16, 170, "NO", 44);
-		choices[NO].color = 0xff2D5925;
+		choices[YES] = new FlxText(425, 225, 170, "APE IN", 36);
+		choices[NO] = new FlxText(425, choices[YES].y + choices[YES].height + 16, 170, "QUIT", 36);
 		add(choices[YES]);
 		add(choices[NO]);
 
 		// 投資多少錢
-		investNumText = new FlxText(background.x + 60, background.y + 96, 170, "0", 44);
-		investNumText.color = 0xff2D5925;
+		investNumText = new FlxText(choices[YES].x, choices[YES].y, 170, "0", 44);
 		add(investNumText);
 		investNumText.visible = false;
 
 		// 敵人名字
-		enemyNameText = new FlxText(background.x + 60, background.y - 50, "enemyName", 44);
-		enemyNameText.color = 0xff2D5925;
+		enemyNameText = new FlxText(70, 20, "enemyName", 36);
+		enemyNameText.font = AssetPaths.silver__ttf;
 		add(enemyNameText);
 
 		// 錢的數量
-		diamondText = new FlxText(background.x + background.width, background.y + 100, "0", 44);
-		diamondText.color = 0xff2D5925;
+		diamondText = new FlxText(560, 20, "0", 20);
 		add(diamondText);
 
 		// 那隻箭頭
-		pointer = new FlxSprite(background.x + 40, choices[YES].y + (choices[YES].height / 2) - 16, AssetPaths.combatPointer__png);
+		pointer = new FlxSprite(choices[YES].x - 16, choices[YES].y + (choices[YES].height / 2) - 16, AssetPaths.pointer__png);
 		pointer.visible = false;
 		add(pointer);
 
