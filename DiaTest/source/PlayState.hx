@@ -220,13 +220,15 @@ class PlayState extends FlxState
 			case "sbGreen":
 				npc.add(new NPC(x, y, sbGreen));
 
-			// 把敵人移到地磚水平中心
-			case "ponzi":
-				enemies.add(new Enemy(x + 4, y, REGULAR));
-			case "ponziBad":
-				enemies.add(new Enemy(x + 4, y, BOSS));
+			// 敵人
 			case "shibaCoin":
-				enemies.add(new Enemy(x + 4, y, shibaCoin));
+				enemies.add(new Enemy(x, y, shibaCoin));
+
+			case "cloudMiner":
+				enemies.add(new Enemy(x, y, cloudMiner));
+			case "nft":
+				enemies.add(new Enemy(x, y, nft));
+
 			case "banana":
 				var b = new FlxSprite(x + 20, y + 20).loadGraphic(AssetPaths.banana__png, true, 40, 40);
 				b.animation.add("spin", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 5, true);
@@ -296,15 +298,52 @@ class PlayState extends FlxState
 		{
 			if (!combatHud.visible)
 			{
-				if (combatHud.choice == YES)
-				{
-					combatHud.enemy.kill();
-				}
-				else
-					combatHud.enemy.enemyFire();
 				bag.diamondCounter = combatHud.diamond;
 				bag.updateBag();
 				inCombat = false;
+				switch (combatHud.enemy.type)
+				{
+					case shibaCoin:
+						if (combatHud.outcome == WIN)
+						{
+							name = ":D:恭喜你贏了！";
+							txt = false;
+							combatHud.enemy.kill();
+						}
+						else if (combatHud.outcome == LOSE)
+						{
+							name = ":D:哎呀，真可惜！";
+							txt = false;
+							combatHud.enemy.kill();
+						}
+						else if (combatHud.outcome == FLEE)
+						{
+							name = ":D:柴犬幣很好賺呢，下次試試看跟他們交涉吧！";
+							txt = false;
+							combatHud.enemy.enemyFire();
+						}
+					case cloudMiner:
+						if (combatHud.outcome == FLEE)
+							name = ":D:你躲過詐騙了呢！";
+						else
+							name = ":D:這是詐騙喔！";
+						combatHud.enemy.kill();
+						txt = false;
+					case nft:
+						if (combatHud.outcome == FLEE)
+						{
+							name = ":D:NFT還不錯，下次試試看吧。";
+							combatHud.enemy.enemyFire();
+						}
+						else
+						{
+							name = ":D:這很稀有呢。";
+							combatHud.enemy.kill();
+						}
+				}
+				txt = false;
+				playerUpDown();
+				dia.show(name, txt);
 			}
 		}
 	}

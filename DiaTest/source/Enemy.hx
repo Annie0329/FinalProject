@@ -12,9 +12,9 @@ using flixel.util.FlxSpriteUtil;
 // 定義敵人的類型
 enum EnemyType
 {
-	REGULAR;
-	BOSS;
 	shibaCoin;
+	cloudMiner;
+	nft;
 }
 
 class Enemy extends FlxSprite
@@ -40,12 +40,12 @@ class Enemy extends FlxSprite
 		var graphic:String;
 		switch (type)
 		{
-			case REGULAR:
-				graphic = AssetPaths.ponzi__png;
-			case BOSS:
-				graphic = AssetPaths.ponziBad__png;
 			case shibaCoin:
 				graphic = AssetPaths.shibaCoin__png;
+			case cloudMiner:
+				graphic = AssetPaths.cloudMiner__png;
+			case nft:
+				graphic = AssetPaths.nft__png;
 		}
 		loadGraphic(graphic);
 
@@ -96,10 +96,8 @@ class Enemy extends FlxSprite
 				// 隨機選角度移動
 				moveDirection = FlxG.random.int(0, 8) * 45;
 
-				if (type == BOSS)
-					velocity.set(SPEED, 0);
-				else
-					velocity.set(SPEED * 0.5, 0);
+				velocity.set(SPEED, 0);
+
 				velocity.rotate(FlxPoint.weak(), moveDirection);
 			}
 			// 隨機選個數
@@ -117,11 +115,7 @@ class Enemy extends FlxSprite
 			brain.activeState = idle;
 		else
 		{
-			// 我自己加的:D，魔王的速度會比囉囉快
-			if (type == BOSS)
-				FlxVelocity.moveTowardsPoint(this, playerPosition, Std.int(SPEED * 1.5));
-			else
-				FlxVelocity.moveTowardsPoint(this, playerPosition, Std.int(SPEED));
+			FlxVelocity.moveTowardsPoint(this, playerPosition, Std.int(SPEED));
 		}
 	}
 
@@ -133,14 +127,14 @@ class Enemy extends FlxSprite
 			var graphic:String;
 			switch (type)
 			{
-				case REGULAR:
-					graphic = AssetPaths.ponzi__png;
-				case BOSS:
-					graphic = AssetPaths.ponziBad__png;
 				case shibaCoin:
 					graphic = AssetPaths.shibaCoin__png;
+				case cloudMiner:
+					graphic = AssetPaths.cloudMiner__png;
+				case nft:
+					graphic = AssetPaths.nft__png;
 			}
-			loadGraphic(graphic, true, 64, 64);
+			loadGraphic(graphic);
 		}
 	}
 

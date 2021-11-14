@@ -80,18 +80,18 @@
         {"name": "banana", "id": 68, "_eid": "75219327", "x": 1680, "y": 960, "originX": 0, "originY": 0},
         {"name": "banana", "id": 69, "_eid": "75219327", "x": 1520, "y": 880, "originX": 0, "originY": 0},
         {"name": "minerDoor", "id": 70, "_eid": "06343898", "x": 3080, "y": 1160, "originX": 0, "originY": 0},
-        {"name": "shibaCoin", "id": 71, "_eid": "86208261", "x": 2680, "y": 1520, "originX": 0, "originY": 0},
-        {"name": "shibaCoin", "id": 72, "_eid": "86208261", "x": 3320, "y": 1440, "originX": 0, "originY": 0},
-        {"name": "shibaCoin", "id": 73, "_eid": "86208261", "x": 3560, "y": 1280, "originX": 0, "originY": 0},
-        {"name": "shibaCoin", "id": 74, "_eid": "86208261", "x": 3280, "y": 600, "originX": 0, "originY": 0},
-        {"name": "shibaCoin", "id": 75, "_eid": "86208261", "x": 3040, "y": 880, "originX": 0, "originY": 0},
         {"name": "shibaCoin", "id": 76, "_eid": "86208261", "x": 3640, "y": 720, "originX": 0, "originY": 0},
         {"name": "shibaCoin", "id": 77, "_eid": "86208261", "x": 2840, "y": 600, "originX": 0, "originY": 0},
         {"name": "shibaCoin", "id": 78, "_eid": "86208261", "x": 3000, "y": 1720, "originX": 0, "originY": 0},
-        {"name": "shibaCoin", "id": 80, "_eid": "86208261", "x": 3440, "y": 1720, "originX": 0, "originY": 0},
         {"name": "banana", "id": 83, "_eid": "75219327", "x": 1320, "y": 920, "originX": 0, "originY": 0},
         {"name": "banana", "id": 84, "_eid": "75219327", "x": 1680, "y": 760, "originX": 0, "originY": 0},
-        {"name": "banana", "id": 86, "_eid": "75219327", "x": 2640, "y": 1160, "originX": 0, "originY": 0}
+        {"name": "banana", "id": 86, "_eid": "75219327", "x": 2640, "y": 1160, "originX": 0, "originY": 0},
+        {"name": "cloudMiner", "id": 87, "_eid": "89965802", "x": 3560, "y": 1280, "originX": 0, "originY": 0},
+        {"name": "cloudMiner", "id": 88, "_eid": "89965802", "x": 3320, "y": 1440, "originX": 0, "originY": 0},
+        {"name": "nft", "id": 89, "_eid": "04469671", "x": 2680, "y": 1520, "originX": 0, "originY": 0},
+        {"name": "nft", "id": 90, "_eid": "04469671", "x": 3280, "y": 600, "originX": 0, "originY": 0},
+        {"name": "cloudMiner", "id": 91, "_eid": "89965802", "x": 3040, "y": 880, "originX": 0, "originY": 0},
+        {"name": "nft", "id": 92, "_eid": "04469671", "x": 3480, "y": 1760, "originX": 0, "originY": 0}
       ]
     },
     {
