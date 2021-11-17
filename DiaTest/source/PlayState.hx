@@ -6,10 +6,8 @@ import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
-import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 
@@ -132,6 +130,7 @@ class PlayState extends FlxState
 
 		// 對話框
 		dia = new Dia();
+		dia.background.visible = true;
 		add(dia);
 
 		// 包包介面
@@ -306,7 +305,7 @@ class PlayState extends FlxState
 					case shibaCoin:
 						if (combatHud.outcome == WIN)
 						{
-							name = ":D:恭喜你贏了！";
+							name = ":D:恭喜你賺到錢了！";
 							txt = false;
 							combatHud.enemy.kill();
 						}
@@ -314,13 +313,13 @@ class PlayState extends FlxState
 						{
 							name = ":D:哎呀，真可惜！";
 							txt = false;
-							combatHud.enemy.kill();
+							combatHud.enemy.enemyFire();
 						}
 						else if (combatHud.outcome == FLEE)
 						{
 							name = ":D:柴犬幣很好賺呢，下次試試看跟他們交涉吧！";
 							txt = false;
-							combatHud.enemy.enemyFire();
+							combatHud.enemy.kill();
 						}
 					case cloudMiner:
 						if (combatHud.outcome == FLEE)
@@ -404,17 +403,15 @@ class PlayState extends FlxState
 	{
 		if (bag.diamondCounter >= 1)
 		{
-			name = ":N:跟你收1元過路費。:N:你給了傳送門1元。";
+			name = ":N:跟你收100能量幣過路費。:N:你給了傳送門100能量幣。";
 			txt = false;
 			playerUpDown();
 			dia.show(name, txt);
-			bag.diamondCounter--;
-			bag.updateBag();
 			minerOpen = true;
 		}
 		else
 		{
-			name = ":N:你沒有1元過路費。";
+			name = ":N:你沒有100能量幣過路費。";
 			txt = false;
 			playerUpDown();
 			dia.show(name, txt);

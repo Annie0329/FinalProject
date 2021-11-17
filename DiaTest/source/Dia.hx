@@ -18,10 +18,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var dilog_boxes:Array<String>;
 
 	var text:FlxTypeText;
-	var background:FlxSprite;
+
+	public var background:FlxSprite;
+
 	var pointer:Pointer;
 	var pointerQ:String = "none";
 	var txt:Bool = true;
+	var saveStoneIntro:Bool = false;
 
 	public var name:String;
 
@@ -165,8 +168,17 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		}
 		if (npcType == saveStone)
 		{
+			// if (saveStoneIntro)
+			// {
 			name = ":N:存檔成功！";
 			txt = false;
+			// }
+			// else
+			// {
+			// 	name = AssetPaths.saveStoneIntro__txt;
+			// 	txt = true;
+			// 	saveStoneIntro = true;
+			// }
 		}
 		show(name, txt);
 	}

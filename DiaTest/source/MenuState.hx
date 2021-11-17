@@ -52,7 +52,7 @@ class MenuState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		// 存檔元件
+		// 存檔能量幣件
 		save = new FlxSave();
 		save.bind("DiaTest");
 

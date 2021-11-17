@@ -18,7 +18,7 @@ class MinerState extends FlxState
 	var bag:Bag;
 
 	// 各關目標
-	var stoneGoal:Int = 3;
+	var stoneGoal:Int = 7;
 	var boxGoal:Int = 1;
 
 	// 對話框和他的變數
@@ -126,6 +126,7 @@ class MinerState extends FlxState
 
 		// 對話框
 		dia = new Dia();
+		dia.background.visible = true;
 		add(dia);
 
 		// 包包介面
@@ -172,7 +173,8 @@ class MinerState extends FlxState
 					save.data.playerPos = player.getPosition();
 					save.data.place = "miner";
 					save.flush();
-					name = ":N:恭喜你到了礦場，送你1能量幣。:N:你得到了1能量幣";
+
+					name = ":N:恭喜你到了礦場，送你100能量幣。:N:你得到了100能量幣";
 					txt = false;
 					playerUpDown();
 					dia.show(name, txt);
