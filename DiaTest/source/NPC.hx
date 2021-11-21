@@ -13,6 +13,8 @@ enum NpcType
 	monument;
 	lake;
 	saveStone;
+
+	spartan;
 }
 
 class NPC extends FlxSprite
@@ -43,11 +45,17 @@ class NPC extends FlxSprite
 			case lake:
 				makeGraphic(80, 160, FlxColor.TRANSPARENT);
 			case saveStone:
-				loadGraphic(AssetPaths.saveStone__png, true, 80, 80);
-				animation.add("shine", [0, 1, 2, 3, 4, 5], 5, true);
-				animation.play("shine");
+				loadGraphic(AssetPaths.saveStone__png);
+			case spartan:
+				loadGraphic(AssetPaths.spartan__png);
 		}
+
 		immovable = true;
+	}
+
+	public function saveStoneAnimation()
+	{
+		animation.play("shine");
 	}
 
 	override function update(elapsed:Float) {}

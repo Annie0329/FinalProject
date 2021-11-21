@@ -10,6 +10,7 @@ import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
+import flixel.util.FlxTimer;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -26,7 +27,6 @@ class PlayState extends FlxState
 	var name:String;
 	var txt:Bool = true;
 	var talkYes:Bool = false;
-	var talkId:Int;
 
 	// 香蕉和他的變數
 	var banana:FlxTypedGroup<FlxSprite> = null;
@@ -43,6 +43,7 @@ class PlayState extends FlxState
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
 	var minerOpen:Bool = false;
+	var minerYes:Bool = false;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -94,11 +95,11 @@ class PlayState extends FlxState
 		add(banana);
 
 		// 礦場門
-		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 160, 160);
+		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
 		minerDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		minerDoor.immovable = true;
-		minerDoor.setSize(160, 80);
-		minerDoor.offset.set(0, 80);
+		minerDoor.setSize(104, 40);
+		minerDoor.offset.set(0, 120);
 		add(minerDoor);
 		minerDoor.animation.play("glow");
 
@@ -130,7 +131,6 @@ class PlayState extends FlxState
 
 		// 對話框
 		dia = new Dia();
-		dia.background.visible = true;
 		add(dia);
 
 		// 包包介面
@@ -166,10 +166,12 @@ class PlayState extends FlxState
 			}
 			if (save.data.playerPos != null && save.data.place != null)
 			{
-				if (save.data.place == "menu")
+				if (save.data.place == "monument")
 					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 				else if (save.data.place == "miner")
 				{
+					minerYes = true;
+					dia.saveStoneIntro = true;
 					player.setPosition(minerDoor.x, minerDoor.y);
 					save.data.bananaValue = bag.bananaCounter;
 					save.data.diamondValue = bag.diamondCounter;
@@ -182,13 +184,24 @@ class PlayState extends FlxState
 		}
 		else
 		{
-			name = AssetPaths.c1Opening__txt;
-			getBag = true;
-			playerUpDown();
-			dia.show(name, true);
+			player.active = false;
+			new FlxTimer().start(1.5, function(timer:FlxTimer)
+			{
+				name = AssetPaths.c1Opening__txt;
+				getBag = true;
+				playerUpDown();
+				dia.show(name, true);
+			});
 		}
+
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+
 		FlxG.mouse.visible = false;
-		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+		if (loadsave)
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+		else
+			FlxG.camera.fade(0xffFFFDE4, 1, true);
 
 		super.create();
 	}
@@ -256,7 +269,6 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
 		// 除錯大隊
 		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
@@ -293,57 +305,46 @@ class PlayState extends FlxState
 	// 打架結束囉
 	function updateInCombat()
 	{
-		if (inCombat)
+		if (inCombat && !combatHud.visible)
 		{
-			if (!combatHud.visible)
+			bag.diamondCounter = combatHud.diamond;
+			bag.updateBag();
+			inCombat = false;
+			switch (combatHud.outcome)
 			{
-				bag.diamondCounter = combatHud.diamond;
-				bag.updateBag();
-				inCombat = false;
-				switch (combatHud.enemy.type)
-				{
-					case shibaCoin:
-						if (combatHud.outcome == WIN)
-						{
-							name = ":D:恭喜你賺到錢了！";
-							txt = false;
-							combatHud.enemy.kill();
-						}
-						else if (combatHud.outcome == LOSE)
-						{
-							name = ":D:哎呀，真可惜！";
-							txt = false;
-							combatHud.enemy.enemyFire();
-						}
-						else if (combatHud.outcome == FLEE)
-						{
-							name = ":D:柴犬幣很好賺呢，下次試試看跟他們交涉吧！";
-							txt = false;
-							combatHud.enemy.kill();
-						}
-					case cloudMiner:
-						if (combatHud.outcome == FLEE)
-							name = ":D:你躲過詐騙了呢！";
-						else
-							name = ":D:這是詐騙喔！";
-						combatHud.enemy.kill();
-						txt = false;
-					case nft:
-						if (combatHud.outcome == FLEE)
-						{
-							name = ":D:NFT還不錯，下次試試看吧。";
-							combatHud.enemy.enemyFire();
-						}
-						else
-						{
-							name = ":D:這很稀有呢。";
-							combatHud.enemy.kill();
-						}
-				}
-				txt = false;
-				playerUpDown();
-				dia.show(name, txt);
+				case WIN, FLEE:
+					combatHud.enemy.kill();
+				case LOSE:
+					combatHud.enemy.enemyFire();
 			}
+			switch (combatHud.enemy.type)
+			{
+				case shibaCoin:
+					if (combatHud.outcome == WIN)
+						name = ":D:恭喜你賺到錢了！";
+					else if (combatHud.outcome == LOSE)
+						name = ":D:哎呀，真可惜！";
+					else
+						name = ":D:柴犬幣很好賺呢，下次試試看跟他們交涉吧！";
+
+				case cloudMiner:
+					if (combatHud.outcome == FLEE)
+						name = ":D:你躲過詐騙了呢！";
+					else
+						name = ":D:這是詐騙喔！";
+
+				case nft:
+					if (combatHud.outcome == WIN)
+						name = ":D:你真幸運，買到時下流行的NFT花樣。";
+					else if (combatHud.outcome == LOSE)
+						name = ":D:沒有關係，流行趨勢本來就是瞬息萬變的。";
+					else
+						name = ":D:NFT還不錯，下次試試看吧。";
+				case spartanMiner:
+			}
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
 		}
 	}
 
@@ -377,13 +378,6 @@ class PlayState extends FlxState
 			enemy.seesPlayer = false;
 	}
 
-	// 終極對話！
-	function ultimateTalk(player:Player, sprite:FlxSprite)
-	{
-		talkYes = true;
-		talkId = sprite.ID;
-	}
-
 	function npcTalk(player:Player, npc:NPC)
 	{
 		talkYes = true;
@@ -401,20 +395,35 @@ class PlayState extends FlxState
 	// 去礦場
 	function goToMiner(player:Player, minerDoor:FlxSprite)
 	{
-		if (bag.diamondCounter >= 1)
+		if (minerYes)
 		{
-			name = ":N:跟你收100能量幣過路費。:N:你給了傳送門100能量幣。";
-			txt = false;
-			playerUpDown();
-			dia.show(name, txt);
-			minerOpen = true;
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			{
+				save.data.bananaValue = bag.bananaCounter;
+				save.data.diamondValue = bag.diamondCounter;
+				save.data.playerBag = player.playerBag;
+				save.data.place = "monument";
+				save.flush();
+				FlxG.switchState(new MinerState(true));
+			});
 		}
 		else
 		{
-			name = ":N:你沒有100能量幣過路費。";
-			txt = false;
-			playerUpDown();
-			dia.show(name, txt);
+			if (bag.diamondCounter >= 1)
+			{
+				name = ":N:跟你收100能量幣過路費。:N:你給了傳送門100能量幣。";
+				txt = false;
+				playerUpDown();
+				dia.show(name, txt);
+				minerOpen = true;
+			}
+			else
+			{
+				name = ":N:你沒有100能量幣過路費。";
+				txt = false;
+				playerUpDown();
+				dia.show(name, txt);
+			}
 		}
 	}
 
@@ -484,6 +493,7 @@ class PlayState extends FlxState
 			if (minerOpen)
 			{
 				minerOpen = false;
+				minerYes = true;
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
 					save.data.bananaValue = bag.bananaCounter;

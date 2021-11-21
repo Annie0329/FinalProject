@@ -22,15 +22,14 @@ class OpeningState extends FlxState
 
 	override public function create()
 	{
-		guide = new FlxText(0, 0, 400, "操作說明：\nENTER、SPACE、Z：調查、對話換行、確定\nX、SHIFT：取消\nC：查看持有物品", 20, true);
-		guide.font = AssetPaths.font__ttf;
+		guide = new FlxText(0, 0, 400, "操作說明：\nENTER、SPACE、Z：調查、對話換行、確定\nX、SHIFT：取消\nC：查看持有物品", 28, true);
+		guide.font = AssetPaths.silver__ttf;
 		guide.screenCenter();
 		guide.visible = false;
 		add(guide);
 
 		// 開場動畫
-		openingAnimation = new FlxSprite();
-		openingAnimation.loadGraphic(AssetPaths.openingAnimation__png, true, 480, 360);
+		openingAnimation = new FlxSprite().loadGraphic(AssetPaths.openingAnimation__png, true, 480, 360);
 		openingAnimation.setGraphicSize(360, 270);
 		openingAnimation.updateHitbox();
 		openingAnimation.screenCenter(FlxAxes.X);
@@ -63,9 +62,10 @@ class OpeningState extends FlxState
 	{
 		super.update(elapsed);
 
-		var x = FlxG.keys.anyJustReleased([ANY]);
-		var enter = FlxG.keys.anyJustReleased([ENTER]);
-		if (!openingAnimation.visible && x)
+		var any = FlxG.keys.anyJustReleased([ANY]);
+		var x = FlxG.keys.anyJustReleased([X]);
+		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
+		if (!openingAnimation.visible && any || x)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
@@ -76,15 +76,23 @@ class OpeningState extends FlxState
 		{
 			if (i > 10)
 			{
-				openingAnimation.visible = false;
-				guide.visible = true;
+				FlxG.camera.fade(0xffFFFDE4, 1, false, function()
+				{
+					FlxG.switchState(new PlayState(false));
+				});
 			}
 			else
 			{
 				i++;
 				textRunDone = false;
-				openingAnimation.animation.frameIndex = i;
 				openText.resetText(dilog_boxes[i + 1]);
+				FlxTween.tween(openingAnimation, {alpha: 0}, .33, {
+					onComplete: function(_)
+					{
+						openingAnimation.animation.frameIndex = i;
+						FlxTween.tween(openingAnimation, {alpha: 1}, .33);
+					}
+				});
 				openText.start(false, false, function()
 				{
 					textRunDone = true;

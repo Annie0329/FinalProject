@@ -12,6 +12,7 @@ class MenuState extends FlxState
 {
 	var menuBackground:FlxSprite;
 	var about:FlxSprite;
+	var aboutText:FlxText;
 
 	var pointerY:Int = 210;
 	var pointerX:Int = 260;
@@ -44,6 +45,14 @@ class MenuState extends FlxState
 		add(about);
 		about.visible = false;
 
+		aboutText = new FlxText(0, 0, 200, "操作說明：\nENTER、SPACE、Z：調查、對話換行、確定\nX、SHIFT：取消\nC：查看持有物品\nMusic: https://www.bensound.com", 28);
+		aboutText.borderColor = FlxColor.BLACK;
+		aboutText.font = AssetPaths.silver__ttf;
+		aboutText.color = FlxColor.BLACK;
+		aboutText.screenCenter();
+		add(aboutText);
+		aboutText.visible = false;
+
 		// 除錯ufo
 		ufo = new FlxText(0, 0, "ufo", 20);
 		ufo.borderColor = FlxColor.BLACK;
@@ -60,6 +69,10 @@ class MenuState extends FlxState
 			pointer.y = pointerY;
 		else
 			pointer.y = pointerY + pointerBar;
+		if (save.data.place != null)
+		{
+			this.save.data.place = save.data.place;
+		}
 
 		FlxG.mouse.visible = false;
 
@@ -72,7 +85,7 @@ class MenuState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		ufo.text = "oui";
+		ufo.text = Std.string(save.data.place);
 
 		var up = FlxG.keys.anyJustReleased([UP, W]);
 		var down = FlxG.keys.anyJustReleased([DOWN, S]);
@@ -101,9 +114,9 @@ class MenuState extends FlxState
 							loadsave = true;
 							if (save.data.place == "miner")
 								FlxG.switchState(new MinerState(loadsave));
-							else
+							else if (save.data.place == "monument")
 								FlxG.switchState(new PlayState(loadsave));
-							save.data.place = "menu";
+							// save.data.place = "menu";
 							save.flush();
 						});
 				}
@@ -121,6 +134,7 @@ class MenuState extends FlxState
 				else
 				{
 					about.visible = true;
+					aboutText.visible = true;
 					menu = "about";
 				}
 			}
@@ -130,6 +144,7 @@ class MenuState extends FlxState
 		if (x)
 		{
 			about.visible = false;
+			aboutText.visible = false;
 			menu = "main";
 		}
 	}

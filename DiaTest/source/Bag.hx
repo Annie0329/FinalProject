@@ -32,7 +32,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	var diamondCounterText:FlxText;
 
 	var shopCho:FlxText;
-	var shopText:FlxTypeText;
+	var shopText:Text;
 	var mainTalk:String;
 	var bananaSell:Int = 0;
 
@@ -85,12 +85,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		add(shopCho);
 
 		// 商店的字
-		shopText = new FlxTypeText(0, 0, 270, "歡迎來到我的店！", 28, true);
+		shopText = new Text(0, 0, 270, "歡迎來到我的店！", 28, true);
 		shopText.color = 0xff2D5925;
-		shopText.delay = 0.05;
-		shopText.skipKeys = ["X", "SHIFT"];
-		// shopText.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
-		shopText.font = AssetPaths.silver__ttf;
 		add(shopText);
 
 		// 交易紀錄
@@ -345,7 +341,6 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";
 						txt = false;
 						shopTalkStart(name, txt);
-						pointer.visible = false;
 					}
 					else
 					{
@@ -380,11 +375,10 @@ class Bag extends FlxTypedGroup<FlxSprite>
 			}
 			else
 			{
-				i++;
-
 				// 對話結束就離開
-				if (i >= dilog_boxes.length)
+				if (shopText.over)
 				{
+					pointer.visible = true;
 					if (shopChoice == talk)
 					{
 						shopText.resetText(talkCho);
@@ -400,16 +394,6 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						textRunDone = true;
 						bananaCounterIcon.visible = true;
 					}
-					pointer.visible = true;
-				}
-				else
-				{
-					textRunDone = false;
-					shopText.resetText(dilog_boxes[i]);
-					shopText.start(false, false, function()
-					{
-						textRunDone = true;
-					});
 				}
 			}
 		}
@@ -418,15 +402,8 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	// 聊天準備事項
 	function shopTalkStart(name, txt)
 	{
-		dilog_boxes = if (txt) openfl.Assets.getText(name).split(":") else name.split(":");
-		i = 1;
 		pointer.visible = false;
 		bananaCounterIcon.visible = false;
-		textRunDone = false;
-		shopText.resetText(dilog_boxes[i]);
-		shopText.start(false, false, function()
-		{
-			textRunDone = true;
-		});
+		shopText.show(name, txt);
 	}
 }

@@ -15,12 +15,28 @@ enum EnemyType
 	shibaCoin;
 	cloudMiner;
 	nft;
+	spartanMiner;
+}
+
+class FSM
+{
+	public var activeState:Float->Void;
+
+	public function new(initialState:Float->Void)
+	{
+		activeState = initialState;
+	}
+
+	public function update(elapsed:Float)
+	{
+		activeState(elapsed);
+	}
 }
 
 class Enemy extends FlxSprite
 {
 	// 跑多快
-	static inline var SPEED:Float = 100;
+	var SPEED:Float = 100;
 
 	var brain:FSM;
 	var idleTimer:Float;
@@ -37,27 +53,7 @@ class Enemy extends FlxSprite
 		this.type = type;
 
 		// 呼叫敵人或魔王的圖片
-		var graphic:String;
-		switch (type)
-		{
-			case shibaCoin:
-				graphic = AssetPaths.shibaCoin__png;
-			case cloudMiner:
-				graphic = AssetPaths.cloudMiner__png;
-			case nft:
-				graphic = AssetPaths.nft__png;
-		}
-		loadGraphic(graphic);
-
-		// // 面向右邊時使用鏡像的左邊圖片
-		// setFacingFlip(FlxObject.LEFT, false, false);
-		// setFacingFlip(FlxObject.RIGHT, true, false);
-
-		// // 走路動畫
-		// animation.add("lr", [4, 3, 5, 3], 6, false);
-		// animation.add("u", [7, 6, 8, 6], 6, false);
-		// animation.add("d", [1, 0, 2, 0], 6, false);
-
+		switchType(type);
 		// 滑壘強度
 		drag.x = drag.y = 10;
 
@@ -65,6 +61,23 @@ class Enemy extends FlxSprite
 		brain = new FSM(idle);
 		idleTimer = 0;
 		playerPosition = FlxPoint.get();
+	}
+
+	function switchType(type)
+	{
+		switch (type)
+		{
+			case shibaCoin:
+				loadGraphic(AssetPaths.shibaCoin__png);
+			case cloudMiner:
+				loadGraphic(AssetPaths.cloudMiner__png);
+			case nft:
+				loadGraphic(AssetPaths.nft__png, true, 56, 64);
+				animation.frameIndex = 1;
+			case spartanMiner:
+				loadGraphic(AssetPaths.spartanMiner__png);
+				elasticity = 1;
+		}
 	}
 
 	// 燃燒的錢
@@ -86,7 +99,7 @@ class Enemy extends FlxSprite
 		else if (idleTimer <= 0)
 		{
 			// 如果隨機選到1的話就不動
-			if (FlxG.random.bool(1))
+			if (type != spartanMiner && FlxG.random.bool(1))
 			{
 				moveDirection = -1;
 				velocity.x = velocity.y = 0;
@@ -95,8 +108,10 @@ class Enemy extends FlxSprite
 			{
 				// 隨機選角度移動
 				moveDirection = FlxG.random.int(0, 8) * 45;
-
-				velocity.set(SPEED, 0);
+				if (type == spartanMiner)
+					velocity.set(SPEED * 1.5, 0);
+				else
+					velocity.set(SPEED, 0);
 
 				velocity.rotate(FlxPoint.weak(), moveDirection);
 			}
@@ -124,51 +139,12 @@ class Enemy extends FlxSprite
 		if (this.type != type)
 		{
 			this.type = type;
-			var graphic:String;
-			switch (type)
-			{
-				case shibaCoin:
-					graphic = AssetPaths.shibaCoin__png;
-				case cloudMiner:
-					graphic = AssetPaths.cloudMiner__png;
-				case nft:
-					graphic = AssetPaths.nft__png;
-			}
-			loadGraphic(graphic);
+			switchType(type);
 		}
 	}
 
 	override function update(elapsed:Float)
 	{
-		// 如果敵人在動的話
-		/*if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE)
-			{
-				// 什麼時候臉該面向哪邊，以x、y的速度方向判斷
-				if (Math.abs(velocity.x) > Math.abs(velocity.y))
-				{
-					if (velocity.x < 0)
-						facing = LEFT;
-					else
-						facing = RIGHT;
-				}
-				else
-				{
-					if (velocity.y < 0)
-						facing = UP;
-					else
-						facing = DOWN;
-				}
-				switch (facing)
-				{
-					case LEFT, RIGHT:
-						animation.play("lr");
-					case UP:
-						animation.play("u");
-					case DOWN:
-						animation.play("d");
-					case _:
-				}
-		}*/
 		if (onFire && animation.finished)
 		{
 			exists = false;

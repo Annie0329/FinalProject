@@ -29,7 +29,6 @@ enum Choice
 class CombatHUD extends FlxTypedGroup<FlxSprite>
 {
 	public var enemy:Enemy; // 我們打的是哪個敵人
-	public var choice(default, null):Choice; // 我們到底是逃走還是殺了敵人
 
 	// 這些是hud的素材
 	var background:FlxSprite; // 背景
@@ -39,7 +38,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var selected:Choice; // 我們選的打還是逃(前面那的enum的Choice)
 	var choices:Map<Choice, FlxText>; // 這個地圖把打或逃的選項變成文字(應該吧)
 
-	public var outcome:Outcome;
+	public var outcome:Outcome; // 結果
+
+	var state:Int = 1;
 
 	// 文字組
 	var combatText:FlxTypeText;
@@ -49,6 +50,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var i:Int = 1;
 	var textRunDone:Bool = false;
 	var investNumText:FlxText;
+	var nftStyle:FlxSprite;
+	var nftStyleNum:Int = 0;
 
 	var investNum:Int = 0;
 
@@ -77,7 +80,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(enemySprite);
 
 		// 字
-		combatText = new FlxTypeText(110, 235, 250, "text", 28, true);
+		combatText = new FlxTypeText(110, 220, 270, "text", 24, true);
 		combatText.font = AssetPaths.silver__ttf;
 		combatText.delay = 0.07;
 		combatText.skipKeys = ["X", "SHIFT"];
@@ -94,6 +97,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		investNumText = new FlxText(choices[YES].x, choices[YES].y, 170, "0", 44);
 		add(investNumText);
 		investNumText.visible = false;
+
+		nftStyle = new FlxSprite(choices[YES].x + choices[YES].width / 2, choices[YES].y).loadGraphic(AssetPaths.nft__png, true, 56, 64);
+		nftStyle.animation.frameIndex = 0;
+		add(nftStyle);
+		nftStyle.visible = false;
 
 		// 敵人名字
 		enemyNameText = new FlxText(70, 20, "enemyName", 36);
@@ -125,6 +133,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		*@param enemy 我們打的是哪種敵人，這樣才能叫出正確的類型
 
 	 */
+	// 準備介面
 	public function initCombat(diamond:Int, enemy:Enemy)
 	{
 		this.enemy = enemy; // 把這裡的敵人設成我們在別地方拿到的敵人
@@ -146,17 +155,241 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				combatText.resetText("要不要買點狗狗幣啊？誰不喜歡可愛的狗狗呢？");
 			case cloudMiner:
 				enemyNameText.text = "雲挖礦";
-				combatText.resetText("想不想雲挖礦呀？只要付給我一點能量幣，就可以租一台高效率機器幫你挖礦賺錢喔！");
+				combatText.resetText("哈囉~猩猩，只要你付給我5能量幣，就可以租到一台高效率機器幫你挖礦賺大錢喔！快來加入我吧！");
 			case nft:
 				enemyNameText.text = "NFT";
 				combatText.resetText("要不要買些特別的圖像啊？這些獨一無二的藝術品可以留著珍藏也可以拿去商店賣，如果是爆紅款式還可以賣出天價喔！");
+			case spartanMiner:
 		}
 		diamondText.text = Std.string(diamond);
-
+		state = 1;
 		visible = true; // 讓打架介面出現
 
 		// 應該是淡入的效果
 		FlxTween.num(0, 1, .66, {ease: FlxEase.circOut, onComplete: finishFadeIn}, updateAlpha);
+	}
+
+	function updateKeyboardInput()
+	{
+		// 看看哪個按鍵被按下的變數
+		var up:Bool = false;
+		var down:Bool = false;
+		var left:Bool = false;
+		var right:Bool = false;
+		var fire:Bool = false;
+
+		if (FlxG.keys.anyJustReleased([SPACE, X, ENTER]))
+			fire = true;
+		else if (FlxG.keys.anyJustReleased([W, UP]))
+			up = true;
+		else if (FlxG.keys.anyJustReleased([S, DOWN]))
+			down = true;
+		else if (FlxG.keys.anyJustReleased([A, LEFT]))
+			left = true;
+		else if (FlxG.keys.anyJustReleased([D, RIGHT]))
+			right = true;
+
+		// 根據按鍵做不同反應
+		if (fire)
+		{
+			// 柴犬幣
+			if (enemy.type == shibaCoin)
+			{
+				if (state == 1)
+				{
+					state++;
+					pointer.visible = false;
+					switch (selected)
+					{
+						case YES:
+							textRunDone = false;
+							choices[YES].visible = false;
+							choices[NO].visible = false;
+							investNumText.visible = true;
+							combatText.resetText("請選擇你要投資多少？最少5能量幣。好了就按enter。");
+							combatText.start(false, false, function()
+							{
+								textRunDone = true;
+							});
+
+						case NO:
+							outcome = FLEE;
+							doneResultsIn();
+					}
+				}
+				else if (state == 2)
+				{
+					state++;
+					if (FlxG.random.bool(70))
+					{
+						diamond += investNum;
+						combatText.resetText("你賺到" + Std.string(investNum) + "能量幣！");
+						outcome = WIN;
+					}
+					else
+					{
+						diamond -= investNum;
+						combatText.resetText("狗狗幣虧了。你什麼都沒得到。");
+						outcome = LOSE;
+					}
+					combatText.start(false, false);
+					investNumText.visible = false;
+					diamondText.text = Std.string(diamond);
+				}
+				else if (state == 3)
+					doneResultsIn();
+			}
+			// 雲挖礦
+			else if (enemy.type == cloudMiner)
+			{
+				if (state == 1)
+				{
+					state++;
+					switch (selected)
+					{
+						case YES:
+							diamond += 5;
+							textRunDone = false;
+							combatText.resetText("我沒騙你吧！馬上就賺到能量幣了。你想再多租幾台嗎？這次你出20能量幣就會有7台機器幫你挖礦賺錢喔！");
+							combatText.start(false, false, function()
+							{
+								textRunDone = true;
+							});
+
+						case NO:
+							outcome = FLEE;
+							combatText.resetText("唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。");
+							combatText.start(false, false, function()
+							{
+								textRunDone = true;
+							});
+					}
+				}
+				else if (state == 2)
+				{
+					state++;
+					if (outcome == FLEE)
+						doneResultsIn();
+					else
+					{
+						switch (selected)
+						{
+							case YES:
+								diamond -= 20;
+								textRunDone = false;
+								combatText.resetText("真是隻傻猩猩啊，這些錢我就收下了，嘿嘿嘿！");
+								combatText.start(false, false, function()
+								{
+									textRunDone = true;
+								});
+								outcome = LOSE;
+
+							case NO:
+								combatText.resetText("唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。");
+								combatText.start(false, false, function()
+								{
+									textRunDone = true;
+								});
+								outcome = FLEE;
+						}
+					}
+				}
+				else if (state == 3)
+					doneResultsIn();
+			}
+
+			// NFT
+			else if (enemy.type == nft)
+			{
+				if (state == 1)
+				{
+					state++;
+					pointer.visible = false;
+					switch (selected)
+					{
+						case YES:
+							textRunDone = false;
+							choices[YES].visible = false;
+							choices[NO].visible = false;
+							nftStyle.visible = true;
+							combatText.resetText("選一個花樣吧。按左右鍵查看花樣。");
+							combatText.start(false, false, function()
+							{
+								textRunDone = true;
+							});
+
+						case NO:
+							outcome = FLEE;
+							doneResultsIn();
+					}
+				}
+				else if (state == 2)
+				{
+					state++;
+					nftStyle.visible = false;
+					if (FlxG.random.bool(50))
+					{
+						diamond += 20;
+						combatText.resetText("哇！立刻有人用高價買你的NFT了！");
+						outcome = WIN;
+					}
+					else
+					{
+						diamond -= 20;
+						combatText.resetText("這張NFT沒人想買呢。");
+						outcome = LOSE;
+					}
+
+					combatText.start(false, false);
+				}
+				else if (state == 3)
+					doneResultsIn();
+			}
+			diamondText.text = Std.string(diamond);
+		}
+		else if (up || down)
+		{
+			// 如果按上下鍵就移動箭頭，如果本來在YES就變成NO，反之
+			// 聰明的寫法
+			selected = if (selected == YES) NO else YES;
+			movePointer();
+		}
+		else if (left || right)
+		{
+			if (investNumText.visible)
+			{
+				if (left && investNum != 0)
+					investNum -= 5;
+				else if (right && investNum / 5 != Std.int(diamond / 5))
+					investNum += 5;
+				investNumText.text = Std.string(investNum);
+			}
+			else if (nftStyle.visible)
+			{
+				if (left)
+				{
+					if (nftStyleNum == 0)
+						nftStyleNum = 2;
+					else
+						nftStyleNum--;
+				}
+				else if (right)
+				{
+					if (nftStyleNum == 2)
+						nftStyleNum = 0;
+					else
+						nftStyleNum++;
+				}
+				nftStyle.animation.frameIndex = nftStyleNum;
+			}
+		}
+	}
+
+	// 傳說中的movePointer
+	// 直接指定箭頭到選項的y座標，聰明
+	function movePointer()
+	{
+		pointer.y = choices[selected].y + (choices[selected].height / 2) - 16;
 	}
 
 	// 召喚淡入淡出的效果
@@ -191,6 +424,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		});
 	}
 
+	// 更新啦
 	override public function update(elapsed:Float)
 	{
 		updateKeyboardInput();
@@ -198,144 +432,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		super.update(elapsed);
 	}
 
-	function updateKeyboardInput()
-	{
-		// 看看哪個按鍵被按下的變數
-		var up:Bool = false;
-		var down:Bool = false;
-		var left:Bool = false;
-		var right:Bool = false;
-		var fire:Bool = false;
-
-		if (FlxG.keys.anyJustReleased([SPACE, X, ENTER]))
-		{
-			fire = true;
-		}
-		else if (FlxG.keys.anyJustReleased([W, UP]))
-		{
-			up = true;
-		}
-		else if (FlxG.keys.anyJustReleased([S, DOWN]))
-		{
-			down = true;
-		}
-		else if (FlxG.keys.anyJustReleased([A, LEFT]))
-		{
-			left = true;
-		}
-		else if (FlxG.keys.anyJustReleased([D, RIGHT]))
-		{
-			right = true;
-		}
-
-		// 根據按鍵做不同反應
-		if (fire)
-		{
-			// 選YES或NO
-			if (choices[YES].visible)
-				makeChoice();
-			else
-			{
-				// 投資結果
-				if (investNumText.visible)
-				{
-					switch (enemy.type)
-					{
-						// 柴犬幣
-						case shibaCoin:
-							if (FlxG.random.bool(70))
-							{
-								diamond += investNum;
-								combatText.resetText("你賺到" + Std.string(investNum) + "能量幣！");
-								outcome = WIN;
-							}
-							else
-							{
-								diamond -= investNum;
-								combatText.resetText("狗狗幣虧了。你什麼都沒得到。");
-								outcome = LOSE;
-							}
-						case cloudMiner:
-							diamond -= investNum;
-							combatText.resetText("這是詐騙。");
-							outcome = LOSE;
-
-						case nft:
-							diamond -= investNum;
-							combatText.resetText("你得到了一張NFT。");
-							outcome = WIN;
-					}
-					combatText.start(false, false);
-					investNumText.visible = false;
-					diamondText.text = Std.string(diamond);
-				}
-				else
-					doneResultsIn();
-			}
-		}
-		else if (up || down)
-		{
-			// 如果按上下鍵就移動箭頭，如果本來在YES就變成NO，反之
-			// 聰明的寫法
-			selected = if (selected == YES) NO else YES;
-			movePointer();
-		}
-		else if ((left || right) && investNumText.visible)
-		{
-			if (left && investNum != 0)
-				investNum -= 5;
-			else if (right && investNum / 5 != Std.int(diamond / 5))
-				investNum += 5;
-			investNumText.text = Std.string(investNum);
-		}
-	}
-
-	// 傳說中的movePointer
-	// 直接指定箭頭到選項的y座標，聰明
-	function movePointer()
-	{
-		pointer.y = choices[selected].y + (choices[selected].height / 2) - 16;
-	}
-
-	// 選擇完成後，根據選中內容做出反應
-	function makeChoice()
-	{
-		pointer.visible = false;
-		switch (selected)
-		{
-			case YES:
-				// 如果我們選擇打架，我們會有85%的機率可以打中敵人
-				choice = YES;
-				textRunDone = false;
-				choices[YES].visible = false;
-				choices[NO].visible = false;
-				investNumText.visible = true;
-				switch (enemy.type)
-				{
-					case shibaCoin:
-						combatText.resetText("請選擇你要投資多少？最少5能量幣。好了就按enter。");
-					case cloudMiner:
-						combatText.resetText("請選擇你要投資多少？最少5能量幣。好了就按enter。");
-					case nft:
-						combatText.resetText("請選擇你要投資多少？最少5能量幣。好了就按enter。");
-				}
-
-				combatText.start(false, false, function()
-				{
-					textRunDone = true;
-				});
-
-			case NO:
-				choice = NO;
-				outcome = FLEE;
-				doneResultsIn();
-		}
-
-		// 在這些事發生時我們要讓玩家等待，以免出錯
-		wait = true;
-	}
-
-	// 如果結果淡入完成玩家又沒被打敗，就淡出整的打架介面
+	// 離開打架介面
 	function doneResultsIn()
 	{
 		investNum = 0;

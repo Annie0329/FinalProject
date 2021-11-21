@@ -24,7 +24,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var pointer:Pointer;
 	var pointerQ:String = "none";
 	var txt:Bool = true;
-	var saveStoneIntro:Bool = false;
+
+	public var saveStoneIntro:Bool = false;
 
 	public var name:String;
 
@@ -44,11 +45,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(background);
 
 		// 字
-		text = new FlxTypeText(background.x + 110, background.y + 10, 340, "text", 28, true);
+		text = new FlxTypeText(background.x + 110, background.y + 15, 340, "text", 28, true);
 		text.color = FlxColor.BLACK;
 		text.font = AssetPaths.silver__ttf;
-		// text.sounds = [FlxG.sound.load("assets/sounds/speech.wav")];
-		text.delay = 0.07;
+		text.delay = 0.05;
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
 
@@ -125,60 +125,57 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		else
 			background.y = FlxG.height - background.height - 10;
 		pointer.y = background.y + 75;
-		text.y = background.y + 10;
+		text.y = background.y + 15;
 	}
 
 	// 對話大滿貫
 	public function context(npcType:NPC.NpcType)
 	{
-		if (npcType == doge)
+		switch (npcType)
 		{
-			name = AssetPaths.forestMission__txt;
-			txt = true;
-		}
-		if (npcType == ming)
-		{
-			name = AssetPaths.mingTalking__txt;
-			txt = true;
-		}
-		if (npcType == sbRed)
-		{
-			name = ":SR:你問我在做什麼？哼哼，我怎麼可能會告訴你我在竄改島上的交易紀錄呢？這次我一定可以做到的！";
-			txt = false;
-		}
-		if (npcType == sbBlue)
-		{
-			name = ":SB:在迪拜島上，想更改交易紀錄，除非同時把一半以上的島民手中的交易紀錄改掉，不然是不可能成功的。";
-			txt = false;
-		}
-		if (npcType == sbGreen)
-		{
-			name = ":SG:你遇到那隻紅領巾的笨狗了嗎？他又在做竄改交易紀錄的白日夢了。";
-			txt = false;
-		}
-		if (npcType == monument)
-		{
-			name = ":N:裡面似乎有毀壞的記帳本。";
-			txt = false;
-		}
-		if (npcType == lake)
-		{
-			name = AssetPaths.lakeTalking__txt;
-			txt = true;
-		}
-		if (npcType == saveStone)
-		{
-			// if (saveStoneIntro)
-			// {
-			name = ":N:存檔成功！";
-			txt = false;
-			// }
-			// else
-			// {
-			// 	name = AssetPaths.saveStoneIntro__txt;
-			// 	txt = true;
-			// 	saveStoneIntro = true;
-			// }
+			case doge:
+				name = AssetPaths.forestMission__txt;
+				txt = true;
+
+			case ming:
+				name = AssetPaths.mingTalking__txt;
+				txt = true;
+
+			case sbRed:
+				name = AssetPaths.srTalk__txt;
+				txt = true;
+
+			case sbBlue:
+				name = AssetPaths.sbTalk__txt;
+				txt = true;
+
+			case sbGreen:
+				name = AssetPaths.sgTalk__txt;
+				txt = true;
+
+			case monument:
+				name = ":N:裡面似乎有毀壞的記帳本。";
+				txt = false;
+
+			case lake:
+				name = AssetPaths.lakeTalking__txt;
+				txt = true;
+
+			case saveStone:
+				if (saveStoneIntro)
+				{
+					name = ":N:存檔成功！";
+					txt = false;
+				}
+				else
+				{
+					name = AssetPaths.saveStoneIntro__txt;
+					txt = true;
+					saveStoneIntro = true;
+				}
+			case spartan:
+				name = AssetPaths.spartanTalk__txt;
+				txt = true;
 		}
 		show(name, txt);
 	}
@@ -213,6 +210,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				pointer.visible = false;
 				pointerQ = "none";
 			}
+			// 對話換行
 			else
 			{
 				profile += 2;
