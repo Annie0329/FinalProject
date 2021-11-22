@@ -26,9 +26,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var txt:Bool = true;
 
 	public var saveStoneIntro:Bool = false;
-
+	public var stoneTextYes:Bool = false;
 	public var name:String;
-
 	public var diaUpDown:String;
 
 	var profilePic:String;
@@ -174,8 +173,17 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					saveStoneIntro = true;
 				}
 			case spartan:
-				name = AssetPaths.spartanTalk__txt;
-				txt = true;
+				if (stoneTextYes)
+				{
+					name = ":S:加油！";
+					txt = false;
+				}
+				else
+				{
+					name = AssetPaths.spartanTalk__txt;
+					txt = true;
+					stoneTextYes = true;
+				}
 		}
 		show(name, txt);
 	}

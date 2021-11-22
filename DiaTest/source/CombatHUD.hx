@@ -47,9 +47,10 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var dilog_boxes:Array<String>;
 	var name:String;
 	var txt:Bool = true;
-	var i:Int = 1;
 	var textRunDone:Bool = false;
 	var investNumText:FlxText;
+	var textIn:Bool = false;
+
 	var nftStyle:FlxSprite;
 	var nftStyleNum:Int = 0;
 

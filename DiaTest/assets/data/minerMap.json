@@ -24,7 +24,7 @@
         {"name": "stone", "id": 22, "_eid": "55350965", "x": 280, "y": 1080, "originX": 0, "originY": 0},
         {"name": "stone", "id": 23, "_eid": "55350965", "x": 880, "y": 1320, "originX": 0, "originY": 0},
         {"name": "stone", "id": 26, "_eid": "55350965", "x": 1040, "y": 1200, "originX": 0, "originY": 0},
-        {"name": "monumentDoor", "id": 40, "_eid": "78347318", "x": 120, "y": 1680, "originX": 0, "originY": 0},
+        {"name": "monumentDoor", "id": 40, "_eid": "78347318", "x": 160, "y": 1760, "originX": 0, "originY": 0},
         {"name": "stone", "id": 41, "_eid": "55350965", "x": 960, "y": 1040, "originX": 0, "originY": 0},
         {"name": "spartanMiner", "id": 42, "_eid": "47564238", "x": 440, "y": 1080, "originX": 0, "originY": 0},
         {"name": "spartanMiner", "id": 43, "_eid": "47564238", "x": 720, "y": 1320, "originX": 0, "originY": 0},

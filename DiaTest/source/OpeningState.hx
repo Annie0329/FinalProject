@@ -78,7 +78,11 @@ class OpeningState extends FlxState
 			{
 				FlxG.camera.fade(0xffFFFDE4, 1, false, function()
 				{
-					FlxG.switchState(new PlayState(false));
+					openingAnimation.visible = false;
+					FlxG.camera.fade(0xffFFFDE4, 1, true, function()
+					{
+						FlxG.switchState(new PlayState(false));
+					});
 				});
 			}
 			else
@@ -86,16 +90,16 @@ class OpeningState extends FlxState
 				i++;
 				textRunDone = false;
 				openText.resetText(dilog_boxes[i + 1]);
+				openText.start(false, false, function()
+				{
+					textRunDone = true;
+				});
 				FlxTween.tween(openingAnimation, {alpha: 0}, .33, {
 					onComplete: function(_)
 					{
 						openingAnimation.animation.frameIndex = i;
 						FlxTween.tween(openingAnimation, {alpha: 1}, .33);
 					}
-				});
-				openText.start(false, false, function()
-				{
-					textRunDone = true;
 				});
 			}
 		}

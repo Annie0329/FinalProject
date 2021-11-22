@@ -20,6 +20,7 @@ class PlayState extends FlxState
 	var player:Player;
 	var bag:Bag;
 	var playerPoint:FlxPoint;
+	//var diamond:Diamond;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -125,6 +126,9 @@ class PlayState extends FlxState
 		through.follow();
 		add(through);
 
+		// diamond = new Diamond();
+		// add(diamond);
+
 		// 打人介面
 		combatHud = new CombatHUD();
 		add(combatHud);
@@ -182,26 +186,21 @@ class PlayState extends FlxState
 				}
 			}
 		}
-		else
-		{
-			player.active = false;
-			new FlxTimer().start(1.5, function(timer:FlxTimer)
-			{
-				name = AssetPaths.c1Opening__txt;
-				getBag = true;
-				playerUpDown();
-				dia.show(name, true);
-			});
-		}
 
 		if (FlxG.sound.music == null)
 			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
 
 		FlxG.mouse.visible = false;
 		if (loadsave)
-			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+			FlxG.camera.fade(FlxColor.BLACK, .33, true);
 		else
-			FlxG.camera.fade(0xffFFFDE4, 1, true);
+			FlxG.camera.fade(FlxColor.BLACK, 1, true, function()
+			{
+				name = AssetPaths.c1Opening__txt;
+				getBag = true;
+				playerUpDown();
+				dia.show(name, true);
+			});
 
 		super.create();
 	}
@@ -277,6 +276,7 @@ class PlayState extends FlxState
 			ufo.visible = true;
 			FlxG.mouse.visible = true;
 		}
+		// diamond.diamondText.text = Std.string(bag.diamondCounter);
 		updateInCombat();
 		updateWhenDiaInvisible();
 		updateTalking();
@@ -494,6 +494,8 @@ class PlayState extends FlxState
 			{
 				minerOpen = false;
 				minerYes = true;
+				bag.diamondCounter--;
+				bag.updateBag();
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
 					save.data.bananaValue = bag.bananaCounter;

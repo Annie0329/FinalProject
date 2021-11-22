@@ -18,6 +18,7 @@ class MinerState extends FlxState
 	var player:Player;
 	var bag:Bag;
 
+	// var diamond:Diamond;
 	// 各關目標
 	var stoneGoal:Int = 3;
 	var boxGoal:Int = 1;
@@ -131,6 +132,9 @@ class MinerState extends FlxState
 		dia = new Dia();
 		add(dia);
 
+		// diamond = new Diamond();
+		// add(diamond);
+
 		// 包包介面
 		bag = new Bag();
 		add(bag);
@@ -150,12 +154,10 @@ class MinerState extends FlxState
 		stoneCounterIcon.updateHitbox();
 		stoneCounterIcon.scrollFactor.set(0, 0);
 		add(stoneCounterIcon);
-		stoneCounterIcon.visible = false;
 
 		stoneCounterText = new FlxText(stoneCounterIcon.x + stoneCounterIcon.width + 10, stoneCounterIcon.y, 200, "0", 20);
 		stoneCounterText.scrollFactor.set(0, 0);
 		add(stoneCounterText);
-		stoneCounterText.visible = false;
 
 		// 儲存資料的能量幣件
 		save = new FlxSave();
@@ -245,6 +247,7 @@ class MinerState extends FlxState
 		updateEsc();
 		updateC();
 
+		// diamond.diamondText.text = Std.string(bag.diamondCounter);
 		// 除錯大隊
 
 		var e = FlxG.keys.anyJustReleased([E]);
@@ -324,7 +327,7 @@ class MinerState extends FlxState
 		if (stoneCounter >= stoneGoal)
 		{
 			bag.diamondCounter += Std.int(stoneCounter / stoneGoal);
-			name = ":N:你得到了" + Std.int(stoneCounter / stoneGoal) + "顆能量石！";
+			name = ":N:你得到了" + Std.int(stoneCounter / stoneGoal) + "能量幣！";
 			stoneCounter = stoneCounter % stoneGoal;
 			stoneCounterText.text = Std.string(stoneCounter);
 			boxCounter++;
@@ -377,7 +380,8 @@ class MinerState extends FlxState
 			}
 			else if (npcType == spartan)
 			{
-				stoneYes = true;
+				if (!stoneCounterText.visible)
+					stoneYes = true;
 			}
 
 			dia.context(npcType);
@@ -394,15 +398,7 @@ class MinerState extends FlxState
 			player.active = true;
 
 		// 對話結束時要做什麼合集
-		if (!dia.visible)
-		{
-			if (stoneYes)
-			{
-				stoneCounterIcon.visible = true;
-				stoneCounterText.visible = true;
-				stoneYes = false;
-			}
-		}
+		if (!dia.visible) {}
 	}
 
 	// 如果玩家在螢幕上方，對話框就放到下方
