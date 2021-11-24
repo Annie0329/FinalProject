@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
@@ -17,17 +18,19 @@ enum ShopChoice
 	exit;
 }
 
-class Bag extends FlxTypedGroup<FlxSprite>
+class Bag extends FlxTypedGroup<FlxBasic>
 {
-	var shopkeeper:FlxSprite;
+	public var shopUi = new FlxTypedGroup<FlxSprite>();
+	public var bagUi = new FlxTypedGroup<FlxSprite>();
+	public var diamondUi = new FlxTypedGroup<FlxSprite>();
+
 	var background:FlxSprite;
 
 	public var bananaCounter:Int = 0;
+	public var diamondCounter:Int = 0;
 
 	var bananaCounterText:FlxText;
 	var bananaCounterIcon:FlxSprite;
-
-	public var diamondCounter:Int = 0;
 
 	var diamondCounterText:FlxText;
 
@@ -52,73 +55,100 @@ class Bag extends FlxTypedGroup<FlxSprite>
 
 	var pointer:Pointer;
 
+	public var diamondText:FlxText;
+
+	var diamondIcon:FlxSprite;
+
 	public function new()
 	{
 		super();
-		// 老闆
-		shopkeeper = new FlxSprite(0, 0, AssetPaths.shopkeeper__png);
-		add(shopkeeper);
+
+		// 能量幣組
+		diamondIcon = new FlxSprite(10, 10).loadGraphic(AssetPaths.diamondIcon__png);
+		diamondUi.add(diamondIcon);
+
+		diamondText = new FlxText(diamondIcon.x + 40, diamondIcon.y + 5, "0", 20);
+		diamondText.color = 0xff2D5925;
+		diamondUi.add(diamondText);
+
+		add(diamondUi);
+		diamondUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 
 		// 背景
 		background = new FlxSprite(10, 10);
 		background.screenCenter(FlxAxes.X);
-		add(background);
 
 		// 香蕉圖示
 		bananaCounterIcon = new FlxSprite(background.x + 65, 120, AssetPaths.bananaIcon__png);
-		add(bananaCounterIcon);
-
-		// 香蕉數目
-		bananaCounterText = new FlxText(bananaCounterIcon.x + bananaCounterIcon.width, bananaCounterIcon.y + 5, "0", 20);
-		bananaCounterText.color = 0xff2D5925;
-		add(bananaCounterText);
 
 		// 錢數目
 		diamondCounterText = new FlxText(370, 150, "0", 20);
 		diamondCounterText.color = 0xff2D5925;
-		add(diamondCounterText);
 
-		// 商店選項
-		shopCho = new FlxText(background.x + 10, background.y + 10, "買\n賣\n聊天\n離開\n", 26, true);
-		shopCho.color = 0xff2D5925;
-		shopCho.font = AssetPaths.silver__ttf;
-		add(shopCho);
+		// 包包組
+		bagUi.add(background);
+		bagUi.add(bananaCounterIcon);
+		bagUi.add(diamondCounterText);
 
-		// 商店的字
-		shopText = new Text(0, 0, 270, "歡迎來到我的店！", 28, true);
-		shopText.color = 0xff2D5925;
-		add(shopText);
+		// 香蕉數目
+		bananaCounterText = new FlxText(bananaCounterIcon.x + bananaCounterIcon.width, bananaCounterIcon.y + 5, "0", 20);
+		bananaCounterText.color = 0xff2D5925;
+		bagUi.add(bananaCounterText);
 
 		// 交易紀錄
 		dealText = new FlxText(background.x + 85, 125, "目前並無交易紀錄\n", 28, true);
 		dealText.color = 0xff2D5925;
 		dealText.font = AssetPaths.silver__ttf;
-		add(dealText);
+		bagUi.add(dealText);
+
+		add(bagUi);
+		bagUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		bagUi.visible = false;
+
+		// 商店組
+		shopUi.add(background);
+		shopUi.add(bananaCounterIcon);
+		shopUi.add(diamondCounterText);
+
+		// 商店選項
+		shopCho = new FlxText(background.x + 10, background.y + 10, "買\n賣\n聊天\n離開\n", 26, true);
+		shopCho.color = 0xff2D5925;
+		shopCho.font = AssetPaths.silver__ttf;
+		shopUi.add(shopCho);
+
+		// 商店的字
+		shopText = new Text(0, 0, 270, "歡迎來到我的店！", 28, true);
+		shopText.color = 0xff2D5925;
+		shopUi.add(shopText);
 
 		// 箭頭
 		pointer = new Pointer();
 		pointer.color = 0xffF0433D;
-		add(pointer);
+		shopUi.add(pointer);
 
-		forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		add(shopUi);
+		shopUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		shopUi.visible = false;
 
-		visible = false;
 		active = false;
 	}
 
-	public function bagUi()
+	public function bagUiShow()
 	{
 		background.loadGraphic(AssetPaths.bagItem__png);
 		background.screenCenter(FlxAxes.X);
 		background.y = 10;
+
 		bananaCounterIcon.setPosition(background.x + 65, 120);
 		bananaCounterIcon.setGraphicSize(40, 40);
 		bananaCounterIcon.updateHitbox();
+
 		bananaCounterText.x = bananaCounterIcon.x + bananaCounterIcon.width;
 		diamondCounterText.setPosition(background.x + 370, 265);
+
 		dealText.setPosition(background.x + 85, 125);
-		visible = true;
-		active = true;
+		dealText.visible = false;
+
 		if (bananaCounter > 0)
 		{
 			bananaCounterIcon.visible = true;
@@ -130,41 +160,32 @@ class Bag extends FlxTypedGroup<FlxSprite>
 			bananaCounterText.visible = false;
 		}
 
-		dealText.visible = false;
-		shopText.visible = false;
-		shopkeeper.visible = false;
-		shopCho.visible = false;
-		pointer.visible = false;
+		bagUi.visible = true;
+		shopUi.visible = false;
+		active = true;
 	}
 
 	public function buyAndSell()
 	{
-		background.loadGraphic(AssetPaths.shopUi__png);
-		background.setPosition(0, 172);
+		background.loadGraphic(AssetPaths.shopkeeper__png);
+		background.setPosition(0, 0);
 		background.screenCenter(FlxAxes.X);
 
-		shopText.setPosition(background.x + 200, background.y + 20);
-		shopCho.setPosition(background.x + 10 + pointer.width + 10, background.y + 20);
-		diamondCounterText.setPosition(background.x + 80, 310);
+		shopText.setPosition(background.x + 280, background.height / 2 + 10);
+		shopCho.setPosition(background.x + 90 + pointer.width + 10, background.height / 2 + 10);
+		diamondCounterText.setPosition(background.x + 160, 310);
+
 		bananaCounterIcon.setGraphicSize(30, 30);
 		bananaCounterIcon.updateHitbox();
+		bananaCounterIcon.visible = false;
 
 		mainTalk = "歡迎來到我的店！";
 		setMainShop(mainTalk);
 
-		visible = true;
-
-		bananaCounterIcon.visible = false;
-		bananaCounterText.visible = false;
-		dealText.visible = false;
-
-		diamondCounterText.visible = true;
-		shopText.visible = true;
-		shopkeeper.visible = true;
-		shopCho.visible = true;
-		pointer.visible = true;
-
+		bagUi.visible = false;
+		shopUi.visible = true;
 		active = true;
+
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 	}
 
@@ -176,7 +197,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 		{
 			textRunDone = true;
 		});
-		pointer.setPointer(background.x + 15, shopCho.y, 30, 4, "ud");
+		pointer.setPointer(background.x + 95, shopCho.y, 30, 4, "ud");
 		shopChoice = main;
 	}
 
@@ -184,41 +205,40 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	{
 		bananaCounterText.text = Std.string(bananaCounter);
 		diamondCounterText.text = Std.string(diamondCounter);
+		diamondText.text = Std.string(diamondCounter);
 	}
 
 	override function update(elapsed:Float)
 	{
 		updateEnter();
-		// 退出
-		if (visible)
+
+		// 包包功能
+		if (bagUi.visible)
 		{
-			// 如果按x而且不是在商店(看不到老闆)才能退出
 			var x = FlxG.keys.anyJustReleased([X]);
 			var l = FlxG.keys.anyJustReleased([LEFT]);
 			var r = FlxG.keys.anyJustReleased([RIGHT]);
-			if (!shopkeeper.visible)
+			// 退出
+			if (x)
 			{
-				if (x)
-				{
-					visible = false;
-					active = false;
-				}
-				// 所有物品
-				if (l)
-				{
-					background.loadGraphic(AssetPaths.bagItem__png);
-					bananaCounterIcon.visible = true;
-					bananaCounterText.visible = true;
-					dealText.visible = false;
-				}
-				// 交易紀錄
-				if (r)
-				{
-					background.loadGraphic(AssetPaths.bagDeal__png);
-					bananaCounterIcon.visible = false;
-					bananaCounterText.visible = false;
-					dealText.visible = true;
-				}
+				bagUi.visible = false;
+				active = false;
+			}
+			// 所有物品
+			if (l)
+			{
+				background.loadGraphic(AssetPaths.bagItem__png);
+				bananaCounterIcon.visible = true;
+				bananaCounterText.visible = true;
+				dealText.visible = false;
+			}
+			// 交易紀錄
+			if (r)
+			{
+				background.loadGraphic(AssetPaths.bagDeal__png);
+				bananaCounterIcon.visible = false;
+				bananaCounterText.visible = false;
+				dealText.visible = true;
 			}
 		}
 
@@ -229,7 +249,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 		// 按enter了
-		if (enter && shopkeeper.visible && textRunDone)
+		if (enter && shopUi.visible && textRunDone)
 		{
 			// 有箭頭
 			if (pointer.visible)
@@ -280,7 +300,7 @@ class Bag extends FlxTypedGroup<FlxSprite>
 						textRunDone = true;
 						FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 						{
-							visible = false;
+							shopUi.visible = false;
 							active = false;
 							FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 						});

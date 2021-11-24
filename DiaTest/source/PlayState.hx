@@ -10,7 +10,6 @@ import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
-import flixel.util.FlxTimer;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -20,7 +19,6 @@ class PlayState extends FlxState
 	var player:Player;
 	var bag:Bag;
 	var playerPoint:FlxPoint;
-	//var diamond:Diamond;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -126,8 +124,9 @@ class PlayState extends FlxState
 		through.follow();
 		add(through);
 
-		// diamond = new Diamond();
-		// add(diamond);
+		// 包包介面
+		bag = new Bag();
+		add(bag);
 
 		// 打人介面
 		combatHud = new CombatHUD();
@@ -136,10 +135,6 @@ class PlayState extends FlxState
 		// 對話框
 		dia = new Dia();
 		add(dia);
-
-		// 包包介面
-		bag = new Bag();
-		add(bag);
 
 		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
@@ -276,7 +271,6 @@ class PlayState extends FlxState
 			ufo.visible = true;
 			FlxG.mouse.visible = true;
 		}
-		// diamond.diamondText.text = Std.string(bag.diamondCounter);
 		updateInCombat();
 		updateWhenDiaInvisible();
 		updateTalking();
@@ -353,16 +347,11 @@ class PlayState extends FlxState
 	{
 		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
 		{
-			startCombat(enemy);
+			inCombat = true;
+			player.active = false;
+			enemies.active = false;
+			combatHud.initCombat(bag.diamondCounter, bag.diamondText, enemy);
 		}
-	}
-
-	function startCombat(enemy:Enemy)
-	{
-		inCombat = true;
-		player.active = false;
-		enemies.active = false;
-		combatHud.initCombat(bag.diamondCounter, enemy);
 	}
 
 	// 檢查敵人視野
@@ -378,6 +367,7 @@ class PlayState extends FlxState
 			enemy.seesPlayer = false;
 	}
 
+	// 跟NPC講話
 	function npcTalk(player:Player, npc:NPC)
 	{
 		talkYes = true;
@@ -446,7 +436,7 @@ class PlayState extends FlxState
 			talkYes = false;
 
 		// 如果按enter就對話
-		if (talkYes && enter && !bag.visible)
+		if (talkYes && enter && !bag.bagUi.visible && !bag.shopUi.visible)
 		{
 			talkYes = false;
 			playerUpDown();
@@ -470,7 +460,7 @@ class PlayState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.visible || combatHud.visible)
+		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemies.active = false;
@@ -494,10 +484,11 @@ class PlayState extends FlxState
 			{
 				minerOpen = false;
 				minerYes = true;
-				bag.diamondCounter--;
-				bag.updateBag();
+
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
+					bag.diamondCounter--;
+					bag.updateBag();
 					save.data.bananaValue = bag.bananaCounter;
 					save.data.diamondValue = bag.diamondCounter;
 					save.data.playerBag = player.playerBag;
@@ -537,9 +528,9 @@ class PlayState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && player.playerBag && !bag.visible)
+		if (c && !dia.visible && player.playerBag && (!bag.bagUi.visible && !bag.shopUi.visible))
 		{
-			bag.bagUi();
+			bag.bagUiShow();
 		}
 	}
 }

@@ -59,6 +59,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var enemyNameText:FlxText;
 	var diamondText:FlxText;
 
+	public var diamondUiText:FlxText;
+
 	public var diamond:Int = 0;
 
 	var alpha:Float = 0; // 淡入淡出的效果，alpha就是透明度啦
@@ -131,15 +133,18 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	/**
 		*當打架開始時PlayerState會啟動這個功能。這會架好螢幕，讓一切都準備好
 		*@param diamond
+		*@param diamondUiText
 		*@param enemy 我們打的是哪種敵人，這樣才能叫出正確的類型
 
 	 */
 	// 準備介面
-	public function initCombat(diamond:Int, enemy:Enemy)
+	public function initCombat(diamond:Int, diamondUiText:FlxText, enemy:Enemy)
 	{
 		this.enemy = enemy; // 把這裡的敵人設成我們在別地方拿到的敵人
 		this.diamond = diamond;
-
+		this.diamondUiText = diamondUiText;
+		diamondText.text = Std.string(diamond);
+		
 		enemySprite.changeType(enemy.type); // 換成普通敵人或是魔王
 
 		// 確定這些東西即使在我們之後來也不會亂動或亂出現
@@ -162,7 +167,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				combatText.resetText("要不要買些特別的圖像啊？這些獨一無二的藝術品可以留著珍藏也可以拿去商店賣，如果是爆紅款式還可以賣出天價喔！");
 			case spartanMiner:
 		}
-		diamondText.text = Std.string(diamond);
+
 		state = 1;
 		visible = true; // 讓打架介面出現
 
@@ -347,6 +352,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					doneResultsIn();
 			}
 			diamondText.text = Std.string(diamond);
+			diamondUiText.text = Std.string(diamond);
 		}
 		else if (up || down)
 		{
@@ -361,7 +367,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			{
 				if (left && investNum != 0)
 					investNum -= 5;
-				else if (right && investNum / 5 != Std.int(diamond / 5))
+				else if (right) // && investNum / 5 != Std.int(diamond / 5))
 					investNum += 5;
 				investNumText.text = Std.string(investNum);
 			}

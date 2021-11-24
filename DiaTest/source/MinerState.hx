@@ -18,7 +18,6 @@ class MinerState extends FlxState
 	var player:Player;
 	var bag:Bag;
 
-	// var diamond:Diamond;
 	// 各關目標
 	var stoneGoal:Int = 3;
 	var boxGoal:Int = 1;
@@ -128,16 +127,13 @@ class MinerState extends FlxState
 		through.follow();
 		add(through);
 
-		// 對話框
-		dia = new Dia();
-		add(dia);
-
-		// diamond = new Diamond();
-		// add(diamond);
-
 		// 包包介面
 		bag = new Bag();
 		add(bag);
+
+		// 對話框
+		dia = new Dia();
+		add(dia);
 
 		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
@@ -149,7 +145,7 @@ class MinerState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		stoneCounterIcon = new FlxSprite(10, 10).loadGraphic(AssetPaths.stone__png);
+		stoneCounterIcon = new FlxSprite(110, 10).loadGraphic(AssetPaths.stone__png);
 		stoneCounterIcon.setGraphicSize(20, 20);
 		stoneCounterIcon.updateHitbox();
 		stoneCounterIcon.scrollFactor.set(0, 0);
@@ -247,7 +243,6 @@ class MinerState extends FlxState
 		updateEsc();
 		updateC();
 
-		// diamond.diamondText.text = Std.string(bag.diamondCounter);
 		// 除錯大隊
 
 		var e = FlxG.keys.anyJustReleased([E]);
@@ -273,6 +268,7 @@ class MinerState extends FlxState
 		FlxG.collide(enemies, walls);
 		FlxG.overlap(enemies, stone, enemyGotStone);
 		FlxG.collide(enemies);
+		FlxG.collide(enemies, npc);
 
 		FlxG.collide(stone);
 		FlxG.collide(stone, walls);
@@ -327,9 +323,9 @@ class MinerState extends FlxState
 		if (stoneCounter >= stoneGoal)
 		{
 			bag.diamondCounter += Std.int(stoneCounter / stoneGoal);
-			name = ":N:你得到了" + Std.int(stoneCounter / stoneGoal) + "能量幣！";
 			stoneCounter = stoneCounter % stoneGoal;
 			stoneCounterText.text = Std.string(stoneCounter);
+
 			boxCounter++;
 			box.loadGraphic(AssetPaths.boxFull__png);
 
@@ -343,9 +339,7 @@ class MinerState extends FlxState
 					FlxTween.tween(box, {y: boxPos}, 2, {
 						onComplete: function(_)
 						{
-							playerUpDown();
-							txt = false;
-							dia.show(name, txt);
+							bag.updateBag();
 						}
 					});
 				}
@@ -363,7 +357,7 @@ class MinerState extends FlxState
 			talkYes = false;
 
 		// 如果按enter就對話
-		if (talkYes && enter && !bag.visible)
+		if (talkYes && enter && !bag.bagUi.visible && !bag.shopUi.visible)
 		{
 			talkYes = false;
 			playerUpDown();
@@ -392,8 +386,11 @@ class MinerState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.visible)
+		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible)
+		{
 			player.active = false;
+			enemies.active = false;
+		}
 		else
 			player.active = true;
 
@@ -429,9 +426,9 @@ class MinerState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && player.playerBag)
+		if (c && !dia.visible && player.playerBag && (!bag.bagUi.visible && !bag.shopUi.visible))
 		{
-			bag.bagUi();
+			bag.bagUiShow();
 		}
 	}
 }
