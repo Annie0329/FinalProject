@@ -10,13 +10,13 @@ class Text extends FlxTypeText
 	public var dilog_boxes:Array<String>;
 
 	var txt:Bool = true;
-	var textRunDone = false;
+	public var textRunDone = false;
 
 	public var over:Bool = false;
 
 	public function new(X:Float, Y:Float, Width:Int, Text:String, Size:Int, EmbeddedFont:Bool)
 	{
-		super(x, y, Width, Text, Size, EmbeddedFont);
+		super(X, Y, Width, Text, Size, EmbeddedFont);
 		font = AssetPaths.silver__ttf;
 		delay = 0.05;
 		skipKeys = ["X", "SHIFT"];

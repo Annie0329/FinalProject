@@ -141,7 +141,6 @@ class PlayState extends FlxState
 
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 200, "ufo", 20);
-		// ufo.color = FlxColor.BLACK;
 		ufo.scrollFactor.set(0, 0);
 		add(ufo);
 		ufo.visible = false;
@@ -151,18 +150,10 @@ class PlayState extends FlxState
 		save.bind("DiaTest");
 		if (loadsave)
 		{
-			if (save.data.bananaValue != null && save.data.diamondValue != null)
-			{
-				bag.bananaCounter = save.data.bananaValue;
-				bag.diamondCounter = save.data.diamondValue;
-				bag.updateBag();
-			}
-			if (save.data.playerBag != null)
-			{
-				player.playerBag = save.data.playerBag;
-				if (player.playerBag)
-					player.playerBagPic();
-			}
+			bag.bananaCounter = save.data.bananaValue;
+			bag.diamondCounter = save.data.diamondValue;
+			bag.updateBag();
+
 			if (save.data.playerPos != null && save.data.place != null)
 			{
 				if (save.data.place == "monument")
@@ -172,12 +163,7 @@ class PlayState extends FlxState
 					minerYes = true;
 					dia.saveStoneIntro = true;
 					player.setPosition(minerDoor.x, minerDoor.y);
-					save.data.bananaValue = bag.bananaCounter;
-					save.data.diamondValue = bag.diamondCounter;
-					save.data.playerBag = player.playerBag;
-					save.data.playerPos = player.getPosition();
-					save.data.place = "monument";
-					save.flush();
+					dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
 				}
 			}
 		}
@@ -189,6 +175,8 @@ class PlayState extends FlxState
 		if (loadsave)
 			FlxG.camera.fade(FlxColor.BLACK, .33, true);
 		else
+		{
+			player.animation.frameIndex = 11;
 			FlxG.camera.fade(FlxColor.BLACK, 1, true, function()
 			{
 				name = AssetPaths.c1Opening__txt;
@@ -196,6 +184,7 @@ class PlayState extends FlxState
 				playerUpDown();
 				dia.show(name, true);
 			});
+		}
 
 		super.create();
 	}
@@ -264,7 +253,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(npcType); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -276,7 +265,6 @@ class PlayState extends FlxState
 		updateTalking();
 		updateEsc();
 		updateC();
-
 		// 碰撞爆
 		FlxG.overlap(player, ground);
 		FlxG.overlap(player, road);
@@ -389,11 +377,7 @@ class PlayState extends FlxState
 		{
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 			{
-				save.data.bananaValue = bag.bananaCounter;
-				save.data.diamondValue = bag.diamondCounter;
-				save.data.playerBag = player.playerBag;
-				save.data.place = "monument";
-				save.flush();
+				dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
 				FlxG.switchState(new MinerState(true));
 			});
 		}
@@ -444,12 +428,7 @@ class PlayState extends FlxState
 			// 存檔點
 			if (npcType == saveStone)
 			{
-				save.data.bananaValue = bag.bananaCounter;
-				save.data.diamondValue = bag.diamondCounter;
-				save.data.playerBag = player.playerBag;
-				save.data.playerPos = player.getPosition();
-				save.data.place = "monument";
-				save.flush();
+				dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
 			}
 
 			dia.context(npcType);
@@ -476,7 +455,7 @@ class PlayState extends FlxState
 		{
 			if (getBag)
 			{
-				player.playerBagPic();
+				player.animation.frameIndex = 0;
 				getBag = false;
 			}
 			// 有錢就開礦場門
@@ -489,11 +468,7 @@ class PlayState extends FlxState
 				{
 					bag.diamondCounter--;
 					bag.updateBag();
-					save.data.bananaValue = bag.bananaCounter;
-					save.data.diamondValue = bag.diamondCounter;
-					save.data.playerBag = player.playerBag;
-					save.data.place = "monument";
-					save.flush();
+					dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
 					FlxG.switchState(new MinerState(true));
 				});
 			}
@@ -528,7 +503,7 @@ class PlayState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && player.playerBag && (!bag.bagUi.visible && !bag.shopUi.visible))
+		if (c && !dia.visible && (!bag.bagUi.visible && !bag.shopUi.visible))
 		{
 			bag.bagUiShow();
 		}

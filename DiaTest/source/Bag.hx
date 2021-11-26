@@ -9,6 +9,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 
+// 商店選項
 enum ShopChoice
 {
 	main;
@@ -39,7 +40,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var mainTalk:String;
 	var bananaSell:Int = 0;
 
-	var dilog_boxes:Array<String>;
 	var name:String;
 	var txt:Bool = true;
 	var i:Int = 1;
@@ -75,8 +75,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		diamondUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 
 		// 背景
-		background = new FlxSprite(10, 10);
-		background.screenCenter(FlxAxes.X);
+		background = new FlxSprite();
 
 		// 香蕉圖示
 		bananaCounterIcon = new FlxSprite(background.x + 65, 120, AssetPaths.bananaIcon__png);
@@ -110,21 +109,21 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shopUi.add(bananaCounterIcon);
 		shopUi.add(diamondCounterText);
 
+		// 箭頭
+		pointer = new Pointer();
+		pointer.color = 0xffF0433D;
+		shopUi.add(pointer);
+
 		// 商店選項
-		shopCho = new FlxText(background.x + 10, background.y + 10, "買\n賣\n聊天\n離開\n", 26, true);
+		shopCho = new FlxText(background.x + 90 + pointer.width + 10, FlxG.height / 2 + 10, "買\n賣\n聊天\n離開\n", 26, true);
 		shopCho.color = 0xff2D5925;
 		shopCho.font = AssetPaths.silver__ttf;
 		shopUi.add(shopCho);
 
 		// 商店的字
-		shopText = new Text(0, 0, 270, "歡迎來到我的店！", 28, true);
+		shopText = new Text(background.x + 280, shopCho.y, 270, "歡迎來到我的店！", 28, true);
 		shopText.color = 0xff2D5925;
 		shopUi.add(shopText);
-
-		// 箭頭
-		pointer = new Pointer();
-		pointer.color = 0xffF0433D;
-		shopUi.add(pointer);
 
 		add(shopUi);
 		shopUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
@@ -133,11 +132,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		active = false;
 	}
 
+	// 開啟包包
 	public function bagUiShow()
 	{
 		background.loadGraphic(AssetPaths.bagItem__png);
-		background.screenCenter(FlxAxes.X);
-		background.y = 10;
 
 		bananaCounterIcon.setPosition(background.x + 65, 120);
 		bananaCounterIcon.setGraphicSize(40, 40);
@@ -146,7 +144,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bananaCounterText.x = bananaCounterIcon.x + bananaCounterIcon.width;
 		diamondCounterText.setPosition(background.x + 370, 265);
 
-		dealText.setPosition(background.x + 85, 125);
 		dealText.visible = false;
 
 		if (bananaCounter > 0)
@@ -165,14 +162,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		active = true;
 	}
 
+	// 開啟商店
 	public function buyAndSell()
 	{
 		background.loadGraphic(AssetPaths.shopkeeper__png);
-		background.setPosition(0, 0);
-		background.screenCenter(FlxAxes.X);
 
-		shopText.setPosition(background.x + 280, background.height / 2 + 10);
-		shopCho.setPosition(background.x + 90 + pointer.width + 10, background.height / 2 + 10);
 		diamondCounterText.setPosition(background.x + 160, 310);
 
 		bananaCounterIcon.setGraphicSize(30, 30);

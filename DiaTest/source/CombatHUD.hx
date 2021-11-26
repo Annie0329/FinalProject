@@ -38,12 +38,15 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var selected:Choice; // 我們選的打還是逃(前面那的enum的Choice)
 	var choices:Map<Choice, FlxText>; // 這個地圖把打或逃的選項變成文字(應該吧)
 
+	var pointerRight:FlxSprite;
+	var pointerLeft:FlxSprite;
+
 	public var outcome:Outcome; // 結果
 
 	var state:Int = 1;
 
 	// 文字組
-	var combatText:FlxTypeText;
+	var combatText:Text;
 	var dilog_boxes:Array<String>;
 	var name:String;
 	var txt:Bool = true;
@@ -54,7 +57,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var nftStyle:FlxSprite;
 	var nftStyleNum:Int = 0;
 
-	var investNum:Int = 0;
+	var investNum:Int = 5;
 
 	var enemyNameText:FlxText;
 	var diamondText:FlxText;
@@ -83,10 +86,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(enemySprite);
 
 		// 字
-		combatText = new FlxTypeText(110, 220, 270, "text", 24, true);
-		combatText.font = AssetPaths.silver__ttf;
-		combatText.delay = 0.07;
-		combatText.skipKeys = ["X", "SHIFT"];
+		combatText = new Text(110, 220, 270, "text", 24, true);
 		add(combatText);
 
 		// 加入選項
@@ -97,8 +97,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(choices[NO]);
 
 		// 投資多少錢
-		investNumText = new FlxText(choices[YES].x, choices[YES].y, 170, "0", 44);
+		investNumText = new FlxText(choices[YES].x, choices[YES].y, 170, "5", 44);
 		add(investNumText);
+		investNumText.alignment = CENTER;
 		investNumText.visible = false;
 
 		nftStyle = new FlxSprite(choices[YES].x + choices[YES].width / 2, choices[YES].y).loadGraphic(AssetPaths.nft__png, true, 56, 64);
@@ -119,6 +120,13 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		pointer = new FlxSprite(choices[YES].x - 16, choices[YES].y + (choices[YES].height / 2) - 16, AssetPaths.pointer__png);
 		pointer.visible = false;
 		add(pointer);
+
+		pointerLeft = new FlxSprite(0, 0, AssetPaths.pointer__png);
+		pointerLeft.flipX = true;
+		add(pointerLeft);
+
+		pointerRight = new FlxSprite(0, 0, AssetPaths.pointer__png);
+		add(pointerRight);
 
 		forEach(function(sprite:FlxSprite)
 		{
@@ -144,7 +152,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		this.diamond = diamond;
 		this.diamondUiText = diamondUiText;
 		diamondText.text = Std.string(diamond);
-		
+
 		enemySprite.changeType(enemy.type); // 換成普通敵人或是魔王
 
 		// 確定這些東西即使在我們之後來也不會亂動或亂出現
@@ -154,11 +162,17 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		movePointer();
 		choices[YES].visible = true;
 		choices[NO].visible = true;
+
+		investNum = 5;
+		investNumText.text = Std.string(investNum);
+
+		pointerLeft.visible = false;
+		pointerRight.visible = false;
 		switch (enemy.type)
 		{
 			case shibaCoin:
 				enemyNameText.text = "柴犬幣";
-				combatText.resetText("要不要買點狗狗幣啊？誰不喜歡可愛的狗狗呢？");
+				combatText.resetText(":要不要買點狗狗幣啊？:誰不喜歡可愛的狗狗呢？");
 			case cloudMiner:
 				enemyNameText.text = "雲挖礦";
 				combatText.resetText("哈囉~猩猩，只要你付給我5能量幣，就可以租到一台高效率機器幫你挖礦賺大錢喔！快來加入我吧！");
@@ -173,6 +187,20 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 		// 應該是淡入的效果
 		FlxTween.num(0, 1, .66, {ease: FlxEase.circOut, onComplete: finishFadeIn}, updateAlpha);
+	}
+
+	// 淡入後就啟用hud
+	function finishFadeIn(_)
+	{
+		active = true;
+		wait = false;
+		textRunDone = false;
+
+		combatText.start(false, false, function()
+		{
+			textRunDone = true;
+			pointer.visible = true;
+		});
 	}
 
 	function updateKeyboardInput()
@@ -212,6 +240,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 							choices[YES].visible = false;
 							choices[NO].visible = false;
 							investNumText.visible = true;
+							lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
+
 							combatText.resetText("請選擇你要投資多少？最少5能量幣。好了就按enter。");
 							combatText.start(false, false, function()
 							{
@@ -240,6 +270,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					}
 					combatText.start(false, false);
 					investNumText.visible = false;
+					pointerLeft.visible = false;
+					pointerRight.visible = false;
 					diamondText.text = Std.string(diamond);
 				}
 				else if (state == 3)
@@ -318,6 +350,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 							choices[YES].visible = false;
 							choices[NO].visible = false;
 							nftStyle.visible = true;
+							lrPointer(nftStyle.x, nftStyle.y, 56, nftStyle.height);
+
 							combatText.resetText("選一個花樣吧。按左右鍵查看花樣。");
 							combatText.start(false, false, function()
 							{
@@ -333,6 +367,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				{
 					state++;
 					nftStyle.visible = false;
+					pointerLeft.visible = false;
+					pointerRight.visible = false;
+
 					if (FlxG.random.bool(50))
 					{
 						diamond += 20;
@@ -365,7 +402,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			if (investNumText.visible)
 			{
-				if (left && investNum != 0)
+				if (left && investNum != 5)
 					investNum -= 5;
 				else if (right) // && investNum / 5 != Std.int(diamond / 5))
 					investNum += 5;
@@ -399,25 +436,19 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		pointer.y = choices[selected].y + (choices[selected].height / 2) - 16;
 	}
 
+	function lrPointer(spriteX:Float, spriteY:Float, spriteW:Float, spriteH:Float)
+	{
+		pointerLeft.visible = true;
+		pointerLeft.setPosition(spriteX - pointerLeft.width, spriteY + spriteH / 2 - 10);
+		pointerRight.visible = true;
+		pointerRight.setPosition(spriteX + spriteW, spriteY + spriteH / 2 - 10);
+	}
+
 	// 召喚淡入淡出的效果
 	function updateAlpha(alpha:Float)
 	{
 		this.alpha = alpha;
 		forEach(function(sprite) sprite.alpha = alpha);
-	}
-
-	// 淡入後就啟用hud
-	function finishFadeIn(_)
-	{
-		active = true;
-		wait = false;
-		textRunDone = false;
-
-		combatText.start(false, false, function()
-		{
-			textRunDone = true;
-			pointer.visible = true;
-		});
 	}
 
 	// 淡出後再停用hud，也停止更新
@@ -442,8 +473,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	// 離開打架介面
 	function doneResultsIn()
 	{
-		investNum = 0;
-		investNumText.text = Std.string(investNum);
 		FlxTween.num(1, 0, .66, {ease: FlxEase.circOut, onComplete: finishFadeOut}, updateAlpha);
 	}
 }

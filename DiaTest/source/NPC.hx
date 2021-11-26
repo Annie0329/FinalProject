@@ -45,7 +45,7 @@ class NPC extends FlxSprite
 			case lake:
 				makeGraphic(80, 160, FlxColor.TRANSPARENT);
 			case saveStone:
-				loadGraphic(AssetPaths.saveStone__png);
+				loadGraphic(AssetPaths.saveStoneAnimation__png, true, 80, 80);
 			case spartan:
 				loadGraphic(AssetPaths.spartan__png);
 		}
@@ -53,10 +53,10 @@ class NPC extends FlxSprite
 		immovable = true;
 	}
 
-	public function saveStoneAnimation()
-	{
-		animation.play("shine");
-	}
+	public function saveStoneAnimation() {}
 
-	override function update(elapsed:Float) {}
+	override function update(elapsed:Float)
+	{
+		
+	}
 }

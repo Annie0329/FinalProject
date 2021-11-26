@@ -6,6 +6,7 @@ import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 
 class Dia extends FlxTypedGroup<FlxSprite>
 {
@@ -31,6 +32,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var diaUpDown:String;
 
 	var profilePic:String;
+	var save:FlxSave;
 
 	var textRunDone:Bool = false;
 
@@ -55,6 +57,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		pointer = new Pointer();
 		add(pointer);
 		pointer.visible = false;
+
+		save = new FlxSave();
+		save.bind("DiaTest");
 
 		visible = false;
 		active = false;
@@ -193,6 +198,16 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		pointerQ = quest;
 		switch (pointerQ) {}
+	}
+
+	// 存檔啦
+	public function saveFile(banana, diamond, playerPos, place)
+	{
+		save.data.bananaValue = banana;
+		save.data.diamondValue = diamond;
+		save.data.playerPos = playerPos;
+		save.data.place = place;
+		save.flush();
 	}
 
 	// 更新啦

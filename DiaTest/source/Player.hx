@@ -10,21 +10,10 @@ class Player extends FlxSprite
 	// 跑多快
 	var SPEED:Float = 200;
 
-	public var playerBag:Bool = false;
-
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
-		loadGraphic(AssetPaths.ape__png);
-		setSize(50, 32);
-		offset.set(0, 32);
-		playerBag = false;
-	}
-
-	// 換成猩猩背包包的造型
-	public function playerBagPic()
-	{
-		loadGraphic(AssetPaths.apeNew__png, true, 50, 64);
+		loadGraphic(AssetPaths.ape__png, true, 50, 64);
 		// 面向右邊時使用鏡像的左邊圖片
 		setFacingFlip(FlxObject.LEFT, false, false);
 		setFacingFlip(FlxObject.RIGHT, true, false);
@@ -32,10 +21,9 @@ class Player extends FlxSprite
 		animation.add("lr", [3, 4, 3, 5, 6, 7, 6, 5], 6, false);
 		animation.add("u", [9, 8, 10, 8], 6, false);
 		animation.add("d", [1, 0, 2, 0], 6, false);
-
 		setSize(50, 32);
 		offset.set(0, 32);
-		playerBag = true;
+		immovable = false;
 	}
 
 	public function updateMovement()

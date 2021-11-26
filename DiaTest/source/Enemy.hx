@@ -6,6 +6,7 @@ import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
 import flixel.system.FlxSound;
+import flixel.tweens.FlxTween;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -42,6 +43,9 @@ class Enemy extends FlxSprite
 	var idleTimer:Float;
 	var moveDirection:Float;
 
+	var enemiesStart:Int = 280;
+	var enemiesEnd:Int = 1080;
+
 	public var type(default, null):EnemyType;
 	public var seesPlayer:Bool;
 	public var playerPosition:FlxPoint;
@@ -77,6 +81,7 @@ class Enemy extends FlxSprite
 			case spartanMiner:
 				loadGraphic(AssetPaths.spartanMiner__png);
 				elasticity = 1;
+				immovable = true;
 		}
 	}
 
@@ -98,25 +103,35 @@ class Enemy extends FlxSprite
 			brain.activeState = chase;
 		else if (idleTimer <= 0)
 		{
-			// 如果隨機選到1的話就不動
-			if (type != spartanMiner && FlxG.random.bool(1))
+			if (type == spartanMiner)
 			{
-				moveDirection = -1;
-				velocity.x = velocity.y = 0;
+				if (x == enemiesStart)
+					FlxTween.tween(this, {x: enemiesEnd}, 3);
+				else if (x == enemiesEnd)
+					FlxTween.tween(this, {x: enemiesStart}, 3);
 			}
 			else
 			{
-				// 隨機選角度移動
-				moveDirection = FlxG.random.int(0, 8) * 45;
-				if (type == spartanMiner)
-					velocity.set(SPEED * 1.5, 0);
+				// 如果隨機選到1的話就不動
+				if (FlxG.random.bool(1))
+				{
+					moveDirection = -1;
+					velocity.x = velocity.y = 0;
+				}
 				else
-					velocity.set(SPEED, 0);
+				{
+					// 隨機選角度移動
+					moveDirection = FlxG.random.int(0, 8) * 45;
+					if (type == spartanMiner)
+						velocity.set(SPEED * 1.5, 0);
+					else
+						velocity.set(SPEED, 0);
 
-				velocity.rotate(FlxPoint.weak(), moveDirection);
+					velocity.rotate(FlxPoint.weak(), moveDirection);
+				}
+				// 隨機選個數
+				idleTimer = FlxG.random.int(1, 4);
 			}
-			// 隨機選個數
-			idleTimer = FlxG.random.int(1, 4);
 		}
 		else
 			idleTimer -= elapsed;

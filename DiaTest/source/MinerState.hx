@@ -35,17 +35,20 @@ class MinerState extends FlxState
 	var npcType:NPC.NpcType;
 	var monumentDoor:FlxSprite;
 
-	// 箱子和石頭
+	// 箱子
 	var box:FlxSprite;
-	var boxCounter:Int = 0;
-	var stone:FlxTypedGroup<FlxSprite> = null;
-	var stoneCounter:Int = 0;
 	var roadStart:Int = 800;
 	var roadEnd:Int = 1440;
 	var boxPos:Float;
+
+	// 石頭
+	var stone:FlxTypedGroup<FlxSprite> = null;
+	var stoneCounter:Int = 0;
 	var stoneCounterText:FlxText;
 	var stoneCounterIcon:FlxSprite;
 	var stoneYes:Bool = false;
+	var minerTimer:FlxText;
+	var timer:FlxTimer;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -135,6 +138,12 @@ class MinerState extends FlxState
 		dia = new Dia();
 		add(dia);
 
+		// 計時器
+		minerTimer = new FlxText(0, 0, 200, "0", 20);
+		minerTimer.scrollFactor.set(0, 0);
+		add(minerTimer);
+		minerTimer.visible = false;
+
 		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
 
@@ -145,9 +154,7 @@ class MinerState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		stoneCounterIcon = new FlxSprite(110, 10).loadGraphic(AssetPaths.stone__png);
-		stoneCounterIcon.setGraphicSize(20, 20);
-		stoneCounterIcon.updateHitbox();
+		stoneCounterIcon = new FlxSprite(120, 10).loadGraphic(AssetPaths.stone__png);
 		stoneCounterIcon.scrollFactor.set(0, 0);
 		add(stoneCounterIcon);
 
@@ -166,12 +173,7 @@ class MinerState extends FlxState
 				bag.diamondCounter = save.data.diamondValue;
 				bag.updateBag();
 			}
-			if (save.data.playerBag != null)
-			{
-				player.playerBag = save.data.playerBag;
-				if (player.playerBag)
-					player.playerBagPic();
-			}
+
 			if (save.data.playerPos != null && save.data.place != null)
 			{
 				if (save.data.place == "miner")
@@ -181,12 +183,7 @@ class MinerState extends FlxState
 				else if (save.data.place == "monument")
 				{
 					player.setPosition(monumentDoor.x, monumentDoor.y);
-					save.data.bananaValue = bag.bananaCounter;
-					save.data.diamondValue = bag.diamondCounter;
-					save.data.playerBag = player.playerBag;
-					save.data.playerPos = player.getPosition();
-					save.data.place = "miner";
-					save.flush();
+					dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "miner");
 				}
 			}
 		}
@@ -243,6 +240,9 @@ class MinerState extends FlxState
 		updateEsc();
 		updateC();
 
+		if (minerTimer.visible)
+			minerTimer.text = Std.string(Std.int(timer.timeLeft));
+
 		// 除錯大隊
 
 		var e = FlxG.keys.anyJustReleased([E]);
@@ -263,7 +263,7 @@ class MinerState extends FlxState
 		FlxG.collide(player, monumentDoor, goToMonument);
 		FlxG.overlap(player, stone, playerGotStone);
 		FlxG.collide(player, box, stoneInsideBox);
-		FlxG.collide(player, enemies);
+		FlxG.overlap(player, enemies, touchEnemy);
 
 		FlxG.collide(enemies, walls);
 		FlxG.overlap(enemies, stone, enemyGotStone);
@@ -288,15 +288,12 @@ class MinerState extends FlxState
 	{
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
-			save.data.bananaValue = bag.bananaCounter;
-			save.data.diamondValue = bag.diamondCounter;
-			save.data.playerBag = player.playerBag;
-			save.data.place = "miner";
-			save.flush();
+			dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "miner");
 			FlxG.switchState(new PlayState(true));
 		});
 	}
 
+	// 玩家收集到石頭了
 	function playerGotStone(player:Player, stone:FlxSprite)
 	{
 		stoneCounter++;
@@ -308,6 +305,7 @@ class MinerState extends FlxState
 		});
 	}
 
+	// 敵人收集到石頭了
 	function enemyGotStone(enemy:Enemy, stone:FlxSprite)
 	{
 		stone.kill();
@@ -317,7 +315,17 @@ class MinerState extends FlxState
 		});
 	}
 
-	// 石頭放到箱子裡了
+	// 如果你碰了敵人代表敵人碰了你
+	function touchEnemy(player:Player, enemy:Enemy)
+	{
+		FlxG.camera.shake(0.01, 0.1, function()
+		{
+			stoneCounter--;
+			stoneCounterText.text = Std.string(stoneCounter);
+		});
+	}
+
+	// 石頭放到車子裡了
 	function stoneInsideBox(player:Player, box:FlxSprite)
 	{
 		if (stoneCounter >= stoneGoal)
@@ -326,7 +334,6 @@ class MinerState extends FlxState
 			stoneCounter = stoneCounter % stoneGoal;
 			stoneCounterText.text = Std.string(stoneCounter);
 
-			boxCounter++;
 			box.loadGraphic(AssetPaths.boxFull__png);
 
 			bag.updateBag();
@@ -365,17 +372,11 @@ class MinerState extends FlxState
 			// 存檔點
 			if (npcType == saveStone)
 			{
-				save.data.bananaValue = bag.bananaCounter;
-				save.data.diamondValue = bag.diamondCounter;
-				save.data.playerBag = player.playerBag;
-				save.data.playerPos = player.getPosition();
-				save.data.place = "miner";
-				save.flush();
+				dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "miner");
 			}
 			else if (npcType == spartan)
 			{
-				if (!stoneCounterText.visible)
-					stoneYes = true;
+				stoneYes = true;
 			}
 
 			dia.context(npcType);
@@ -392,10 +393,21 @@ class MinerState extends FlxState
 			enemies.active = false;
 		}
 		else
+		{
 			player.active = true;
+			enemies.active = true;
+		}
 
 		// 對話結束時要做什麼合集
-		if (!dia.visible) {}
+		if (!dia.visible)
+		{
+			if (stoneYes)
+			{
+				stoneYes = false;
+				timer = new FlxTimer().start(60);
+				minerTimer.visible = true;
+			}
+		}
 	}
 
 	// 如果玩家在螢幕上方，對話框就放到下方
@@ -426,7 +438,7 @@ class MinerState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && player.playerBag && (!bag.bagUi.visible && !bag.shopUi.visible))
+		if (c && !dia.visible && (!bag.bagUi.visible && !bag.shopUi.visible))
 		{
 			bag.bagUiShow();
 		}
