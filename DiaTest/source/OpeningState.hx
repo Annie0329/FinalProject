@@ -65,6 +65,8 @@ class OpeningState extends FlxState
 		var any = FlxG.keys.anyJustReleased([ANY]);
 		var x = FlxG.keys.anyJustReleased([X]);
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
+
+		// 跳過動畫
 		if (!openingAnimation.visible && any || x)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
@@ -72,19 +74,22 @@ class OpeningState extends FlxState
 				FlxG.switchState(new PlayState(false));
 			});
 		}
+		// 換下一頁
 		else if (enter && textRunDone)
 		{
-			if (i > 10)
+			if (i > 9)
 			{
 				FlxG.camera.fade(0xffFFFDE4, 1, false, function()
 				{
 					openingAnimation.visible = false;
+					openText.visible = false;
 					FlxG.camera.fade(0xffFFFDE4, 1, true, function()
 					{
 						FlxG.switchState(new PlayState(false));
 					});
 				});
 			}
+			// 動畫結束轉場
 			else
 			{
 				i++;

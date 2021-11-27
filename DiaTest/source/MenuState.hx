@@ -116,7 +116,6 @@ class MenuState extends FlxState
 								FlxG.switchState(new MinerState(loadsave));
 							else if (save.data.place == "monument")
 								FlxG.switchState(new PlayState(loadsave));
-							// save.data.place = "menu";
 							save.flush();
 						});
 				}
@@ -126,6 +125,7 @@ class MenuState extends FlxState
 				{
 					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 					{
+						save.erase();
 						FlxG.switchState(new OpeningState());
 					});
 				}

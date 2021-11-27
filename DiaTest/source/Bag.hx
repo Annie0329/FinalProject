@@ -33,8 +33,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var bananaCounterText:FlxText;
 	var bananaCounterIcon:FlxSprite;
 
-	var diamondCounterText:FlxText;
-
 	var shopCho:FlxText;
 	var shopText:Text;
 	var mainTalk:String;
@@ -47,8 +45,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 	var dealText:FlxText;
 
-	var sellCho:String = "   1能量幣\n原本世界的錢\n離開";
-	var buyCho:String = "   2能量幣\n離開";
+	var sellCho:String = "   1 能量幣\n原本世界的錢\n離開";
+	var buyCho:String = "   2 能量幣\n離開";
 	var talkCho:String = "為什麼要對著包包大吼大叫\n離開";
 
 	public var shopChoice(default, null):ShopChoice;
@@ -63,31 +61,15 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	{
 		super();
 
-		// 能量幣組
-		diamondIcon = new FlxSprite(10, 10).loadGraphic(AssetPaths.diamondIcon__png);
-		diamondUi.add(diamondIcon);
-
-		diamondText = new FlxText(diamondIcon.x + 40, diamondIcon.y + 5, "0", 20);
-		diamondText.color = 0xff2D5925;
-		diamondUi.add(diamondText);
-
-		add(diamondUi);
-		diamondUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
-
 		// 背景
 		background = new FlxSprite();
 
 		// 香蕉圖示
-		bananaCounterIcon = new FlxSprite(background.x + 65, 120, AssetPaths.bananaIcon__png);
-
-		// 錢數目
-		diamondCounterText = new FlxText(370, 150, "0", 20);
-		diamondCounterText.color = 0xff2D5925;
+		bananaCounterIcon = new FlxSprite(140, 110, AssetPaths.bananaIcon__png);
 
 		// 包包組
 		bagUi.add(background);
 		bagUi.add(bananaCounterIcon);
-		bagUi.add(diamondCounterText);
 
 		// 香蕉數目
 		bananaCounterText = new FlxText(bananaCounterIcon.x + bananaCounterIcon.width, bananaCounterIcon.y + 5, "0", 20);
@@ -95,7 +77,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bagUi.add(bananaCounterText);
 
 		// 交易紀錄
-		dealText = new FlxText(background.x + 85, 125, "目前並無交易紀錄\n", 28, true);
+		dealText = new FlxText(165, 120, "目前並無交易紀錄\n", 28, true);
 		dealText.color = 0xff2D5925;
 		dealText.font = AssetPaths.silver__ttf;
 		bagUi.add(dealText);
@@ -107,7 +89,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// 商店組
 		shopUi.add(background);
 		shopUi.add(bananaCounterIcon);
-		shopUi.add(diamondCounterText);
 
 		// 箭頭
 		pointer = new Pointer();
@@ -129,6 +110,17 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shopUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 		shopUi.visible = false;
 
+		// 能量幣組
+		diamondIcon = new FlxSprite(10, 10).loadGraphic(AssetPaths.diamondIcon__png);
+		diamondUi.add(diamondIcon);
+
+		diamondText = new FlxText(diamondIcon.x + 40, diamondIcon.y + 7, "0", 20);
+		diamondText.color = 0xff2D5925;
+		diamondUi.add(diamondText);
+
+		add(diamondUi);
+		diamondUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+
 		active = false;
 	}
 
@@ -137,12 +129,9 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	{
 		background.loadGraphic(AssetPaths.bagItem__png);
 
-		bananaCounterIcon.setPosition(background.x + 65, 120);
 		bananaCounterIcon.setGraphicSize(40, 40);
 		bananaCounterIcon.updateHitbox();
-
-		bananaCounterText.x = bananaCounterIcon.x + bananaCounterIcon.width;
-		diamondCounterText.setPosition(background.x + 370, 265);
+		bananaCounterIcon.setPosition(140, 110);
 
 		dealText.visible = false;
 
@@ -167,8 +156,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	{
 		background.loadGraphic(AssetPaths.shopkeeper__png);
 
-		diamondCounterText.setPosition(background.x + 160, 310);
-
 		bananaCounterIcon.setGraphicSize(30, 30);
 		bananaCounterIcon.updateHitbox();
 		bananaCounterIcon.visible = false;
@@ -179,7 +166,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bagUi.visible = false;
 		shopUi.visible = true;
 		active = true;
-
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 	}
 
@@ -198,8 +184,14 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	public function updateBag()
 	{
 		bananaCounterText.text = Std.string(bananaCounter);
-		diamondCounterText.text = Std.string(diamondCounter);
 		diamondText.text = Std.string(diamondCounter);
+		if (diamondCounter < 0)
+		{
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			{
+				FlxG.switchState(new GameOverState());
+			});
+		}
 	}
 
 	override function update(elapsed:Float)
@@ -324,7 +316,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							mainTalk = "猩猩什麼都沒有買！";
 						else
 						{
-							mainTalk = "猩猩給老闆" + Std.string(bananaSell * 2) + "個能量石！\n老闆給猩猩" + Std.string(bananaSell) + "片香蕉葉！";
+							mainTalk = "猩猩給老闆 " + Std.string(bananaSell * 2) + " 個能量石！\n老闆給猩猩 " + Std.string(bananaSell) + " 片香蕉葉！";
 							dealText.text = mainTalk + "\n";
 						}
 						bananaSell = 0;
@@ -362,7 +354,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							mainTalk = "猩猩什麼都沒有賣！";
 						else
 						{
-							mainTalk = "猩猩給老闆" + Std.string(bananaSell) + "片香蕉葉！\n老闆給猩猩" + Std.string(bananaSell) + "個能量石！";
+							mainTalk = "猩猩給老闆 " + Std.string(bananaSell) + " 片香蕉葉！\n老闆給猩猩 " + Std.string(bananaSell) + " 個能量石！";
 							dealText.text = mainTalk + "\n";
 						}
 						bananaSell = 0;

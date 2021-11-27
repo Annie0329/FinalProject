@@ -34,6 +34,7 @@ class MinerState extends FlxState
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
 	var monumentDoor:FlxSprite;
+	var minerGate:FlxSprite;
 
 	// 箱子
 	var box:FlxSprite;
@@ -49,6 +50,7 @@ class MinerState extends FlxState
 	var stoneYes:Bool = false;
 	var minerTimer:FlxText;
 	var timer:FlxTimer;
+	var minerTimeSet:Int = 10;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -57,9 +59,8 @@ class MinerState extends FlxState
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
-	var loadsave:Bool;
 
-	var getBag:Bool = true;
+	var loadsave:Bool;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -90,12 +91,17 @@ class MinerState extends FlxState
 		road.follow();
 		add(road);
 
+		// 礦場大門
+		minerGate = new FlxSprite().makeGraphic(80, 80, FlxColor.BLACK);
+		minerGate.immovable = true;
+		add(minerGate);
+
 		// 牆
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
 
-		// 礦場門
+		// 礦場傳送門
 		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
 		monumentDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		monumentDoor.setSize(104, 40);
@@ -147,6 +153,16 @@ class MinerState extends FlxState
 		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
 
+		stoneCounterIcon = new FlxSprite(120, 10).loadGraphic(AssetPaths.stone__png);
+		stoneCounterIcon.scrollFactor.set(0, 0);
+		add(stoneCounterIcon);
+		stoneCounterIcon.visible = false;
+
+		stoneCounterText = new FlxText(stoneCounterIcon.x + stoneCounterIcon.width + 10, stoneCounterIcon.y, 200, "0", 20);
+		stoneCounterText.scrollFactor.set(0, 0);
+		add(stoneCounterText);
+		stoneCounterText.visible = false;
+
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 200, "ufo", 20);
 		// ufo.color = FlxColor.BLACK;
@@ -154,38 +170,12 @@ class MinerState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		stoneCounterIcon = new FlxSprite(120, 10).loadGraphic(AssetPaths.stone__png);
-		stoneCounterIcon.scrollFactor.set(0, 0);
-		add(stoneCounterIcon);
-
-		stoneCounterText = new FlxText(stoneCounterIcon.x + stoneCounterIcon.width + 10, stoneCounterIcon.y, 200, "0", 20);
-		stoneCounterText.scrollFactor.set(0, 0);
-		add(stoneCounterText);
-
 		// 儲存資料的能量幣件
 		save = new FlxSave();
 		save.bind("DiaTest");
 		if (loadsave)
 		{
-			if (save.data.bananaValue != null && save.data.diamondValue != null)
-			{
-				bag.bananaCounter = save.data.bananaValue;
-				bag.diamondCounter = save.data.diamondValue;
-				bag.updateBag();
-			}
-
-			if (save.data.playerPos != null && save.data.place != null)
-			{
-				if (save.data.place == "miner")
-				{
-					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
-				}
-				else if (save.data.place == "monument")
-				{
-					player.setPosition(monumentDoor.x, monumentDoor.y);
-					dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "miner");
-				}
-			}
+			loadFile();
 		}
 
 		if (FlxG.sound.music == null)
@@ -214,6 +204,8 @@ class MinerState extends FlxState
 
 			case "monumentDoor":
 				monumentDoor.setPosition(x, y);
+			case "minerGate":
+				minerGate.setPosition(x, y);
 
 			case "spartan":
 				npc.add(new NPC(x, y, spartan));
@@ -231,6 +223,35 @@ class MinerState extends FlxState
 		}
 	}
 
+	// 讀檔啦
+	function loadFile()
+	{
+		bag.bananaCounter = save.data.bananaValue;
+		bag.diamondCounter = save.data.diamondValue;
+		bag.updateBag();
+
+		if (save.data.playerPos != null && save.data.place != null)
+		{
+			if (save.data.place == "miner")
+				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+			else if (save.data.place == "monument")
+			{
+				player.setPosition(monumentDoor.x, monumentDoor.y);
+				saveFile();
+			}
+		}
+	}
+
+	// 存檔啦
+	function saveFile()
+	{
+		save.data.bananaValue = bag.bananaCounter;
+		save.data.diamondValue = bag.diamondCounter;
+		save.data.playerPos = player.getPosition();
+		save.data.place = "miner";
+		save.flush();
+	}
+
 	// 更新啦
 	override public function update(elapsed:Float)
 	{
@@ -241,10 +262,18 @@ class MinerState extends FlxState
 		updateC();
 
 		if (minerTimer.visible)
+		{
 			minerTimer.text = Std.string(Std.int(timer.timeLeft));
+			if (Std.int(timer.timeLeft) <= 5)
+				minerTimer.color = FlxColor.RED;
+			else
+				minerTimer.color = FlxColor.WHITE;
+			if (timer.finished)
+				player.active = false;
+		}
 
 		// 除錯大隊
-
+		ufo.text = Std.string(player.getPosition());
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -257,6 +286,7 @@ class MinerState extends FlxState
 		FlxG.overlap(player, road);
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, through);
+		FlxG.collide(player, minerGate);
 
 		FlxG.collide(player, npc, npcTalk);
 
@@ -276,19 +306,19 @@ class MinerState extends FlxState
 		FlxG.collide(box, walls);
 	}
 
-	// 終極對話！
+	// NPC對話
 	function npcTalk(player:Player, npc:NPC)
 	{
 		talkYes = true;
 		npcType = npc.type;
 	}
 
-	// 去到紀念碑
+	// 去紀念碑
 	function goToMonument(player:Player, monumentDoor:FlxSprite)
 	{
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
-			dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "miner");
+			saveFile();
 			FlxG.switchState(new PlayState(true));
 		});
 	}
@@ -343,12 +373,7 @@ class MinerState extends FlxState
 				{
 					box.y = roadStart;
 					box.loadGraphic(AssetPaths.boxEmpty__png);
-					FlxTween.tween(box, {y: boxPos}, 2, {
-						onComplete: function(_)
-						{
-							bag.updateBag();
-						}
-					});
+					FlxTween.tween(box, {y: boxPos}, 2);
 				}
 			});
 		}
@@ -372,7 +397,7 @@ class MinerState extends FlxState
 			// 存檔點
 			if (npcType == saveStone)
 			{
-				dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "miner");
+				saveFile();
 			}
 			else if (npcType == spartan)
 			{
@@ -401,11 +426,33 @@ class MinerState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
+			// 礦場計時開始
 			if (stoneYes)
 			{
+				FlxTween.tween(minerGate, {x: minerGate.x + 80}, 0.5, {
+					onComplete: function(_)
+					{
+						timer = new FlxTimer().start(minerTimeSet, function(timer:FlxTimer)
+						{
+							FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+							{
+								minerGate.x -= 80;
+								player.setPosition(minerGate.x, minerGate.y + 200);
+								minerTimer.visible = false;
+								stoneCounterIcon.visible = false;
+								stoneCounterText.visible = false;
+								stoneCounter = 0;
+								stoneCounterText.text = Std.string(stoneCounter);
+
+								FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
+							});
+						});
+						minerTimer.visible = true;
+						stoneCounterIcon.visible = true;
+						stoneCounterText.visible = true;
+					}
+				});
 				stoneYes = false;
-				timer = new FlxTimer().start(60);
-				minerTimer.visible = true;
 			}
 		}
 	}

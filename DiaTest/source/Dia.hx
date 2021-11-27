@@ -200,16 +200,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		switch (pointerQ) {}
 	}
 
-	// 存檔啦
-	public function saveFile(banana, diamond, playerPos, place)
-	{
-		save.data.bananaValue = banana;
-		save.data.diamondValue = diamond;
-		save.data.playerPos = playerPos;
-		save.data.place = place;
-		save.flush();
-	}
-
 	// 更新啦
 	override public function update(elapsed:Float)
 	{

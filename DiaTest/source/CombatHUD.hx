@@ -8,6 +8,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
+import flixel.util.FlxColor;
 
 using flixel.util.FlxSpriteUtil; // drawRect需要這個
 
@@ -46,7 +47,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var state:Int = 1;
 
 	// 文字組
-	var combatText:Text;
+	var combatText:FlxTypeText;
 	var dilog_boxes:Array<String>;
 	var name:String;
 	var txt:Bool = true;
@@ -54,16 +55,21 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var investNumText:FlxText;
 	var textIn:Bool = false;
 
+	// NFT
 	var nftStyle:FlxSprite;
 	var nftStyleNum:Int = 0;
 
+	var shibaLoseNum:Int = FlxG.random.int(1, 3);
+	var shibaCounter:Int = 0;
+	var shibaLose:Bool = false;
+
 	var investNum:Int = 5;
 
+	// UI
 	var enemyNameText:FlxText;
 	var diamondText:FlxText;
 
 	public var diamondUiText:FlxText;
-
 	public var diamond:Int = 0;
 
 	var alpha:Float = 0; // 淡入淡出的效果，alpha就是透明度啦
@@ -173,9 +179,12 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			case shibaCoin:
 				enemyNameText.text = "柴犬幣";
 				combatText.resetText(":要不要買點狗狗幣啊？:誰不喜歡可愛的狗狗呢？");
+				shibaCounter++;
+				if (shibaCounter == shibaLoseNum)
+					shibaLose = true;
 			case cloudMiner:
 				enemyNameText.text = "雲挖礦";
-				combatText.resetText("哈囉~猩猩，只要你付給我5能量幣，就可以租到一台高效率機器幫你挖礦賺大錢喔！快來加入我吧！");
+				combatText.resetText("哈囉~猩猩，只要你付給我 5 能量幣，就可以租到一台高效率機器幫你挖礦賺大錢喔！快來加入我吧！");
 			case nft:
 				enemyNameText.text = "NFT";
 				combatText.resetText("要不要買些特別的圖像啊？這些獨一無二的藝術品可以留著珍藏也可以拿去商店賣，如果是爆紅款式還可以賣出天價喔！");
@@ -205,6 +214,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	function updateKeyboardInput()
 	{
+		// diamondText.text = Std.string(shibaLoseNum) + Std.string(shibaLose);
 		// 看看哪個按鍵被按下的變數
 		var up:Bool = false;
 		var down:Bool = false;
@@ -242,7 +252,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 							investNumText.visible = true;
 							lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
 
-							combatText.resetText("請選擇你要投資多少？最少5能量幣。好了就按enter。");
+							combatText.resetText("請選擇你要投資多少？最少 5 能量幣。好了就按enter。");
 							combatText.start(false, false, function()
 							{
 								textRunDone = true;
@@ -256,17 +266,18 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				else if (state == 2)
 				{
 					state++;
-					if (FlxG.random.bool(70))
-					{
-						diamond += investNum;
-						combatText.resetText("你賺到" + Std.string(investNum) + "能量幣！");
-						outcome = WIN;
-					}
-					else
+					if (shibaLose)
 					{
 						diamond -= investNum;
 						combatText.resetText("狗狗幣虧了。你什麼都沒得到。");
 						outcome = LOSE;
+						shibaLose = false;
+					}
+					else
+					{
+						diamond += investNum;
+						combatText.resetText("你賺到" + Std.string(investNum) + "能量幣！");
+						outcome = WIN;
 					}
 					combatText.start(false, false);
 					investNumText.visible = false;
@@ -288,7 +299,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 						case YES:
 							diamond += 5;
 							textRunDone = false;
-							combatText.resetText("我沒騙你吧！馬上就賺到能量幣了。你想再多租幾台嗎？這次你出20能量幣就會有7台機器幫你挖礦賺錢喔！");
+							combatText.resetText("我沒騙你吧！馬上就賺到能量幣了。你想再多租幾台嗎？這次你出 20 能量幣就會有7台機器幫你挖礦賺錢喔！");
 							combatText.start(false, false, function()
 							{
 								textRunDone = true;
@@ -310,6 +321,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 						doneResultsIn();
 					else
 					{
+						choices[YES].visible = false;
+						choices[NO].visible = false;
+						pointer.visible = false;
 						switch (selected)
 						{
 							case YES:
@@ -466,13 +480,20 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	override public function update(elapsed:Float)
 	{
 		updateKeyboardInput();
-
 		super.update(elapsed);
 	}
 
 	// 離開打架介面
 	function doneResultsIn()
 	{
-		FlxTween.num(1, 0, .66, {ease: FlxEase.circOut, onComplete: finishFadeOut}, updateAlpha);
+		if (diamond < 0)
+		{
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			{
+				FlxG.switchState(new GameOverState());
+			});
+		}
+		else
+			FlxTween.num(1, 0, .66, {ease: FlxEase.circOut, onComplete: finishFadeOut}, updateAlpha);
 	}
 }

@@ -148,32 +148,13 @@ class PlayState extends FlxState
 		// 儲存資料的元件
 		save = new FlxSave();
 		save.bind("DiaTest");
+
+		// 轉場
 		if (loadsave)
 		{
-			bag.bananaCounter = save.data.bananaValue;
-			bag.diamondCounter = save.data.diamondValue;
-			bag.updateBag();
-
-			if (save.data.playerPos != null && save.data.place != null)
-			{
-				if (save.data.place == "monument")
-					player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
-				else if (save.data.place == "miner")
-				{
-					minerYes = true;
-					dia.saveStoneIntro = true;
-					player.setPosition(minerDoor.x, minerDoor.y);
-					dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
-				}
-			}
-		}
-
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
-
-		FlxG.mouse.visible = false;
-		if (loadsave)
 			FlxG.camera.fade(FlxColor.BLACK, .33, true);
+			loadFile();
+		}
 		else
 		{
 			player.animation.frameIndex = 11;
@@ -186,6 +167,11 @@ class PlayState extends FlxState
 			});
 		}
 
+		// 播音樂
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+
+		FlxG.mouse.visible = false;
 		super.create();
 	}
 
@@ -199,26 +185,21 @@ class PlayState extends FlxState
 		{
 			case "player":
 				player.setPosition(x, y + 32);
-
 			case "guy":
 				npc.add(new NPC(x, y, doge));
 
 			case "ming":
 				npc.add(new NPC(x, y, ming));
-
 			case "sbRed":
 				npc.add(new NPC(x, y, sbRed));
-
 			case "sbBlue":
 				npc.add(new NPC(x, y, sbBlue));
-
 			case "sbGreen":
 				npc.add(new NPC(x, y, sbGreen));
 
 			// 敵人
 			case "shibaCoin":
 				enemies.add(new Enemy(x, y, shibaCoin));
-
 			case "cloudMiner":
 				enemies.add(new Enemy(x, y, cloudMiner));
 			case "nft":
@@ -233,7 +214,6 @@ class PlayState extends FlxState
 
 			case "lake":
 				npc.add(new NPC(x, y, lake));
-
 			case "monument":
 				npc.add(new NPC(x, y, monument));
 
@@ -248,12 +228,43 @@ class PlayState extends FlxState
 		}
 	}
 
+	// 讀檔啦
+	function loadFile()
+	{
+		bag.bananaCounter = save.data.bananaValue;
+		bag.diamondCounter = save.data.diamondValue;
+		bag.updateBag();
+
+		if (save.data.playerPos != null && save.data.place != null)
+		{
+			if (save.data.place == "monument")
+				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+			else if (save.data.place == "miner")
+			{
+				minerYes = true;
+				dia.saveStoneIntro = true;
+				player.setPosition(minerDoor.x, minerDoor.y);
+				saveFile();
+			}
+		}
+	}
+
+	// 存檔啦
+	function saveFile()
+	{
+		save.data.bananaValue = bag.bananaCounter;
+		save.data.diamondValue = bag.diamondCounter;
+		save.data.playerPos = player.getPosition();
+		save.data.place = "monument";
+		save.flush();
+	}
+
 	// 更新啦
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(npcType); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -265,6 +276,7 @@ class PlayState extends FlxState
 		updateTalking();
 		updateEsc();
 		updateC();
+
 		// 碰撞爆
 		FlxG.overlap(player, ground);
 		FlxG.overlap(player, road);
@@ -292,6 +304,8 @@ class PlayState extends FlxState
 			bag.diamondCounter = combatHud.diamond;
 			bag.updateBag();
 			inCombat = false;
+
+			// 敵人的下場
 			switch (combatHud.outcome)
 			{
 				case WIN, FLEE:
@@ -299,6 +313,8 @@ class PlayState extends FlxState
 				case LOSE:
 					combatHud.enemy.enemyFire();
 			}
+
+			// Doge的反應
 			switch (combatHud.enemy.type)
 			{
 				case shibaCoin:
@@ -377,7 +393,7 @@ class PlayState extends FlxState
 		{
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 			{
-				dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
+				saveFile();
 				FlxG.switchState(new MinerState(true));
 			});
 		}
@@ -427,9 +443,7 @@ class PlayState extends FlxState
 
 			// 存檔點
 			if (npcType == saveStone)
-			{
-				dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
-			}
+				saveFile();
 
 			dia.context(npcType);
 		}
@@ -468,7 +482,7 @@ class PlayState extends FlxState
 				{
 					bag.diamondCounter--;
 					bag.updateBag();
-					dia.saveFile(bag.bananaCounter, bag.diamondCounter, player.getPosition(), "monument");
+					saveFile();
 					FlxG.switchState(new MinerState(true));
 				});
 			}
