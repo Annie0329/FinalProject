@@ -226,9 +226,13 @@ class MinerState extends FlxState
 	// 讀檔啦
 	function loadFile()
 	{
+		bag.diamondUi.visible = true;
 		bag.bananaCounter = save.data.bananaValue;
 		bag.diamondCounter = save.data.diamondValue;
 		bag.updateBag();
+
+		dia.saveStoneIntro = save.data.saveStoneIntro;
+		dia.stoneTextYes = save.data.stoneTextYes;
 
 		if (save.data.playerPos != null && save.data.place != null)
 		{
@@ -247,8 +251,13 @@ class MinerState extends FlxState
 	{
 		save.data.bananaValue = bag.bananaCounter;
 		save.data.diamondValue = bag.diamondCounter;
+
+		save.data.saveStoneIntro = dia.saveStoneIntro;
+		save.data.stoneTextYes = dia.stoneTextYes;
+
 		save.data.playerPos = player.getPosition();
 		save.data.place = "miner";
+
 		save.flush();
 	}
 

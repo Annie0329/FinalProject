@@ -35,9 +35,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var background:FlxSprite; // 背景
 	var enemySprite:Enemy; // 敵人
 
-	var pointer:FlxSprite; // 那個選擇打或逃的箭頭
-	var selected:Choice; // 我們選的打還是逃(前面那的enum的Choice)
+	var pointer:Pointer; // 那個選擇打或逃的箭頭
 	var choices:Map<Choice, FlxText>; // 這個地圖把打或逃的選項變成文字(應該吧)
+	var ynCho:Array<String> = ["YES", "NO"];
 
 	var pointerRight:FlxSprite;
 	var pointerLeft:FlxSprite;
@@ -123,7 +123,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(diamondText);
 
 		// 那隻箭頭
-		pointer = new FlxSprite(choices[YES].x - 16, choices[YES].y + (choices[YES].height / 2) - 16, AssetPaths.pointer__png);
+		pointer = new Pointer();
+		pointer.setPointer(choices[YES].x - 16, choices[YES].y + (choices[YES].height / 2) - 16, Std.int(choices[YES].height + 16), ynCho, "ud");
 		pointer.visible = false;
 		add(pointer);
 
@@ -164,8 +165,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		// 確定這些東西即使在我們之後來也不會亂動或亂出現
 		wait = true;
 		pointer.visible = false;
-		selected = YES;
-		movePointer();
+
 		choices[YES].visible = true;
 		choices[NO].visible = true;
 
@@ -178,7 +178,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			case shibaCoin:
 				enemyNameText.text = "柴犬幣";
-				combatText.resetText(":要不要買點狗狗幣啊？:誰不喜歡可愛的狗狗呢？");
+				combatText.resetText("要不要買點狗狗幣啊？誰不喜歡可愛的狗狗呢？");
 				shibaCounter++;
 				if (shibaCounter == shibaLoseNum)
 					shibaLose = true;
@@ -214,20 +214,14 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	function updateKeyboardInput()
 	{
-		// diamondText.text = Std.string(shibaLoseNum) + Std.string(shibaLose);
+		// diamondText.text = Std.string(pointer.selected);
 		// 看看哪個按鍵被按下的變數
-		var up:Bool = false;
-		var down:Bool = false;
 		var left:Bool = false;
 		var right:Bool = false;
 		var fire:Bool = false;
 
 		if (FlxG.keys.anyJustReleased([SPACE, X, ENTER]))
 			fire = true;
-		else if (FlxG.keys.anyJustReleased([W, UP]))
-			up = true;
-		else if (FlxG.keys.anyJustReleased([S, DOWN]))
-			down = true;
 		else if (FlxG.keys.anyJustReleased([A, LEFT]))
 			left = true;
 		else if (FlxG.keys.anyJustReleased([D, RIGHT]))
@@ -239,13 +233,13 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// 柴犬幣
 			if (enemy.type == shibaCoin)
 			{
-				if (state == 1)
+				if (state == 1 && pointer.visible)
 				{
 					state++;
 					pointer.visible = false;
-					switch (selected)
+					switch (pointer.selected)
 					{
-						case YES:
+						case "YES":
 							textRunDone = false;
 							choices[YES].visible = false;
 							choices[NO].visible = false;
@@ -258,7 +252,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 								textRunDone = true;
 							});
 
-						case NO:
+						case "NO":
 							outcome = FLEE;
 							doneResultsIn();
 					}
@@ -291,12 +285,12 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// 雲挖礦
 			else if (enemy.type == cloudMiner)
 			{
-				if (state == 1)
+				if (state == 1 && pointer.visible)
 				{
 					state++;
-					switch (selected)
+					switch (pointer.selected)
 					{
-						case YES:
+						case "YES":
 							diamond += 5;
 							textRunDone = false;
 							combatText.resetText("我沒騙你吧！馬上就賺到能量幣了。你想再多租幾台嗎？這次你出 20 能量幣就會有7台機器幫你挖礦賺錢喔！");
@@ -304,14 +298,18 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 							{
 								textRunDone = true;
 							});
+							outcome = LOSE;
 
-						case NO:
-							outcome = FLEE;
+						case "NO":
+							choices[YES].visible = false;
+							choices[NO].visible = false;
+							pointer.visible = false;
 							combatText.resetText("唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。");
 							combatText.start(false, false, function()
 							{
 								textRunDone = true;
 							});
+							outcome = FLEE;
 					}
 				}
 				else if (state == 2)
@@ -324,9 +322,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 						choices[YES].visible = false;
 						choices[NO].visible = false;
 						pointer.visible = false;
-						switch (selected)
+						switch (pointer.selected)
 						{
-							case YES:
+							case "YES":
 								diamond -= 20;
 								textRunDone = false;
 								combatText.resetText("真是隻傻猩猩啊，這些錢我就收下了，嘿嘿嘿！");
@@ -336,7 +334,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 								});
 								outcome = LOSE;
 
-							case NO:
+							case "NO":
 								combatText.resetText("唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。");
 								combatText.start(false, false, function()
 								{
@@ -353,13 +351,13 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// NFT
 			else if (enemy.type == nft)
 			{
-				if (state == 1)
+				if (state == 1 && pointer.visible)
 				{
 					state++;
 					pointer.visible = false;
-					switch (selected)
+					switch (pointer.selected)
 					{
-						case YES:
+						case "YES":
 							textRunDone = false;
 							choices[YES].visible = false;
 							choices[NO].visible = false;
@@ -372,7 +370,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 								textRunDone = true;
 							});
 
-						case NO:
+						case "NO":
 							outcome = FLEE;
 							doneResultsIn();
 					}
@@ -405,13 +403,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			diamondText.text = Std.string(diamond);
 			diamondUiText.text = Std.string(diamond);
 		}
-		else if (up || down)
-		{
-			// 如果按上下鍵就移動箭頭，如果本來在YES就變成NO，反之
-			// 聰明的寫法
-			selected = if (selected == YES) NO else YES;
-			movePointer();
-		}
 		else if (left || right)
 		{
 			if (investNumText.visible)
@@ -441,13 +432,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				nftStyle.animation.frameIndex = nftStyleNum;
 			}
 		}
-	}
-
-	// 傳說中的movePointer
-	// 直接指定箭頭到選項的y座標，聰明
-	function movePointer()
-	{
-		pointer.y = choices[selected].y + (choices[selected].height / 2) - 16;
 	}
 
 	function lrPointer(spriteX:Float, spriteY:Float, spriteW:Float, spriteH:Float)

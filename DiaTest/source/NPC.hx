@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 
@@ -46,6 +47,7 @@ class NPC extends FlxSprite
 				makeGraphic(80, 160, FlxColor.TRANSPARENT);
 			case saveStone:
 				loadGraphic(AssetPaths.saveStoneAnimation__png, true, 80, 80);
+				animation.add("shine", [0, 1, 2, 3, 4, 5], 6, true);
 			case spartan:
 				loadGraphic(AssetPaths.spartan__png);
 		}
@@ -55,8 +57,11 @@ class NPC extends FlxSprite
 
 	public function saveStoneAnimation() {}
 
+	// 記得要加super.update(elapsed);啊不然動畫不會跑噢
 	override function update(elapsed:Float)
 	{
-		
+		if (type == saveStone)
+			animation.play("shine");
+		super.update(elapsed);
 	}
 }

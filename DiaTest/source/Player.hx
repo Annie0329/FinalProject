@@ -21,6 +21,11 @@ class Player extends FlxSprite
 		animation.add("lr", [3, 4, 3, 5, 6, 7, 6, 5], 6, false);
 		animation.add("u", [9, 8, 10, 8], 6, false);
 		animation.add("d", [1, 0, 2, 0], 6, false);
+
+		animation.add("flr", [3, 4, 3, 5, 6, 7, 6, 5], 10, false);
+		animation.add("fu", [9, 8, 10, 8], 12, false);
+		animation.add("fd", [1, 0, 2, 0], 12, false);
+
 		setSize(50, 32);
 		offset.set(0, 32);
 		immovable = false;
@@ -32,12 +37,14 @@ class Player extends FlxSprite
 		var down:Bool = false;
 		var left:Bool = false;
 		var right:Bool = false;
+		var shift:Bool = false;
 
 		// 如果有按方向鍵這些數值就會變成真
 		up = FlxG.keys.anyPressed([UP, W]);
 		down = FlxG.keys.anyPressed([DOWN, S]);
 		left = FlxG.keys.anyPressed([LEFT, A]);
 		right = FlxG.keys.anyPressed([RIGHT, D]);
+		shift = FlxG.keys.anyPressed([SHIFT]);
 
 		// 如果上下或左右同時被按就不要動
 		if (up && down)
@@ -87,15 +94,33 @@ class Player extends FlxSprite
 			if (velocity.x != 0 || velocity.y != 0)
 			{
 				// 什麼時候臉該面向哪邊
-				switch (facing)
+				if (shift)
 				{
-					case LEFT, RIGHT:
-						animation.play("lr");
-					case UP:
-						animation.play("u");
-					case DOWN:
-						animation.play("d");
-					case _:
+					SPEED = 400;
+					switch (facing)
+					{
+						case LEFT, RIGHT:
+							animation.play("flr");
+						case UP:
+							animation.play("fu");
+						case DOWN:
+							animation.play("fd");
+						case _:
+					}
+				}
+				else
+				{
+					SPEED = 200;
+					switch (facing)
+					{
+						case LEFT, RIGHT:
+							animation.play("lr");
+						case UP:
+							animation.play("u");
+						case DOWN:
+							animation.play("d");
+						case _:
+					}
 				}
 			}
 		}
@@ -107,11 +132,7 @@ class Player extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		updateMovement();
-		var shift = FlxG.keys.anyPressed([SHIFT]);
-		if (shift)
-			SPEED = 400;
-		else
-			SPEED = 200;
+		// 按shift跑步
 		super.update(elapsed);
 	}
 }

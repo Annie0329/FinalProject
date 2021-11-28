@@ -228,12 +228,31 @@ class PlayState extends FlxState
 		}
 	}
 
+	// 存檔啦
+	function saveFile()
+	{
+		save.data.bananaValue = bag.bananaCounter;
+		save.data.diamondValue = bag.diamondCounter;
+
+		save.data.saveStoneIntro = dia.saveStoneIntro;
+		save.data.minerYes = minerYes;
+
+		save.data.playerPos = player.getPosition();
+		save.data.place = "monument";
+
+		save.flush();
+	}
+
 	// 讀檔啦
 	function loadFile()
 	{
+		bag.diamondUi.visible = true;
 		bag.bananaCounter = save.data.bananaValue;
 		bag.diamondCounter = save.data.diamondValue;
 		bag.updateBag();
+
+		dia.saveStoneIntro = save.data.saveStoneIntro;
+		minerYes = save.data.minerYes;
 
 		if (save.data.playerPos != null && save.data.place != null)
 		{
@@ -241,22 +260,10 @@ class PlayState extends FlxState
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 			else if (save.data.place == "miner")
 			{
-				minerYes = true;
-				dia.saveStoneIntro = true;
 				player.setPosition(minerDoor.x, minerDoor.y);
 				saveFile();
 			}
 		}
-	}
-
-	// 存檔啦
-	function saveFile()
-	{
-		save.data.bananaValue = bag.bananaCounter;
-		save.data.diamondValue = bag.diamondCounter;
-		save.data.playerPos = player.getPosition();
-		save.data.place = "monument";
-		save.flush();
 	}
 
 	// 更新啦
@@ -376,6 +383,8 @@ class PlayState extends FlxState
 	{
 		talkYes = true;
 		npcType = npc.type;
+		if (npc.type == saveStone)
+			npc.saveStoneAnimation();
 	}
 
 	// Kris get the banana
@@ -470,6 +479,7 @@ class PlayState extends FlxState
 			if (getBag)
 			{
 				player.animation.frameIndex = 0;
+				bag.diamondUi.visible = true;
 				getBag = false;
 			}
 			// 有錢就開礦場門

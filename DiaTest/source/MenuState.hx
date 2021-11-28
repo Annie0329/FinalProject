@@ -14,14 +14,14 @@ class MenuState extends FlxState
 	var about:FlxSprite;
 	var aboutText:FlxText;
 
-	var pointerY:Int = 210;
 	var pointerX:Int = 260;
+	var pointerY:Int = 210;
 	var pointerBar:Int = 50;
 	var pointerChoNum:Int = 3;
 	var pointerDir:String = "ud";
+	var pointerCho:Array<String> = ["continue", "restart", "about"];
 	var pointer:Pointer;
 
-	var menu:String = "main";
 	var loadsave:Bool;
 
 	var ufo:FlxText;
@@ -38,7 +38,7 @@ class MenuState extends FlxState
 		pointer = new Pointer();
 		pointer.color = 0xffCC9709;
 		add(pointer);
-		pointer.setPointer(260, 210, 50, 3, "ud");
+		pointer.setPointer(pointerX, pointerY, pointerBar, pointerCho, pointerDir);
 
 		about = new FlxSprite(0, 0, AssetPaths.menuAbout__png);
 		about.screenCenter(FlxAxes.X);
@@ -61,7 +61,7 @@ class MenuState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		// 存檔能量幣件
+		// 存檔元件
 		save = new FlxSave();
 		save.bind("DiaTest");
 
@@ -85,7 +85,7 @@ class MenuState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		ufo.text = Std.string(save.data.place);
+		ufo.text = Std.string(pointer.selected);
 
 		var up = FlxG.keys.anyJustReleased([UP, W]);
 		var down = FlxG.keys.anyJustReleased([DOWN, S]);
@@ -99,15 +99,13 @@ class MenuState extends FlxState
 			save.erase();
 		}
 
-		// 確認
-		if (enter)
+		// 主選單功能
+		if (enter && !about.visible)
 		{
-			// 主選單功能
-			if (menu == "main")
+			switch (pointer.selected)
 			{
 				// 繼續遊戲
-				if (pointer.y == pointer.start)
-				{
+				case "continue":
 					if (save.data.bananaValue != null)
 						FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 						{
@@ -116,36 +114,28 @@ class MenuState extends FlxState
 								FlxG.switchState(new MinerState(loadsave));
 							else if (save.data.place == "monument")
 								FlxG.switchState(new PlayState(loadsave));
-							save.flush();
 						});
-				}
 
 				// 重新開始
-				else if (pointer.y == pointer.start + pointer.bar)
-				{
+				case "restart":
 					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 					{
 						save.erase();
 						FlxG.switchState(new OpeningState());
 					});
-				}
 
 				// 關於
-				else
-				{
+				case "about":
 					about.visible = true;
 					aboutText.visible = true;
-					menu = "about";
-				}
 			}
 		}
 
 		// 回主選單
-		if (x)
+		if (x && about.visible)
 		{
 			about.visible = false;
 			aboutText.visible = false;
-			menu = "main";
 		}
 	}
 }

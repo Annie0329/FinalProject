@@ -2,14 +2,18 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import js.html.BarProp;
 
 class Pointer extends FlxSprite
 {
 	public var start:Float = 0;
 	public var anoPos:Float = 0;
 	public var bar:Int = 0;
+	public var cho:Array<String> = ["oui1", "oui2", "oui3"];
 	public var choNum:Int = 0;
 	public var dir:String = "none";
+	public var order:Int = 1;
+	public var selected:String = "none";
 
 	public function new(x:Float = 0, y:Float = 0)
 	{
@@ -21,14 +25,25 @@ class Pointer extends FlxSprite
 	{
 		super.update(elapsed);
 		movePointer();
+
+		// 判斷選了哪一個選項
+		if (dir == "ud")
+			order = Std.int((y - start) / bar);
+		else
+			order = Std.int((x - start) / bar);
+		selected = cho[order];
 	}
 
-	public function setPointer(pointerX, pointerY, pointerBar, pointerChoNum, pointerDir)
+	public function setPointer(pointerX, pointerY, pointerBar, pointerCho, pointerDir)
 	{
 		x = pointerX;
 		y = pointerY;
 		bar = pointerBar;
-		choNum = pointerChoNum - 1;
+
+		cho = [];
+		cho = cho.concat(pointerCho);
+
+		choNum = cho.length - 1;
 		dir = pointerDir;
 		if (dir == "ud")
 		{
@@ -49,7 +64,6 @@ class Pointer extends FlxSprite
 		var down = FlxG.keys.anyJustReleased([DOWN, S]);
 		var left = FlxG.keys.anyJustReleased([LEFT, A]);
 		var right = FlxG.keys.anyJustReleased([RIGHT, D]);
-		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 
 		if (visible)
 		{

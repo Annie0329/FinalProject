@@ -15,7 +15,7 @@ enum ShopChoice
 	main;
 	buy;
 	sell;
-	talk;
+	chat;
 	exit;
 }
 
@@ -35,7 +35,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 	var shopCho:FlxText;
 	var shopText:Text;
-	var mainTalk:String;
+	var mainChat:String;
 	var bananaSell:Int = 0;
 
 	var name:String;
@@ -47,11 +47,15 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 	var sellCho:String = "   1 能量幣\n原本世界的錢\n離開";
 	var buyCho:String = "   2 能量幣\n離開";
-	var talkCho:String = "為什麼要對著包包大吼大叫\n離開";
+	var chatCho:String = "為什麼要對著包包大吼大叫\n離開";
 
 	public var shopChoice(default, null):ShopChoice;
 
 	var pointer:Pointer;
+	var mainChoices:Array<String> = ["buy", "sell", "chat", "exit"];
+	var buyChoices:Array<String> = ["leaf", "exit"];
+	var sellChoices:Array<String> = ["leaf", "money", "exit"];
+	var chatChoices:Array<String> = ["yelling", "exit"];
 
 	public var diamondText:FlxText;
 
@@ -120,6 +124,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 		add(diamondUi);
 		diamondUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		diamondUi.visible = false;
 
 		active = false;
 	}
@@ -135,17 +140,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 		dealText.visible = false;
 
-		if (bananaCounter > 0)
-		{
-			bananaCounterIcon.visible = true;
-			bananaCounterText.visible = true;
-		}
-		else
-		{
-			bananaCounterIcon.visible = false;
-			bananaCounterText.visible = false;
-		}
-
 		bagUi.visible = true;
 		shopUi.visible = false;
 		active = true;
@@ -160,8 +154,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bananaCounterIcon.updateHitbox();
 		bananaCounterIcon.visible = false;
 
-		mainTalk = "歡迎來到我的店！";
-		setMainShop(mainTalk);
+		mainChat = "歡迎來到我的店！";
+		setMainShop(mainChat);
 
 		bagUi.visible = false;
 		shopUi.visible = true;
@@ -169,15 +163,15 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 	}
 
-	function setMainShop(mainTalk)
+	function setMainShop(mainChat)
 	{
 		textRunDone = false;
-		shopText.resetText(mainTalk);
+		shopText.resetText(mainChat);
 		shopText.start(false, false, function()
 		{
 			textRunDone = true;
 		});
-		pointer.setPointer(background.x + 95, shopCho.y, 30, 4, "ud");
+		pointer.setPointer(background.x + 95, shopCho.y, 30, mainChoices, "ud");
 		shopChoice = main;
 	}
 
@@ -197,13 +191,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	override function update(elapsed:Float)
 	{
 		updateEnter();
-
+		var x = FlxG.keys.anyJustReleased([X]);
+		var l = FlxG.keys.anyJustReleased([LEFT]);
+		var r = FlxG.keys.anyJustReleased([RIGHT]);
 		// 包包功能
 		if (bagUi.visible)
 		{
-			var x = FlxG.keys.anyJustReleased([X]);
-			var l = FlxG.keys.anyJustReleased([LEFT]);
-			var r = FlxG.keys.anyJustReleased([RIGHT]);
 			// 退出
 			if (x)
 			{
@@ -243,139 +236,122 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				// 主選單
 				if (shopChoice == main)
 				{
-					// 買
-					if (pointer.y == pointer.start)
+					switch (pointer.selected)
 					{
-						shopText.resetText(buyCho);
-						shopText.start(false, false);
-						shopText.skip();
-						textRunDone = true;
-						shopChoice = buy;
-						pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, 2, "ud");
-						bananaCounterIcon.visible = true;
-						bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
+						// 買
+						case "buy":
+							shopText.resetText(buyCho);
+							shopChoice = buy;
+							pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, buyChoices, "ud");
+							bananaCounterIcon.visible = true;
+							bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
+
+						// 賣
+						case "sell":
+							shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
+							shopChoice = sell;
+							pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, sellChoices, "ud");
+							bananaCounterIcon.visible = true;
+							bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
+
+						// 聊天
+						case "chat":
+							shopText.resetText(chatCho);
+							shopChoice = chat;
+							pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, chatChoices, "ud");
+
+						// 離開
+						case "exit":
+							FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+							{
+								shopUi.visible = false;
+								active = false;
+								FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+							});
 					}
-					// 賣
-					else if (pointer.y == pointer.start + pointer.bar)
-					{
-						shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
-						shopText.start(false, false);
-						shopText.skip();
-						textRunDone = true;
-						shopChoice = sell;
-						pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, 3, "ud");
-						bananaCounterIcon.visible = true;
-						bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
-					}
-					// 聊天
-					else if (pointer.y == pointer.start + pointer.bar * 2)
-					{
-						textRunDone = false;
-						shopText.resetText(talkCho);
-						shopText.start(false, false, function()
-						{
-							textRunDone = true;
-						});
-						shopText.skip();
-						shopChoice = talk;
-						pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, 2, "ud");
-					}
-					// 離開
-					else
-					{
-						textRunDone = true;
-						FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
-						{
-							shopUi.visible = false;
-							active = false;
-							FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
-						});
-					}
+					shopText.start(false, false);
+					shopText.skip();
+					textRunDone = true;
 				}
 
 				// 開始買
 				else if (shopChoice == buy)
 				{
-					if (pointer.y == pointer.start)
+					switch (pointer.selected)
 					{
-						if (diamondCounter >= 2)
-						{
-							bananaCounter++;
-							bananaSell++;
-							diamondCounter -= 2;
-							shopText.resetText(buyCho);
-							shopText.start(false, false);
-							shopText.skip();
-							textRunDone = true;
-							updateBag();
-						}
-					}
-					else if (pointer.y == pointer.start + pointer.bar)
-					{
-						if (bananaSell == 0)
-							mainTalk = "猩猩什麼都沒有買！";
-						else
-						{
-							mainTalk = "猩猩給老闆 " + Std.string(bananaSell * 2) + " 個能量石！\n老闆給猩猩 " + Std.string(bananaSell) + " 片香蕉葉！";
-							dealText.text = mainTalk + "\n";
-						}
-						bananaSell = 0;
-						bananaCounterIcon.visible = false;
-						setMainShop(mainTalk);
+						case "leaf":
+							if (diamondCounter >= 2)
+							{
+								bananaCounter++;
+								bananaSell++;
+								diamondCounter -= 2;
+								shopText.resetText(buyCho);
+								shopText.start(false, false);
+								shopText.skip();
+								textRunDone = true;
+								updateBag();
+							}
+						case "exit":
+							if (bananaSell == 0)
+								mainChat = "猩猩什麼都沒有買！";
+							else
+							{
+								mainChat = "猩猩給老闆 " + Std.string(bananaSell * 2) + " 個能量石！\n老闆給猩猩 " + Std.string(bananaSell) + " 片香蕉葉！";
+								dealText.text = mainChat + "\n";
+							}
+							bananaSell = 0;
+							bananaCounterIcon.visible = false;
+							setMainShop(mainChat);
 					}
 				}
 
 				// 開始賣
 				else if (shopChoice == sell)
 				{
-					if (pointer.y == pointer.start)
+					switch (pointer.selected)
 					{
-						if (bananaCounter > 0)
-						{
-							diamondCounter += bananaCounter;
-							bananaSell = bananaCounter;
-							bananaCounter = 0;
-							shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
-							shopText.start(false, false);
-							shopText.skip();
-							textRunDone = true;
-							updateBag();
-						}
-					}
-					else if (pointer.y == pointer.start + pointer.bar)
-					{
-						name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";
-						txt = false;
-						shopTalkStart(name, txt);
-					}
-					else
-					{
-						if (bananaSell == 0)
-							mainTalk = "猩猩什麼都沒有賣！";
-						else
-						{
-							mainTalk = "猩猩給老闆 " + Std.string(bananaSell) + " 片香蕉葉！\n老闆給猩猩 " + Std.string(bananaSell) + " 個能量石！";
-							dealText.text = mainTalk + "\n";
-						}
-						bananaSell = 0;
-						bananaCounterIcon.visible = false;
-						setMainShop(mainTalk);
+						case "leaf":
+							if (bananaCounter > 0)
+							{
+								diamondCounter += bananaCounter;
+								bananaSell = bananaCounter;
+								bananaCounter = 0;
+								shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
+								shopText.start(false, false);
+								shopText.skip();
+								textRunDone = true;
+								updateBag();
+							}
+						case "money":
+							name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";
+							txt = false;
+							shopChatStart(name, txt);
+						case "exit":
+							if (bananaSell == 0)
+								mainChat = "猩猩什麼都沒有賣！";
+							else
+							{
+								mainChat = "猩猩給老闆 " + Std.string(bananaSell) + " 片香蕉葉！\n老闆給猩猩 " + Std.string(bananaSell) + " 個能量石！";
+								dealText.text = mainChat + "\n";
+							}
+							bananaSell = 0;
+							bananaCounterIcon.visible = false;
+							setMainShop(mainChat);
 					}
 				}
 
 				// 開始聊天
-				else if (shopChoice == talk)
+				else if (shopChoice == chat)
 				{
-					if (pointer.y == pointer.start)
+					switch (pointer.selected)
 					{
-						name = AssetPaths.shopTalk__txt;
-						txt = true;
-						shopTalkStart(name, txt);
-					}
-					if (pointer.y == pointer.start + pointer.bar)
-					{
-						mainTalk = "猩猩跟老闆聊天了！";
-						setMainShop(mainTalk);
+						case "yelling":
+							name = AssetPaths.shopTalk__txt;
+							txt = true;
+							shopChatStart(name, txt);
+						case "exit":
+							mainChat = "猩猩跟老闆聊天了！";
+							setMainShop(mainChat);
 					}
 				}
 			}
@@ -385,28 +361,25 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				if (shopText.over)
 				{
 					pointer.visible = true;
-					if (shopChoice == talk)
+					if (shopChoice == chat)
 					{
-						shopText.resetText(talkCho);
-						shopText.start(false, false);
-						shopText.skip();
-						textRunDone = true;
+						shopText.resetText(chatCho);
 					}
 					else if (shopChoice == sell)
 					{
 						shopText.resetText("   " + Std.string(bananaCounter) + sellCho);
-						shopText.start(false, false);
-						shopText.skip();
-						textRunDone = true;
 						bananaCounterIcon.visible = true;
 					}
+					shopText.start(false, false);
+					shopText.skip();
+					textRunDone = true;
 				}
 			}
 		}
 	}
 
 	// 聊天準備事項
-	function shopTalkStart(name, txt)
+	function shopChatStart(name, txt)
 	{
 		pointer.visible = false;
 		bananaCounterIcon.visible = false;
