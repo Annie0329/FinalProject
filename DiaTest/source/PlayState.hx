@@ -206,8 +206,8 @@ class PlayState extends FlxState
 				enemies.add(new Enemy(x, y, nft));
 
 			case "banana":
-				var b = new FlxSprite(x + 20, y + 20).loadGraphic(AssetPaths.banana__png, true, 40, 40);
-				b.animation.add("spin", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 5, true);
+				var b = new FlxSprite(x + 20, y + 20).loadGraphic(AssetPaths.banana__png, true, 40, 80);
+				b.animation.add("spin", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], 5, true);
 				b.animation.play("spin");
 				b.immovable = true;
 				banana.add(b);
@@ -221,7 +221,7 @@ class PlayState extends FlxState
 				npc.add(new NPC(x, y, saveStone));
 
 			case "minerDoor":
-				minerDoor.setPosition(x, y);
+				minerDoor.setPosition(x + 28, y);
 
 			case "shop":
 				shop.setPosition(x, y);

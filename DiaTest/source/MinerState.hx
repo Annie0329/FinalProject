@@ -50,7 +50,7 @@ class MinerState extends FlxState
 	var stoneYes:Bool = false;
 	var minerTimer:FlxText;
 	var timer:FlxTimer;
-	var minerTimeSet:Int = 10;
+	var minerTimeSet:Int = 100;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -59,6 +59,7 @@ class MinerState extends FlxState
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
+	var torch:FlxTypedGroup<FlxSprite> = null;
 
 	var loadsave:Bool;
 
@@ -92,14 +93,18 @@ class MinerState extends FlxState
 		add(road);
 
 		// 礦場大門
-		minerGate = new FlxSprite().makeGraphic(80, 80, FlxColor.BLACK);
+		minerGate = new FlxSprite(AssetPaths.minerGate__png);
 		minerGate.immovable = true;
 		add(minerGate);
-
+		
 		// 牆
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
+
+		// 火把
+		torch = new FlxTypedGroup<FlxSprite>();
+		add(torch);
 
 		// 礦場傳送門
 		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
@@ -153,11 +158,13 @@ class MinerState extends FlxState
 		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
 
+		// 石頭圖示
 		stoneCounterIcon = new FlxSprite(120, 10).loadGraphic(AssetPaths.stone__png);
 		stoneCounterIcon.scrollFactor.set(0, 0);
 		add(stoneCounterIcon);
 		stoneCounterIcon.visible = false;
 
+		// 石頭數目
 		stoneCounterText = new FlxText(stoneCounterIcon.x + stoneCounterIcon.width + 10, stoneCounterIcon.y, 200, "0", 20);
 		stoneCounterText.scrollFactor.set(0, 0);
 		add(stoneCounterText);
@@ -203,7 +210,7 @@ class MinerState extends FlxState
 				npc.add(new NPC(x, y, saveStone));
 
 			case "monumentDoor":
-				monumentDoor.setPosition(x, y);
+				monumentDoor.setPosition(x + 28, y);
 			case "minerGate":
 				minerGate.setPosition(x, y);
 
@@ -220,6 +227,13 @@ class MinerState extends FlxState
 
 			case "spartanMiner":
 				enemies.add(new Enemy(x, y, spartanMiner));
+
+			case "torch":
+				var t = new FlxSprite(x, y).loadGraphic(AssetPaths.torch__png, true, 40, 80);
+				t.animation.add("burn", [0, 1, 2, 3, 4], 6, true);
+				t.animation.play("burn");
+				t.immovable = true;
+				torch.add(t);
 		}
 	}
 
@@ -269,20 +283,10 @@ class MinerState extends FlxState
 		updateTalking();
 		updateEsc();
 		updateC();
-
-		if (minerTimer.visible)
-		{
-			minerTimer.text = Std.string(Std.int(timer.timeLeft));
-			if (Std.int(timer.timeLeft) <= 5)
-				minerTimer.color = FlxColor.RED;
-			else
-				minerTimer.color = FlxColor.WHITE;
-			if (timer.finished)
-				player.active = false;
-		}
+		updateTimer();
 
 		// 除錯大隊
-		ufo.text = Std.string(player.getPosition());
+		// ufo.text = Std.string(player.getPosition());
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -357,6 +361,7 @@ class MinerState extends FlxState
 	// 如果你碰了敵人代表敵人碰了你
 	function touchEnemy(player:Player, enemy:Enemy)
 	{
+		ufo.text = Std.string(enemy.velocity);
 		FlxG.camera.shake(0.01, 0.1, function()
 		{
 			stoneCounter--;
@@ -385,6 +390,46 @@ class MinerState extends FlxState
 					FlxTween.tween(box, {y: boxPos}, 2);
 				}
 			});
+		}
+	}
+
+	// 計時開始
+	function updateTimer()
+	{
+		// 計時開始時要做的事
+		if (minerTimer.visible)
+		{
+			// 只剩5秒字就變紅色
+			minerTimer.text = Std.string(Std.int(timer.timeLeft));
+			if (Std.int(timer.timeLeft) <= 5)
+				minerTimer.color = FlxColor.RED;
+			else
+				minerTimer.color = FlxColor.WHITE;
+			// 時間到玩家就不准動
+			if (timer.finished)
+				player.active = false;
+		}
+		// 如果玩家經過門就啟動計時
+		else if (player.y < minerGate.y - 40)
+		{
+			minerGate.x -= minerGate.width;
+			timer = new FlxTimer().start(minerTimeSet, function(timer:FlxTimer)
+			{
+				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+				{
+					player.setPosition(minerGate.x, minerGate.y + 200);
+					minerTimer.visible = false;
+					stoneCounterIcon.visible = false;
+					stoneCounterText.visible = false;
+					stoneCounter = 0;
+					stoneCounterText.text = Std.string(stoneCounter);
+
+					FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
+				});
+			});
+			minerTimer.visible = true;
+			stoneCounterIcon.visible = true;
+			stoneCounterText.visible = true;
 		}
 	}
 
@@ -435,32 +480,10 @@ class MinerState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
-			// 礦場計時開始
+			// 礦場大門打開
 			if (stoneYes)
 			{
-				FlxTween.tween(minerGate, {x: minerGate.x + 80}, 0.5, {
-					onComplete: function(_)
-					{
-						timer = new FlxTimer().start(minerTimeSet, function(timer:FlxTimer)
-						{
-							FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
-							{
-								minerGate.x -= 80;
-								player.setPosition(minerGate.x, minerGate.y + 200);
-								minerTimer.visible = false;
-								stoneCounterIcon.visible = false;
-								stoneCounterText.visible = false;
-								stoneCounter = 0;
-								stoneCounterText.text = Std.string(stoneCounter);
-
-								FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
-							});
-						});
-						minerTimer.visible = true;
-						stoneCounterIcon.visible = true;
-						stoneCounterText.visible = true;
-					}
-				});
+				FlxTween.tween(minerGate, {x: minerGate.x + minerGate.width}, 0.5);
 				stoneYes = false;
 			}
 		}
