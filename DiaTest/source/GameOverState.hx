@@ -73,9 +73,11 @@ class GameOverState extends FlxState
 						{
 							loadsave = true;
 							if (save.data.place == "miner")
-								FlxG.switchState(new MinerState(loadsave));
+								FlxG.switchState(new MinerState());
 							else if (save.data.place == "monument")
 								FlxG.switchState(new PlayState(loadsave));
+							else if (save.data.place == "street")
+								FlxG.switchState(new StreetState());
 						});
 					// 沒有存檔點就回到一開始
 					else

@@ -10,6 +10,7 @@ class Text extends FlxTypeText
 	public var dilog_boxes:Array<String>;
 
 	var txt:Bool = true;
+
 	public var textRunDone = false;
 
 	public var over:Bool = false;
@@ -22,6 +23,7 @@ class Text extends FlxTypeText
 		skipKeys = ["X", "SHIFT"];
 	}
 
+	// 文字出現
 	public function show(name, txt:Bool)
 	{
 		dilog_boxes = if (txt) openfl.Assets.getText(name).split(":") else dilog_boxes = name.split(":");
@@ -39,6 +41,7 @@ class Text extends FlxTypeText
 		});
 	}
 
+	// 更新啦
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);

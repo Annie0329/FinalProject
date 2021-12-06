@@ -22,6 +22,7 @@ class OpeningState extends FlxState
 
 	override public function create()
 	{
+		// 操作說明
 		guide = new FlxText(0, 0, 400, "操作說明：\nENTER、SPACE、Z：調查、對話換行、確定\nX、SHIFT：取消\nC：查看持有物品", 28, true);
 		guide.font = AssetPaths.silver__ttf;
 		guide.screenCenter();
@@ -36,7 +37,7 @@ class OpeningState extends FlxState
 		add(openingAnimation);
 		openingAnimation.animation.frameIndex = i;
 
-		// 商店的字
+		// 開場字幕
 		openText = new FlxTypeText(openingAnimation.x, openingAnimation.height + 10, 360, "text", 28, true);
 		openText.delay = 0.05;
 		openText.skipKeys = ["X", "SHIFT"];

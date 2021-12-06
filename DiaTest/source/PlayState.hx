@@ -149,12 +149,13 @@ class PlayState extends FlxState
 		save = new FlxSave();
 		save.bind("DiaTest");
 
-		// 轉場
+		// 一般轉場
 		if (loadsave)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, true);
 			loadFile();
 		}
+		// 重新開始遊戲轉場
 		else
 		{
 			player.animation.frameIndex = 11;
@@ -168,9 +169,11 @@ class PlayState extends FlxState
 		}
 
 		// 播音樂
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+		// 最終上傳記得消除註解
+		// if (FlxG.sound.music == null)
+		// 	FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
 
+		// 滑鼠退散
 		FlxG.mouse.visible = false;
 		super.create();
 	}
@@ -206,7 +209,7 @@ class PlayState extends FlxState
 				enemies.add(new Enemy(x, y, nft));
 
 			case "banana":
-				var b = new FlxSprite(x + 20, y + 20).loadGraphic(AssetPaths.banana__png, true, 40, 80);
+				var b = new FlxSprite(x, y).loadGraphic(AssetPaths.banana__png, true, 40, 80);
 				b.animation.add("spin", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], 5, true);
 				b.animation.play("spin");
 				b.immovable = true;
@@ -260,7 +263,7 @@ class PlayState extends FlxState
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 			else if (save.data.place == "miner")
 			{
-				player.setPosition(minerDoor.x, minerDoor.y);
+				player.setPosition(minerDoor.x + (minerDoor.width - player.width) / 2, minerDoor.y - 20);
 				saveFile();
 			}
 		}
@@ -330,7 +333,7 @@ class PlayState extends FlxState
 					else if (combatHud.outcome == LOSE)
 						name = ":D:哎呀，真可惜！";
 					else
-						name = ":D:柴犬幣很好賺呢，下次試試看跟他們交涉吧！";
+						name = ":D:狗狗幣很好賺呢，下次試試看跟他們交涉吧！";
 
 				case cloudMiner:
 					if (combatHud.outcome == FLEE)
@@ -383,8 +386,6 @@ class PlayState extends FlxState
 	{
 		talkYes = true;
 		npcType = npc.type;
-		if (npc.type == saveStone)
-			npc.saveStoneAnimation();
 	}
 
 	// Kris get the banana
@@ -403,7 +404,7 @@ class PlayState extends FlxState
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 			{
 				saveFile();
-				FlxG.switchState(new MinerState(true));
+				FlxG.switchState(new MinerState());
 			});
 		}
 		else
@@ -493,7 +494,7 @@ class PlayState extends FlxState
 					bag.diamondCounter--;
 					bag.updateBag();
 					saveFile();
-					FlxG.switchState(new MinerState(true));
+					FlxG.switchState(new MinerState());
 				});
 			}
 		}

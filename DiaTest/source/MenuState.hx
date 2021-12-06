@@ -40,16 +40,18 @@ class MenuState extends FlxState
 		add(pointer);
 		pointer.setPointer(pointerX, pointerY, pointerBar, pointerCho, pointerDir);
 
+		// 關於背景
 		about = new FlxSprite(0, 0, AssetPaths.menuAbout__png);
-		about.screenCenter(FlxAxes.X);
+		about.screenCenter();
 		add(about);
 		about.visible = false;
 
-		aboutText = new FlxText(0, 0, 200, "操作說明：\nENTER、SPACE、Z：調查、對話換行、確定\nX、SHIFT：取消\nC：查看持有物品\nMusic: https://www.bensound.com", 28);
+		// 關於的字
+		aboutText = new FlxText(0, about.y + 50, 160, "操作說明：\nENTER、SPACE、Z：調查、對話換行、確定\nX、SHIFT：取消\nC：查看持有物品\nMusic: https://www.bensound.com", 20);
 		aboutText.borderColor = FlxColor.BLACK;
 		aboutText.font = AssetPaths.silver__ttf;
 		aboutText.color = FlxColor.BLACK;
-		aboutText.screenCenter();
+		aboutText.screenCenter(FlxAxes.X);
 		add(aboutText);
 		aboutText.visible = false;
 
@@ -111,9 +113,11 @@ class MenuState extends FlxState
 						{
 							loadsave = true;
 							if (save.data.place == "miner")
-								FlxG.switchState(new MinerState(loadsave));
+								FlxG.switchState(new MinerState());
 							else if (save.data.place == "monument")
 								FlxG.switchState(new PlayState(loadsave));
+							else if (save.data.place == "street")
+								FlxG.switchState(new StreetState());
 						});
 
 				// 重新開始

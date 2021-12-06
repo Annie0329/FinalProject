@@ -32,7 +32,7 @@ class ApplicationMain
 
 		ManifestResources.init(config);
 
-		app.meta["build"] = "1958";
+		app.meta["build"] = "2085";
 		app.meta["company"] = "HaxeFlixel";
 		app.meta["file"] = "DiaTest";
 		app.meta["name"] = "DiaTest";
@@ -50,7 +50,7 @@ class ApplicationMain
 			// display: 0,
 			element: null,
 			frameRate: 60,
-			#if !web fullscreen: false, #end
+			#if !web fullscreen: true, #end
 			height: 1080,
 			hidden: #if munit true #else false #end,
 			maximized: false,

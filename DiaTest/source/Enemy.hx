@@ -74,7 +74,7 @@ class Enemy extends FlxSprite
 			case shibaCoin:
 				loadGraphic(AssetPaths.shibaCoin__png, true, 64, 64);
 				// 走路動畫
-				animation.add("lr", [4, 3, 5, 3], 6, false);
+				animation.add("lr", [3, 4, 5, 4], 6, false);
 				animation.add("u", [7, 6, 8, 6], 6, false);
 				animation.add("d", [1, 0, 2, 0], 6, false);
 
@@ -82,7 +82,7 @@ class Enemy extends FlxSprite
 				loadGraphic(AssetPaths.cloudMiner__png);
 			case nft:
 				loadGraphic(AssetPaths.nft__png, true, 56, 64);
-				animation.frameIndex = 1;
+				animation.frameIndex = 0;
 			case spartanMiner:
 				loadGraphic(AssetPaths.spartanMiner__png, true, 64, 64);
 				animation.add("lrSpartan", [0, 1, 2, 3], 6, false);

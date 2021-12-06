@@ -86,9 +86,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		// 加入敵人的人形立牌
 		enemySprite = new Enemy(0, 100, shibaCoin);
 		enemySprite.screenCenter(FlxAxes.X);
-		// enemySprite.animation.frameIndex = 3;
+		enemySprite.animation.frameIndex = 0;
 		enemySprite.active = false;
-		// enemySprite.facing = FlxObject.LEFT;
 		add(enemySprite);
 
 		// 字
@@ -177,7 +176,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		switch (enemy.type)
 		{
 			case shibaCoin:
-				enemyNameText.text = "柴犬幣";
+				enemyNameText.text = "狗狗幣";
 				combatText.resetText("要不要買點狗狗幣啊？誰不喜歡可愛的狗狗呢？");
 				shibaCounter++;
 				if (shibaCounter == shibaLoseNum)
@@ -230,7 +229,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		// 根據按鍵做不同反應
 		if (fire)
 		{
-			// 柴犬幣
+			// 狗狗幣
 			if (enemy.type == shibaCoin)
 			{
 				if (state == 1 && pointer.visible)

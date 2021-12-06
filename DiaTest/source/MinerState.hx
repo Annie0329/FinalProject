@@ -19,8 +19,7 @@ class MinerState extends FlxState
 	var bag:Bag;
 
 	// 各關目標
-	var stoneGoal:Int = 3;
-	var boxGoal:Int = 1;
+	var stoneGoal:Int = 5;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -34,6 +33,7 @@ class MinerState extends FlxState
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
 	var monumentDoor:FlxSprite;
+	var streetDoor:FlxSprite;
 	var minerGate:FlxSprite;
 
 	// 箱子
@@ -54,28 +54,15 @@ class MinerState extends FlxState
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
-	var mapRoom:FlxOgmo3Loader;
 	var through:FlxTilemap;
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 	var torch:FlxTypedGroup<FlxSprite> = null;
 
-	var loadsave:Bool;
-
 	// 除錯ufo
 	var ufo:FlxText;
 	var save:FlxSave;
-
-	/**
-		*來自MenuState的呼喚，我們到底要不要用存檔檔案
-		*@param loadsave
-	 */
-	public function new(loadsave:Bool)
-	{
-		super();
-		this.loadsave = loadsave; // 這個loadsave等於那個loadsave(咒語)
-	}
 
 	// 加好加滿
 	override public function create()
@@ -96,7 +83,7 @@ class MinerState extends FlxState
 		minerGate = new FlxSprite(AssetPaths.minerGate__png);
 		minerGate.immovable = true;
 		add(minerGate);
-		
+
 		// 牆
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
@@ -106,7 +93,7 @@ class MinerState extends FlxState
 		torch = new FlxTypedGroup<FlxSprite>();
 		add(torch);
 
-		// 礦場傳送門
+		// 紀念碑傳送門
 		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
 		monumentDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		monumentDoor.setSize(104, 40);
@@ -114,6 +101,15 @@ class MinerState extends FlxState
 		monumentDoor.immovable = true;
 		add(monumentDoor);
 		monumentDoor.animation.play("glow");
+
+		// defi街傳送門
+		streetDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
+		streetDoor.animation.add("glowStreet", [0, 1, 2, 3], 3, true);
+		streetDoor.setSize(104, 40);
+		streetDoor.offset.set(0, 120);
+		streetDoor.immovable = true;
+		add(streetDoor);
+		streetDoor.animation.play("glowStreet");
 
 		// 石頭
 		stone = new FlxTypedGroup<FlxSprite>();
@@ -180,18 +176,17 @@ class MinerState extends FlxState
 		// 儲存資料的能量幣件
 		save = new FlxSave();
 		save.bind("DiaTest");
-		if (loadsave)
-		{
-			loadFile();
-		}
 
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+		loadFile();
+
+		// 播音樂
+		// 最終上傳記得消除註解
+		// if (FlxG.sound.music == null)
+		// 	FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
 
 		FlxG.mouse.visible = false;
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
-		dia.saveStoneIntro = true;
 		super.create();
 	}
 
@@ -204,13 +199,14 @@ class MinerState extends FlxState
 		switch (entity.name)
 		{
 			case "player":
-				player.setPosition(x, y + 32);
-
+				player.setPosition(x, y);
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
 
 			case "monumentDoor":
 				monumentDoor.setPosition(x + 28, y);
+			case "streetDoor":
+				streetDoor.setPosition(x + 28, y);
 			case "minerGate":
 				minerGate.setPosition(x, y);
 
@@ -254,7 +250,12 @@ class MinerState extends FlxState
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 			else if (save.data.place == "monument")
 			{
-				player.setPosition(monumentDoor.x, monumentDoor.y);
+				player.setPosition(monumentDoor.x + (monumentDoor.width - player.width) / 2, monumentDoor.y - 20);
+				saveFile();
+			}
+			else if (save.data.place == "street")
+			{
+				player.setPosition(streetDoor.x + (streetDoor.width - player.width) / 2, streetDoor.y - 20);
 				saveFile();
 			}
 		}
@@ -304,6 +305,7 @@ class MinerState extends FlxState
 		FlxG.collide(player, npc, npcTalk);
 
 		FlxG.collide(player, monumentDoor, goToMonument);
+		FlxG.collide(player, streetDoor, goToStreet);
 		FlxG.overlap(player, stone, playerGotStone);
 		FlxG.collide(player, box, stoneInsideBox);
 		FlxG.overlap(player, enemies, touchEnemy);
@@ -333,6 +335,16 @@ class MinerState extends FlxState
 		{
 			saveFile();
 			FlxG.switchState(new PlayState(true));
+		});
+	}
+
+	// 去defi街
+	function goToStreet(player:Player, streetDoor:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			saveFile();
+			FlxG.switchState(new StreetState());
 		});
 	}
 

@@ -55,8 +55,6 @@ class NPC extends FlxSprite
 		immovable = true;
 	}
 
-	public function saveStoneAnimation() {}
-
 	// 記得要加super.update(elapsed);啊不然動畫不會跑噢
 	override function update(elapsed:Float)
 	{

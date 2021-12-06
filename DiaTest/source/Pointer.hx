@@ -2,7 +2,6 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import js.html.BarProp;
 
 class Pointer extends FlxSprite
 {
