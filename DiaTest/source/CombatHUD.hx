@@ -107,6 +107,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		investNumText.alignment = CENTER;
 		investNumText.visible = false;
 
+		// nft花樣選擇圖示
 		nftStyle = new FlxSprite(choices[YES].x + choices[YES].width / 2, choices[YES].y).loadGraphic(AssetPaths.nft__png, true, 56, 64);
 		nftStyle.animation.frameIndex = 0;
 		add(nftStyle);
@@ -127,6 +128,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		pointer.visible = false;
 		add(pointer);
 
+		//左右箭頭
 		pointerLeft = new FlxSprite(0, 0, AssetPaths.pointer__png);
 		pointerLeft.flipX = true;
 		add(pointerLeft);

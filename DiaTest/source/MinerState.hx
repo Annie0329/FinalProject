@@ -420,6 +420,11 @@ class MinerState extends FlxState
 			// 時間到玩家就不准動
 			if (timer.finished)
 				player.active = false;
+
+			if (stoneCounter >= stoneGoal)
+				stoneCounterText.color = FlxColor.YELLOW;
+			else
+				stoneCounterText.color = FlxColor.WHITE;
 		}
 		// 如果玩家經過門就啟動計時
 		else if (player.y < minerGate.y - 40)

@@ -50,6 +50,8 @@ class PlayState extends FlxState
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
+	var sea:FlxTypedGroup<FlxSprite> = null;
+
 	var loadsave:Bool;
 
 	var getBag:Bool = false;
@@ -88,6 +90,9 @@ class PlayState extends FlxState
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
+
+		sea = new FlxTypedGroup<FlxSprite>();
+		add(sea);
 
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
@@ -214,6 +219,13 @@ class PlayState extends FlxState
 				b.animation.play("spin");
 				b.immovable = true;
 				banana.add(b);
+
+			case "sea":
+				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
+				s.animation.add("oui", [0, 1, 2, 3], 6, true);
+				s.animation.play("oui");
+				s.immovable = true;
+				sea.add(s);
 
 			case "lake":
 				npc.add(new NPC(x, y, lake));

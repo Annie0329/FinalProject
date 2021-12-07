@@ -97,8 +97,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		switch (dilog_boxes[profile])
 		{
-			case "A":
-				profilePic = AssetPaths.diaApe__png;
 			case "D":
 				profilePic = AssetPaths.diaDoge__png;
 			case "S":

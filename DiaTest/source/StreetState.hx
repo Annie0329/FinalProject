@@ -37,6 +37,7 @@ class StreetState extends FlxState
 	var walls:FlxTilemap;
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
+	var sea:FlxTypedGroup<FlxSprite> = null;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -61,6 +62,9 @@ class StreetState extends FlxState
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
+
+		sea = new FlxTypedGroup<FlxSprite>();
+		add(sea);
 
 		// 礦場傳送門
 		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
@@ -136,6 +140,14 @@ class StreetState extends FlxState
 
 			case "minerDoor":
 				minerDoor.setPosition(x + 28, y);
+
+			case "sea":
+				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
+				s.flipX = true;
+				s.animation.add("oui", [0, 1, 2, 3], 6, true);
+				s.animation.play("oui");
+				s.immovable = true;
+				sea.add(s);
 		}
 	}
 
