@@ -63,14 +63,14 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var shibaCounter:Int = 0;
 	var shibaLose:Bool = false;
 
-	var investNum:Int = 5;
+	public var investNum:Int = 5;
 
 	// UI
 	var enemyNameText:FlxText;
 	var diamondText:FlxText;
 
 	public var diamondUiText:FlxText;
-	public var diamond:Int = 0;
+	public var diamond:Float = 0;
 
 	var alpha:Float = 0; // 淡入淡出的效果，alpha就是透明度啦
 	var wait:Bool = true; // 當我們不准玩家動時就把這個設為true
@@ -128,7 +128,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		pointer.visible = false;
 		add(pointer);
 
-		//左右箭頭
+		// 左右箭頭
 		pointerLeft = new FlxSprite(0, 0, AssetPaths.pointer__png);
 		pointerLeft.flipX = true;
 		add(pointerLeft);
@@ -154,7 +154,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	 */
 	// 準備介面
-	public function initCombat(diamond:Int, diamondUiText:FlxText, enemy:Enemy)
+	public function initCombat(diamond:Float, diamondUiText:FlxText, enemy:Enemy)
 	{
 		this.enemy = enemy; // 把這裡的敵人設成我們在別地方拿到的敵人
 		this.diamond = diamond;
@@ -165,6 +165,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 		// 確定這些東西即使在我們之後來也不會亂動或亂出現
 		wait = true;
+		pointer.setPosition(choices[YES].x - 16, choices[YES].y + (choices[YES].height / 2) - 16);
 		pointer.visible = false;
 
 		choices[YES].visible = true;
@@ -261,19 +262,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				else if (state == 2)
 				{
 					state++;
-					if (shibaLose)
-					{
-						diamond -= investNum;
-						combatText.resetText("狗狗幣虧了。你什麼都沒得到。");
-						outcome = LOSE;
-						shibaLose = false;
-					}
-					else
-					{
-						diamond += investNum;
-						combatText.resetText("你賺到" + Std.string(investNum) + "能量幣！");
-						outcome = WIN;
-					}
+
+					diamond -= investNum;
+					combatText.resetText("謝謝你！");
+					outcome = WIN;
+
 					combatText.start(false, false);
 					investNumText.visible = false;
 					pointerLeft.visible = false;
@@ -410,7 +403,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			{
 				if (left && investNum != 5)
 					investNum -= 5;
-				else if (right) // && investNum / 5 != Std.int(diamond / 5))
+				else if (right && investNum / 5 != Std.int(diamond / 5))
 					investNum += 5;
 				investNumText.text = Std.string(investNum);
 			}

@@ -91,6 +91,7 @@ class PlayState extends FlxState
 		walls.follow();
 		add(walls);
 
+		// 海
 		sea = new FlxTypedGroup<FlxSprite>();
 		add(sea);
 
@@ -112,6 +113,7 @@ class PlayState extends FlxState
 		shop.immovable = true;
 		add(shop);
 
+		// NPC
 		npc = new FlxTypedGroup<NPC>();
 		add(npc);
 
@@ -222,7 +224,7 @@ class PlayState extends FlxState
 
 			case "sea":
 				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
-				s.animation.add("oui", [0, 1, 2, 3], 6, true);
+				s.animation.add("oui", [0, 1, 2, 3], 12, true);
 				s.animation.play("oui");
 				s.immovable = true;
 				sea.add(s);
@@ -246,12 +248,15 @@ class PlayState extends FlxState
 	// 存檔啦
 	function saveFile()
 	{
+		// 能量幣和香蕉數目
 		save.data.bananaValue = bag.bananaCounter;
 		save.data.diamondValue = bag.diamondCounter;
 
+		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
 		save.data.minerYes = minerYes;
 
+		// 玩家位置
 		save.data.playerPos = player.getPosition();
 		save.data.place = "monument";
 
@@ -341,9 +346,13 @@ class PlayState extends FlxState
 			{
 				case shibaCoin:
 					if (combatHud.outcome == WIN)
-						name = ":D:恭喜你賺到錢了！";
-					else if (combatHud.outcome == LOSE)
-						name = ":D:哎呀，真可惜！";
+					{
+						name = ":D:你買了狗狗幣啊！";
+						bag.shibaInvest += combatHud.investNum;
+						bag.shibaWave += bag.shibaInvest;
+						bag.coinUi.visible = true;
+						bag.countShibaWave();
+					}
 					else
 						name = ":D:狗狗幣很好賺呢，下次試試看跟他們交涉吧！";
 

@@ -50,7 +50,7 @@ class MinerState extends FlxState
 	var stoneYes:Bool = false;
 	var minerTimer:FlxText;
 	var timer:FlxTimer;
-	var minerTimeSet:Int = 100;
+	var minerTimeSet:Int = 60;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -264,12 +264,15 @@ class MinerState extends FlxState
 	// 存檔啦
 	function saveFile()
 	{
+		// 能量幣和香蕉數目
 		save.data.bananaValue = bag.bananaCounter;
 		save.data.diamondValue = bag.diamondCounter;
 
+		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
 		save.data.stoneTextYes = dia.stoneTextYes;
 
+		// 玩家位置
 		save.data.playerPos = player.getPosition();
 		save.data.place = "miner";
 
@@ -386,7 +389,8 @@ class MinerState extends FlxState
 	{
 		if (stoneCounter >= stoneGoal)
 		{
-			bag.diamondCounter += Std.int(stoneCounter / stoneGoal);
+			var car = Std.int(stoneCounter / stoneGoal);
+			bag.diamondCounter += Std.int(car * 10);
 			stoneCounter = stoneCounter % stoneGoal;
 			stoneCounterText.text = Std.string(stoneCounter);
 
@@ -426,7 +430,8 @@ class MinerState extends FlxState
 			else
 				stoneCounterText.color = FlxColor.WHITE;
 		}
-		// 如果玩家經過門就啟動計時
+			// 如果玩家經過門就啟動計時
+		// 用else if是為了避免重複計時(看不見計時器才開始計時)
 		else if (player.y < minerGate.y - 40)
 		{
 			minerGate.x -= minerGate.width;

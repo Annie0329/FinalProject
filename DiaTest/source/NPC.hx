@@ -16,6 +16,9 @@ enum NpcType
 	saveStone;
 
 	spartan;
+	p1;
+	p2;
+	p3;
 }
 
 class NPC extends FlxSprite
@@ -50,6 +53,13 @@ class NPC extends FlxSprite
 				animation.add("shine", [0, 1, 2, 3, 4, 5], 6, true);
 			case spartan:
 				loadGraphic(AssetPaths.spartan__png);
+
+			case p1:
+				makeGraphic(80, 80, FlxColor.LIME);
+			case p2:
+				makeGraphic(80, 80, FlxColor.BLUE);
+			case p3:
+				makeGraphic(80, 80, FlxColor.GREEN);
 		}
 
 		immovable = true;

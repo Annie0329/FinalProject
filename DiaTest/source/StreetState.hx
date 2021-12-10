@@ -39,6 +39,15 @@ class StreetState extends FlxState
 	var ground:FlxTilemap;
 	var sea:FlxTypedGroup<FlxSprite> = null;
 
+	// 房間
+	var house1:FlxSprite;
+	var house1Door:FlxSprite;
+	var house2:FlxSprite;
+	var house2Door:FlxSprite;
+	var house3:FlxSprite;
+	var house3Door:FlxSprite;
+	var houseDis:Int = 1360;
+
 	// 除錯ufo
 	var ufo:FlxText;
 	var save:FlxSave;
@@ -74,6 +83,31 @@ class StreetState extends FlxState
 		minerDoor.immovable = true;
 		add(minerDoor);
 		minerDoor.animation.play("glow");
+
+		// 各種房間
+		house1 = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house1.immovable = true;
+		add(house1);
+
+		house1Door = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house1Door.immovable = true;
+		add(house1Door);
+
+		house2 = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house2.immovable = true;
+		add(house2);
+
+		house2Door = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house2Door.immovable = true;
+		add(house2Door);
+
+		house3 = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house3.immovable = true;
+		add(house3);
+
+		house3Door = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house3Door.immovable = true;
+		add(house3Door);
 
 		// 敵人
 		enemies = new FlxTypedGroup<Enemy>();
@@ -141,10 +175,35 @@ class StreetState extends FlxState
 			case "minerDoor":
 				minerDoor.setPosition(x + 28, y);
 
+			case "house1":
+				house1.setPosition(x, y);
+
+			case "house1Door":
+				house1Door.setPosition(x, y);
+
+			case "house2":
+				house2.setPosition(x, y);
+
+			case "house2Door":
+				house2Door.setPosition(x, y);
+
+			case "house3":
+				house3.setPosition(x, y);
+
+			case "house3Door":
+				house3Door.setPosition(x, y);
+
+			case "p1":
+				npc.add(new NPC(x, y, p1));
+			case "p2":
+				npc.add(new NPC(x, y, p2));
+			case "p3":
+				npc.add(new NPC(x, y, p3));
+
 			case "sea":
 				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
 				s.flipX = true;
-				s.animation.add("oui", [0, 1, 2, 3], 6, true);
+				s.animation.add("oui", [0, 1, 2, 3], 12, true);
 				s.animation.play("oui");
 				s.immovable = true;
 				sea.add(s);
@@ -176,11 +235,14 @@ class StreetState extends FlxState
 	// 存檔啦
 	function saveFile()
 	{
+		// 能量幣和香蕉數目
 		save.data.bananaValue = bag.bananaCounter;
 		save.data.diamondValue = bag.diamondCounter;
 
+		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
 
+		// 玩家位置
 		save.data.playerPos = player.getPosition();
 		save.data.place = "street";
 
@@ -215,6 +277,14 @@ class StreetState extends FlxState
 		FlxG.collide(player, npc, npcTalk);
 
 		FlxG.collide(player, minerDoor, goToMiner);
+		FlxG.collide(player, house1, houseIn);
+		FlxG.collide(player, house2, houseIn);
+		FlxG.collide(player, house3, houseIn);
+
+		FlxG.collide(player, house1Door, houseOut);
+		FlxG.collide(player, house2Door, houseOut);
+		FlxG.collide(player, house3Door, houseOut);
+
 		FlxG.overlap(player, enemies);
 
 		FlxG.collide(enemies, walls);
@@ -236,6 +306,24 @@ class StreetState extends FlxState
 		{
 			saveFile();
 			FlxG.switchState(new MinerState());
+		});
+	}
+
+	function houseIn(player:Player, house:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			player.setPosition(house.x, house.y + houseDis);
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+		});
+	}
+
+	function houseOut(player:Player, houseDoor:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			player.setPosition(houseDoor.x, houseDoor.y - houseDis + 80);
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 		});
 	}
 

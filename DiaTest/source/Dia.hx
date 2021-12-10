@@ -103,7 +103,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaSpartan__png;
 			case "L":
 				profilePic = AssetPaths.diaLake__png;
-			case "N":
+			case "N", "P1", "P2", "P3":
 				profilePic = AssetPaths.diaNull__png;
 			case "M":
 				profilePic = AssetPaths.diaMing__png;
@@ -187,6 +187,15 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					txt = true;
 					stoneTextYes = true;
 				}
+			case p1:
+				name = AssetPaths.house1Talk__txt;
+				txt = true;
+			case p2:
+				name = AssetPaths.house2Talk__txt;
+				txt = true;
+			case p3:
+				name = AssetPaths.house3Talk__txt;
+				txt = true;
 		}
 		show(name, txt);
 	}
