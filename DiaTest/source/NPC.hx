@@ -16,6 +16,8 @@ enum NpcType
 	saveStone;
 
 	spartan;
+	
+	sign;
 	p1;
 	p2;
 	p3;
@@ -54,8 +56,10 @@ class NPC extends FlxSprite
 			case spartan:
 				loadGraphic(AssetPaths.spartan__png);
 
+			case sign:
+				makeGraphic(80, 80, FlxColor.BROWN);
 			case p1:
-				makeGraphic(80, 80, FlxColor.LIME);
+				loadGraphic(AssetPaths.p1__png);
 			case p2:
 				makeGraphic(80, 80, FlxColor.BLUE);
 			case p3:

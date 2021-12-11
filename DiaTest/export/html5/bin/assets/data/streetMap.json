@@ -39,7 +39,8 @@
         {"name": "house3Door", "id": 21, "_eid": "13344691", "x": 2320, "y": 2120, "originX": 0, "originY": 0},
         {"name": "p1", "id": 22, "_eid": "14185121", "x": 880, "y": 1880, "originX": 0, "originY": 0},
         {"name": "p2", "id": 23, "_eid": "14187210", "x": 1760, "y": 1880, "originX": 0, "originY": 0},
-        {"name": "p3", "id": 24, "_eid": "14188459", "x": 2640, "y": 1880, "originX": 0, "originY": 0}
+        {"name": "p3", "id": 24, "_eid": "14188459", "x": 2640, "y": 1880, "originX": 0, "originY": 0},
+        {"name": "sign", "id": 25, "_eid": "23609013", "x": 680, "y": 920, "originX": 0, "originY": 0}
       ]
     },
     {

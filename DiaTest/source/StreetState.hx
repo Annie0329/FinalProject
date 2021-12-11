@@ -169,6 +169,9 @@ class StreetState extends FlxState
 
 		switch (entity.name)
 		{
+			case "sign":
+				npc.add(new NPC(x, y, sign));
+
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
 
@@ -203,7 +206,7 @@ class StreetState extends FlxState
 			case "sea":
 				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
 				s.flipX = true;
-				s.animation.add("oui", [0, 1, 2, 3], 12, true);
+				s.animation.add("oui", [0, 1, 2, 3], 2.5, true);
 				s.animation.play("oui");
 				s.immovable = true;
 				sea.add(s);

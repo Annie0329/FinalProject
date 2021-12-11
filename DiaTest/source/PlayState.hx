@@ -224,7 +224,7 @@ class PlayState extends FlxState
 
 			case "sea":
 				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
-				s.animation.add("oui", [0, 1, 2, 3], 12, true);
+				s.animation.add("oui", [0, 1, 2, 3], 2.5, true);
 				s.animation.play("oui");
 				s.immovable = true;
 				sea.add(s);
@@ -291,7 +291,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(bag.shibaWave); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -350,8 +350,11 @@ class PlayState extends FlxState
 						name = ":D:你買了狗狗幣啊！";
 						bag.shibaInvest += combatHud.investNum;
 						bag.shibaWave += bag.shibaInvest;
-						bag.coinUi.visible = true;
-						bag.countShibaWave();
+						if (!bag.coinUi.visible)
+						{
+							bag.coinUi.visible = true;
+							bag.countShibaWave();
+						}
 					}
 					else
 						name = ":D:狗狗幣很好賺呢，下次試試看跟他們交涉吧！";

@@ -47,8 +47,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var shopText:Text;
 	var mainChat:String;
 	var bananaSell:Int = 0;
-	var buyCho:String = "   2 能量幣\n離開";
-	var sellCho:String = "   1 能量幣\n狗狗幣\n原本世界的錢\n離開";
+	var buyCho:String = "香蕉葉 2 能量幣\n離開";
+	var sellCho:String = "香蕉葉 1 能量幣\n狗狗幣\n原本世界的錢\n離開";
 	var chatCho:String = "為什麼要對著包包大吼大叫\n離開";
 
 	var pointer:Pointer;
@@ -65,8 +65,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var i:Int = 1;
 	var textRunDone:Bool = false;
 
+	var sellAmoText:FlxText;
+	var shibaPrizeNow:Float = 0;
+
 	var shiba:FlxSprite;
 	var shibaWaveText:FlxText;
+	var shibaTimer:FlxTimer;
 
 	public var shibaInvest:Int = 0;
 	public var shibaWave:Float = 0;
@@ -78,11 +82,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// 背景
 		background = new FlxSprite();
 
-		// 香蕉圖示
-		bananaCounterIcon = new FlxSprite(140, 110, AssetPaths.bananaIcon__png);
-
 		// 包包組
 		bagUi.add(background);
+
+		// 香蕉圖示
+		bananaCounterIcon = new FlxSprite(140, 110, AssetPaths.bananaIcon__png);
 		bagUi.add(bananaCounterIcon);
 
 		// 香蕉數目
@@ -102,7 +106,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 		// 商店組
 		shopUi.add(background);
-		shopUi.add(bananaCounterIcon);
 
 		// 箭頭
 		pointer = new Pointer();
@@ -120,6 +123,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shopText.color = 0xff2D5925;
 		shopUi.add(shopText);
 
+		// 賣的東西擁有量
+		sellAmoText = new FlxText(background.x + 450, shopCho.y, 270, "oui", 28, true);
+		sellAmoText.color = 0xff2D5925;
+		sellAmoText.font = AssetPaths.silver__ttf;
+		shopUi.add(sellAmoText);
+
 		add(shopUi);
 		shopUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 		shopUi.visible = false;
@@ -129,7 +138,9 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shiba = new FlxSprite(320, 10).loadGraphic(AssetPaths.shibaCoin__png, true, 64, 64);
 		shiba.animation.frameIndex = 0;
 		coinUi.add(shiba);
+
 		shibaWaveText = new FlxText(shiba.x + shiba.width, shiba.y, 0, "+0", 20);
+		shibaWaveText.color = FlxColor.GREEN;
 		coinUi.add(shibaWaveText);
 
 		add(coinUi);
@@ -156,10 +167,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	{
 		background.loadGraphic(AssetPaths.bagItem__png);
 
-		bananaCounterIcon.setGraphicSize(40, 40);
-		bananaCounterIcon.updateHitbox();
-		bananaCounterIcon.setPosition(140, 110);
-
 		dealText.visible = false;
 
 		bagUi.visible = true;
@@ -171,7 +178,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	public function updateBag()
 	{
 		bananaCounterText.text = Std.string(bananaCounter);
-		diamondText.text = Std.string(diamondCounter);
+		diamondText.text = Std.string(FlxMath.roundDecimal(diamondCounter, 2));
 		if (diamondCounter < 0)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
@@ -184,42 +191,24 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	// 狗狗幣漲跌
 	public function countShibaWave()
 	{
-		new FlxTimer().start(2, function(timer:FlxTimer)
+		shibaTimer = new FlxTimer().start(2, function(timer:FlxTimer)
 		{
 			if (FlxG.random.bool(70))
-				shibaWave += shibaInvest * 0.01 * (FlxG.random.int(1, 50));
+				shibaWave *= (1 + 0.01 * (FlxG.random.int(1, 50)));
 			else
-				shibaWave -= shibaInvest * 0.01 * (FlxG.random.int(20, 50));
+				shibaWave *= 0.01 * (FlxG.random.int(20, 100));
 			shibaWave = FlxMath.roundDecimal(shibaWave, 2);
 			if (shibaWave - shibaInvest >= 0)
 			{
-				shibaWaveText.color = FlxColor.GREEN;
 				shibaWaveText.text = "+" + Std.string(FlxMath.roundDecimal(shibaWave - shibaInvest, 2));
+				shibaWaveText.color = FlxColor.GREEN;
 			}
 			else
 			{
-				shibaWaveText.color = FlxColor.RED;
 				shibaWaveText.text = Std.string(FlxMath.roundDecimal(shibaWave - shibaInvest, 2));
+				shibaWaveText.color = FlxColor.RED;
 			}
 		}, 0);
-	}
-
-	// 開啟商店
-	public function buyAndSell()
-	{
-		background.loadGraphic(AssetPaths.shopkeeper__png);
-
-		bananaCounterIcon.setGraphicSize(30, 30);
-		bananaCounterIcon.updateHitbox();
-		bananaCounterIcon.visible = false;
-
-		mainChat = "歡迎來到我的店！";
-		setMainShop(mainChat);
-
-		bagUi.visible = false;
-		shopUi.visible = true;
-		active = true;
-		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 	}
 
 	// 更新啦
@@ -231,7 +220,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		var x = FlxG.keys.anyJustReleased([X]);
 		var l = FlxG.keys.anyJustReleased([LEFT]);
 		var r = FlxG.keys.anyJustReleased([RIGHT]);
-		shibaWaveText.text = Std.string(shibaWave - shibaInvest);
+
 		// 包包功能
 		if (bagUi.visible)
 		{
@@ -260,6 +249,24 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		}
 	}
 
+	// 開啟商店
+	public function buyAndSell()
+	{
+		background.loadGraphic(AssetPaths.shopkeeper__png);
+
+		mainChat = "歡迎來到我的店！";
+		setMainShop(mainChat);
+		shibaPrizeNow = shibaWave;
+		sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow);
+		sellAmoText.visible = false;
+
+		coinUi.visible = false;
+		bagUi.visible = false;
+		shopUi.visible = true;
+		active = true;
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+	}
+
 	// 商店功能
 	function updateEnter()
 	{
@@ -280,16 +287,13 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							shopText.resetText(buyCho);
 							shopChoice = buy;
 							pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, buyChoices, "ud");
-							bananaCounterIcon.visible = true;
-							bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
 
 						// 賣
 						case "sell":
-							shopText.resetText("   " + bananaCounter + sellCho);
+							shopText.resetText(sellCho);
+							sellAmoText.visible = true;
 							shopChoice = sell;
 							pointer.setPointer(shopText.x - pointer.width - 10, shopText.y + 3, 30, sellChoices, "ud");
-							bananaCounterIcon.visible = true;
-							bananaCounterIcon.setPosition(shopText.x - 5, shopText.y);
 
 						// 聊天
 						case "chat":
@@ -303,6 +307,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							{
 								shopUi.visible = false;
 								active = false;
+								if (shibaWave != 0)
+									coinUi.visible = true;
+								else
+									shibaTimer.cancel();
 								FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 							});
 					}
@@ -322,10 +330,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								bananaCounter++;
 								bananaSell++;
 								diamondCounter -= 2;
-								shopText.resetText(buyCho);
-								shopText.start(false, false);
-								shopText.skip();
-								textRunDone = true;
 								updateBag();
 							}
 						case "exit":
@@ -353,10 +357,14 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								diamondCounter += bananaCounter;
 								bananaSell = bananaCounter;
 								bananaCounter = 0;
-								shopText.resetText("   " + bananaCounter + sellCho);
-								shopText.start(false, false);
-								shopText.skip();
-								textRunDone = true;
+								sellAmoText.text = "0\n" + Std.string(shibaPrizeNow);
+								updateBag();
+							}
+						case "shibaCoin":
+							if (shibaPrizeNow > 0)
+							{
+								diamondCounter += shibaPrizeNow;
+								sellAmoText.text = Std.string(bananaCounter) + "\n0";
 								updateBag();
 							}
 						case "money":
@@ -364,15 +372,24 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							txt = false;
 							shopChatStart(name, txt);
 						case "exit":
-							if (bananaSell == 0)
-								mainChat = "猩猩什麼都沒有賣！";
-							else
+							if (bananaSell > 0)
 							{
 								mainChat = "猩猩給老闆 " + bananaSell + " 片香蕉葉！\n老闆給猩猩 " + bananaSell + " 個能量石！";
 								dealText.text = mainChat + "\n";
 							}
+							else if (shibaPrizeNow > 0)
+							{
+								mainChat = "猩猩以 " + shibaInvest + " 買進狗狗幣\n以 " + shibaPrizeNow + " 賣出\n賺了"
+									+ FlxMath.roundDecimal(shibaPrizeNow - shibaInvest, 2) + "能量幣！";
+								shibaWave = 0;
+								shibaInvest = 0;
+							}
+							else
+							{
+								mainChat = "猩猩什麼都沒有賣！";
+							}
+							sellAmoText.visible = false;
 							bananaSell = 0;
-							bananaCounterIcon.visible = false;
 							setMainShop(mainChat);
 					}
 				}
@@ -404,8 +421,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 					}
 					else if (shopChoice == sell)
 					{
-						shopText.resetText("   " + bananaCounter + sellCho);
-						bananaCounterIcon.visible = true;
+						shopText.resetText(sellCho);
+						sellAmoText.visible = true;
 					}
 					shopText.start(false, false);
 					shopText.skip();
@@ -432,6 +449,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	function shopChatStart(name, txt)
 	{
 		pointer.visible = false;
+		sellAmoText.visible = false;
 		bananaCounterIcon.visible = false;
 		shopText.show(name, txt);
 	}

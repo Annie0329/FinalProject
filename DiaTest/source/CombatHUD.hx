@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -271,7 +272,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					investNumText.visible = false;
 					pointerLeft.visible = false;
 					pointerRight.visible = false;
-					diamondText.text = Std.string(diamond);
 				}
 				else if (state == 3)
 					doneResultsIn();
@@ -394,8 +394,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				else if (state == 3)
 					doneResultsIn();
 			}
-			diamondText.text = Std.string(diamond);
-			diamondUiText.text = Std.string(diamond);
+			diamondText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+			diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
 		}
 		else if (left || right)
 		{
