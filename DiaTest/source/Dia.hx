@@ -4,37 +4,60 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
+import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 
 class Dia extends FlxTypedGroup<FlxSprite>
 {
-	var i:Int = 2;
-	var profile:Int = 1;
-
-	var explainNum:Int = 1;
-	var explainPic:String;
-
-	var dilog_boxes:Array<String>;
-
+	var background:FlxSprite;
 	var text:FlxTypeText;
 
-	public var background:FlxSprite;
+	var i:Int = 2;
+
+	var profile:Int = 1;
+	var profilePic:String;
+	var npcType:NPC.NpcType;
+
+	public var name:String;
+
+	var dilog_boxes:Array<String>;
+	var txt:Bool = true;
+	var textRunDone:Bool = false;
+
+	public var diaUpDown:String;
 
 	var pointer:Pointer;
 	var pointerQ:String = "none";
-	var txt:Bool = true;
 
 	public var saveStoneIntro:Bool = false;
 	public var stoneTextYes:Bool = false;
-	public var name:String;
-	public var diaUpDown:String;
 
-	var profilePic:String;
+	var bck = 350;
+	var cak = 200;
+	var ack = 100;
+
+	public var appleCoin:Float;
+	public var bananaCoin:Float;
+
+	var coinText:FlxText;
+	var bananaCoinIn:Int = 1; // 機器裡有多少香蕉
+	var appleCoinIn:Int = 1;
+	var coinIn:Int = 1;
+	var coinOut:Int = 1; // 玩家決定要塞多少幣進去
+	var p1Prize:Float;
+
+	var bananaPrize:Int = 10;
+
+	public var diamond:Float;
+
+	var diamondUiText:FlxText;
+
+	public var updateDiamond:Bool = false;
+
 	var save:FlxSave;
-
-	var textRunDone:Bool = false;
 
 	public function new()
 	{
@@ -52,6 +75,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.delay = 0.05;
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
+
+		coinText = new FlxText(background.x + background.width / 2, background.y + 20, "1", 20);
+		coinText.color = FlxColor.BLACK;
+		add(coinText);
+		coinText.visible = false;
 
 		// 箭頭
 		pointer = new Pointer();
@@ -128,11 +156,50 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			background.y = FlxG.height - background.height - 10;
 		pointer.y = background.y + 75;
 		text.y = background.y + 15;
+		coinText.y = background.y + 80;
+	}
+
+	// 拿包包的參數
+	public function getDiamond(diamond, diamondUiText, bananaCoin, appleCoin)
+	{
+		this.diamond = diamond;
+		this.diamondUiText = diamondUiText;
+		this.bananaCoin = bananaCoin;
+		this.appleCoin = appleCoin;
+	}
+
+	// 左右選擇
+	function updateLr()
+	{
+		var left = FlxG.keys.anyJustReleased([LEFT, A]);
+		var right = FlxG.keys.anyJustReleased([RIGHT, D]);
+		if (left || right)
+		{
+			if (coinText.visible)
+			{
+				if (left && coinOut != 1)
+					coinOut--;
+				else if (right)
+				{
+					if (npcType == p1BaToCoMach && coinOut != Std.int(bananaCoin))
+						coinOut++;
+					else if (npcType == p1CoToApMach && coinOut != Std.int(diamond))
+						coinOut++;
+					else if (npcType == p1ApToCoMach && coinOut != Std.int(appleCoin))
+						coinOut++;
+					else if (npcType == p2Mach && coinOut != Std.int(diamond))
+						coinOut++;
+				}
+
+				coinText.text = Std.string(coinOut);
+			}
+		}
 	}
 
 	// 對話大滿貫
 	public function context(npcType:NPC.NpcType)
 	{
+		this.npcType = npcType;
 		switch (npcType)
 		{
 			case doge:
@@ -187,7 +254,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					txt = true;
 					stoneTextYes = true;
 				}
-				
+
 			case sign:
 				name = AssetPaths.streetSign__txt;
 				txt = true;
@@ -195,11 +262,54 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1:
 				name = AssetPaths.house1Talk__txt;
 				txt = true;
+
+			case p1BaToCoMach:
+				p1Prize = FlxMath.roundDecimal(bck / bananaCoinIn, 2);
+				if (bananaCoin > 0)
+				{
+					name = ':N:你想用多少香蕉幣買能量幣？你目前有 $bananaCoin 香蕉幣， 1 香蕉幣可買 $p1Prize 能量幣。';
+					coinText.visible = true;
+				}
+				else
+					name = ":N:你沒有香蕉幣。";
+				txt = false;
+			case p1ApToCoMach:
+				p1Prize = FlxMath.roundDecimal(ack / appleCoinIn, 2);
+				if (appleCoin > 0)
+				{
+					name = ':N:你想用多少蘋果幣買能量幣？你目前有 $appleCoin 蘋果幣， 1 蘋果幣可買 $p1Prize 能量幣。';
+					coinText.visible = true;
+				}
+				else
+					name = ":N:你沒有蘋果幣。";
+				txt = false;
+			case p1CoToApMach:
+				p1Prize = FlxMath.roundDecimal(cak / coinIn, 2);
+				if (diamond > 0)
+				{
+					name = ':N:你想用多少能量幣買蘋果幣？你目前有 $diamond 能量幣， 1 能量幣可買 $p1Prize 蘋果幣。';
+					coinText.visible = true;
+				}
+				else
+					name = ":N:你沒有能量幣。";
+				txt = false;
 			case p2:
 				name = AssetPaths.house2Talk__txt;
 				txt = true;
+			case p2Mach:
+				if (diamond > 0)
+				{
+					name = ':N:你想用多少能量幣買香蕉幣？ 你目前有 $diamond 能量幣，1 能量幣可買 $bananaPrize 香蕉幣。';
+					coinText.visible = true;
+				}
+				else
+					name = ":N:你沒有能量幣。";
+				txt = false;
 			case p3:
 				name = AssetPaths.house3Talk__txt;
+				txt = true;
+			case rod:
+				name = AssetPaths.rodTalk__txt;
 				txt = true;
 		}
 		show(name, txt);
@@ -217,6 +327,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		updateEnter();
 		updateSkip();
+		updateLr();
 
 		super.update(elapsed);
 	}
@@ -234,6 +345,64 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				show(name, txt);
 				pointer.visible = false;
 				pointerQ = "none";
+			}
+			else if (coinText.visible)
+			{
+				if (npcType == p1BaToCoMach)
+				{
+					name = ":N:你得到了 " + FlxMath.roundDecimal(p1Prize * coinOut, 2) + " 能量幣。";
+					txt = false;
+					show(name, txt);
+					diamond += (p1Prize * coinOut);
+					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+					bananaCoin -= coinOut;
+					bananaCoinIn += coinOut;
+					coinOut = 1;
+					coinText.visible = false;
+					coinText.text = Std.string(coinOut);
+					updateDiamond = true;
+				}
+				else if (npcType == p1ApToCoMach)
+				{
+					name = ":N:你得到了 " + FlxMath.roundDecimal(p1Prize * coinOut, 2) + " 能量幣。";
+					txt = false;
+					show(name, txt);
+					diamond += (p1Prize * coinOut);
+					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+					appleCoin -= coinOut;
+					appleCoinIn += coinOut;
+					coinOut = 1;
+					coinText.visible = false;
+					coinText.text = Std.string(coinOut);
+					updateDiamond = true;
+				}
+				else if (npcType == p1CoToApMach)
+				{
+					name = ":N:你得到了 " + FlxMath.roundDecimal(p1Prize * coinOut, 2) + " 蘋果幣。";
+					txt = false;
+					show(name, txt);
+					diamond -= coinOut;
+					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+					appleCoin += (p1Prize * coinOut);
+					coinIn += coinOut;
+					coinOut = 1;
+					coinText.visible = false;
+					coinText.text = Std.string(coinOut);
+					updateDiamond = true;
+				}
+				else if (npcType == p2Mach)
+				{
+					name = ":N:你得到了 " + FlxMath.roundDecimal(bananaPrize * coinOut, 2) + " 香蕉幣。";
+					txt = false;
+					show(name, txt);
+					diamond -= coinOut;
+					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+					bananaCoin += bananaPrize * coinOut;
+					coinOut = 1;
+					coinText.visible = false;
+					coinText.text = Std.string(coinOut);
+					updateDiamond = true;
+				}
 			}
 			// 對話換行
 			else

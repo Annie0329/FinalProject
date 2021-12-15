@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.system.debug.completion.CompletionListScrollBar;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -48,11 +49,10 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var state:Int = 1;
 
 	// 文字組
-	var combatText:FlxTypeText;
+	var combatText:Text;
 	var dilog_boxes:Array<String>;
 	var name:String;
 	var txt:Bool = true;
-	var textRunDone:Bool = false;
 	var investNumText:FlxText;
 	var textIn:Bool = false;
 
@@ -181,18 +181,19 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			case shibaCoin:
 				enemyNameText.text = "狗狗幣";
-				combatText.resetText("要不要買點狗狗幣啊？誰不喜歡可愛的狗狗呢？");
+				name = ":要不要買點狗狗幣啊？:誰不喜歡可愛的狗狗呢？";
 				shibaCounter++;
 				if (shibaCounter == shibaLoseNum)
 					shibaLose = true;
 			case cloudMiner:
 				enemyNameText.text = "雲挖礦";
-				combatText.resetText("哈囉~猩猩，只要你付給我 5 能量幣，就可以租到一台高效率機器幫你挖礦賺大錢喔！快來加入我吧！");
+				name = ":哈囉~猩猩，只要你付給我 5 能量幣，:就可以租到一台高效率機器幫你挖礦賺大錢喔！快來加入我吧！";
 			case nft:
 				enemyNameText.text = "NFT";
-				combatText.resetText("要不要買些特別的圖像啊？這些獨一無二的藝術品可以留著珍藏也可以拿去商店賣，如果是爆紅款式還可以賣出天價喔！");
+				name = ":要不要買些特別的圖像啊？:這些獨一無二的藝術品可以留著珍藏也可以拿去商店賣，如果是爆紅款式還可以賣出天價喔！";
 			case spartanMiner:
 		}
+		combatText.show(name, false);
 
 		state = 1;
 		visible = true; // 讓打架介面出現
@@ -206,18 +207,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	{
 		active = true;
 		wait = false;
-		textRunDone = false;
-
-		combatText.start(false, false, function()
-		{
-			textRunDone = true;
-			pointer.visible = true;
-		});
 	}
 
 	function updateKeyboardInput()
 	{
-		// diamondText.text = Std.string(pointer.selected);
+		// diamondText.text = Std.string(combatText.over);
 		// 看看哪個按鍵被按下的變數
 		var left:Bool = false;
 		var right:Bool = false;
@@ -236,28 +230,31 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// 狗狗幣
 			if (enemy.type == shibaCoin)
 			{
-				if (state == 1 && pointer.visible)
+				if (state == 1)
 				{
-					state++;
-					pointer.visible = false;
-					switch (pointer.selected)
+					if (combatText.over && !pointer.visible)
 					{
-						case "YES":
-							textRunDone = false;
-							choices[YES].visible = false;
-							choices[NO].visible = false;
-							investNumText.visible = true;
-							lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
+						pointer.visible = true;
+					}
+					else if (pointer.visible)
+					{
+						state++;
+						pointer.visible = false;
+						switch (pointer.selected)
+						{
+							case "YES":
+								choices[YES].visible = false;
+								choices[NO].visible = false;
+								investNumText.visible = true;
+								lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
 
-							combatText.resetText("請選擇你要投資多少？最少 5 能量幣。好了就按enter。");
-							combatText.start(false, false, function()
-							{
-								textRunDone = true;
-							});
+								name = ":請選擇你要投資多少？最少 5 能量幣。好了就按enter。";
+								combatText.show(name, false);
 
-						case "NO":
-							outcome = FLEE;
-							doneResultsIn();
+							case "NO":
+								outcome = FLEE;
+								doneResultsIn();
+						}
 					}
 				}
 				else if (state == 2)
@@ -265,10 +262,10 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					state++;
 
 					diamond -= investNum;
-					combatText.resetText("謝謝你！");
+					name = ":謝謝你！";
 					outcome = WIN;
 
-					combatText.start(false, false);
+					combatText.show(name, false);
 					investNumText.visible = false;
 					pointerLeft.visible = false;
 					pointerRight.visible = false;
@@ -279,62 +276,62 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// 雲挖礦
 			else if (enemy.type == cloudMiner)
 			{
-				if (state == 1 && pointer.visible)
+				if (state == 1)
 				{
-					state++;
-					switch (pointer.selected)
+					// 對話跑完箭頭才出現
+					if (combatText.over && !pointer.visible)
+						pointer.visible = true;
+					else if (pointer.visible)
 					{
-						case "YES":
-							diamond += 5;
-							textRunDone = false;
-							combatText.resetText("我沒騙你吧！馬上就賺到能量幣了。你想再多租幾台嗎？這次你出 20 能量幣就會有7台機器幫你挖礦賺錢喔！");
-							combatText.start(false, false, function()
-							{
-								textRunDone = true;
-							});
-							outcome = LOSE;
-
-						case "NO":
-							choices[YES].visible = false;
-							choices[NO].visible = false;
-							pointer.visible = false;
-							combatText.resetText("唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。");
-							combatText.start(false, false, function()
-							{
-								textRunDone = true;
-							});
-							outcome = FLEE;
-					}
-				}
-				else if (state == 2)
-				{
-					state++;
-					if (outcome == FLEE)
-						doneResultsIn();
-					else
-					{
-						choices[YES].visible = false;
-						choices[NO].visible = false;
+						state++;
 						pointer.visible = false;
 						switch (pointer.selected)
 						{
 							case "YES":
-								diamond -= 20;
-								textRunDone = false;
-								combatText.resetText("真是隻傻猩猩啊，這些錢我就收下了，嘿嘿嘿！");
-								combatText.start(false, false, function()
-								{
-									textRunDone = true;
-								});
+								diamond += 5;
+								name = ":我沒騙你吧！馬上就賺到能量幣了。:你想再多租幾台嗎？這次你出 20 能量幣就會有7台機器幫你挖礦賺錢喔！";
 								outcome = LOSE;
 
 							case "NO":
-								combatText.resetText("唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。");
-								combatText.start(false, false, function()
-								{
-									textRunDone = true;
-								});
+								choices[YES].visible = false;
+								choices[NO].visible = false;
+								pointer.visible = false;
+								name = ":唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。";
 								outcome = FLEE;
+						}
+						combatText.show(name, false);
+					}
+				}
+				else if (state == 2)
+				{
+					if (outcome == FLEE)
+					{
+						state++;
+						doneResultsIn();
+					}
+					else
+					{
+						if (combatText.over && !pointer.visible)
+							pointer.visible = true;
+						else if (pointer.visible)
+						{
+							state++;
+							choices[YES].visible = false;
+							choices[NO].visible = false;
+							pointer.visible = false;
+							switch (pointer.selected)
+							{
+								case "YES":
+									diamond -= 20;
+									name = ":真是隻傻猩猩啊，這些錢我就收下了，嘿嘿嘿！";
+
+									outcome = LOSE;
+
+								case "NO":
+									name = ":唉！你這隻蠢猩猩，都不懂得把握機會賺大錢。";
+									outcome = FLEE;
+							}
+							combatText.show(name, false);
 						}
 					}
 				}
@@ -345,28 +342,30 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// NFT
 			else if (enemy.type == nft)
 			{
-				if (state == 1 && pointer.visible)
+				if (state == 1)
 				{
-					state++;
-					pointer.visible = false;
-					switch (pointer.selected)
+					if (combatText.over && !pointer.visible)
 					{
-						case "YES":
-							textRunDone = false;
-							choices[YES].visible = false;
-							choices[NO].visible = false;
-							nftStyle.visible = true;
-							lrPointer(nftStyle.x, nftStyle.y, 56, nftStyle.height);
+						pointer.visible = true;
+					}
+					else if (pointer.visible)
+					{
+						state++;
+						pointer.visible = false;
+						switch (pointer.selected)
+						{
+							case "YES":
+								choices[YES].visible = false;
+								choices[NO].visible = false;
+								nftStyle.visible = true;
+								lrPointer(nftStyle.x, nftStyle.y, 56, nftStyle.height);
 
-							combatText.resetText("選一個花樣吧。按左右鍵查看花樣。");
-							combatText.start(false, false, function()
-							{
-								textRunDone = true;
-							});
-
-						case "NO":
-							outcome = FLEE;
-							doneResultsIn();
+								name = ":選一個花樣吧。按左右鍵查看花樣。";
+								combatText.show(name, false);
+							case "NO":
+								outcome = FLEE;
+								doneResultsIn();
+						}
 					}
 				}
 				else if (state == 2)
@@ -379,23 +378,24 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					if (FlxG.random.bool(50))
 					{
 						diamond += 20;
-						combatText.resetText("哇！立刻有人用高價買你的NFT了！");
+						name = ":哇！立刻有人用高價買你的NFT了！";
 						outcome = WIN;
 					}
 					else
 					{
 						diamond -= 20;
-						combatText.resetText("這張NFT沒人想買呢。");
+						name = ":這張NFT沒人想買呢。";
 						outcome = LOSE;
 					}
 
-					combatText.start(false, false);
+					combatText.show(name, false);
 				}
 				else if (state == 3)
 					doneResultsIn();
 			}
-			diamondText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
-			diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+			diamond = FlxMath.roundDecimal(diamond, 2);
+			diamondText.text = Std.string(diamond);
+			diamondUiText.text = Std.string(diamond);
 		}
 		else if (left || right)
 		{

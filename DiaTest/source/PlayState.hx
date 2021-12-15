@@ -34,6 +34,7 @@ class PlayState extends FlxState
 	var enemies:FlxTypedGroup<Enemy>;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
+	var enemyFlicker:Bool = false;
 
 	// NPC
 	var npc:FlxTypedGroup<NPC>;
@@ -248,16 +249,21 @@ class PlayState extends FlxState
 	// 存檔啦
 	function saveFile()
 	{
+		// 一樣的
 		// 能量幣和香蕉數目
 		save.data.bananaValue = bag.bananaCounter;
 		save.data.diamondValue = bag.diamondCounter;
+		save.data.shibaInvest = bag.shibaInvest;
+		save.data.shibaWave = bag.shibaWave;
 
 		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
-		save.data.minerYes = minerYes;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
+
+		// 不一樣的
+		save.data.minerYes = minerYes;
 		save.data.place = "monument";
 
 		save.flush();
@@ -266,14 +272,22 @@ class PlayState extends FlxState
 	// 讀檔啦
 	function loadFile()
 	{
+		// 一樣的
+		// 包包
 		bag.diamondUi.visible = true;
 		bag.bananaCounter = save.data.bananaValue;
 		bag.diamondCounter = save.data.diamondValue;
+		bag.shibaInvest = save.data.shibaInvest;
+		bag.shibaWave = save.data.shibaWave;
 		bag.updateBag();
 
-		dia.saveStoneIntro = save.data.saveStoneIntro;
-		minerYes = save.data.minerYes;
+		if (bag.shibaInvest != 0)
+			bag.countShibaWave();
 
+		dia.saveStoneIntro = save.data.saveStoneIntro;
+
+		// 不一樣的
+		minerYes = save.data.minerYes;
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "monument")
@@ -291,7 +305,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(bag.shibaWave); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -350,11 +364,8 @@ class PlayState extends FlxState
 						name = ":D:你買了狗狗幣啊！";
 						bag.shibaInvest += combatHud.investNum;
 						bag.shibaWave += bag.shibaInvest;
-						if (!bag.coinUi.visible)
-						{
-							bag.coinUi.visible = true;
+						if (!bag.shibaUi.visible)
 							bag.countShibaWave();
-						}
 					}
 					else
 						name = ":D:狗狗幣很好賺呢，下次試試看跟他們交涉吧！";
@@ -385,10 +396,22 @@ class PlayState extends FlxState
 	{
 		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
 		{
-			inCombat = true;
-			player.active = false;
-			enemies.active = false;
-			combatHud.initCombat(bag.diamondCounter, bag.diamondText, enemy);
+			if (bag.diamondCounter >= 20)
+			{
+				inCombat = true;
+				player.active = false;
+				enemies.active = false;
+				combatHud.initCombat(bag.diamondCounter, bag.diamondText, enemy);
+			}
+			else
+			{
+				name = ":N:你沒有足夠的能量幣！你需要至少20能量幣！";
+				txt = false;
+				playerUpDown();
+				dia.show(name, txt);
+				combatHud.enemy = enemy;
+				enemyFlicker = true;
+			}
 		}
 	}
 
@@ -520,6 +543,11 @@ class PlayState extends FlxState
 					saveFile();
 					FlxG.switchState(new MinerState());
 				});
+			}
+			if (enemyFlicker)
+			{
+				combatHud.enemy.flicker();
+				enemyFlicker = false;
 			}
 		}
 	}

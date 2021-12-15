@@ -44,7 +44,12 @@
         {"name": "p2", "id": 26, "_eid": "14187210", "x": 1960, "y": 1760, "originX": 0, "originY": 0},
         {"name": "p3", "id": 27, "_eid": "14188459", "x": 2960, "y": 1760, "originX": 0, "originY": 0},
         {"name": "saveStone", "id": 28, "_eid": "31527380", "x": 1560, "y": 2000, "originX": 0, "originY": 0},
-        {"name": "p1Mach", "id": 29, "_eid": "48206217", "x": 800, "y": 1840, "originX": 0, "originY": 0}
+        {"name": "p2Mach", "id": 30, "_eid": "54650494", "x": 1720, "y": 1880, "originX": 0, "originY": 0},
+        {"name": "rod", "id": 31, "_eid": "57384346", "x": 1360, "y": 640, "originX": 0, "originY": 0},
+        {"name": "rod", "id": 32, "_eid": "57384346", "x": 2320, "y": 640, "originX": 0, "originY": 0},
+        {"name": "p1BaToCoMach", "id": 33, "_eid": "48206217", "x": 760, "y": 1880, "originX": 0, "originY": 0},
+        {"name": "p1CoToApMach", "id": 34, "_eid": "57503652", "x": 880, "y": 1880, "originX": 0, "originY": 0},
+        {"name": "p1ApToCoMach", "id": 35, "_eid": "57508009", "x": 1000, "y": 1880, "originX": 0, "originY": 0}
       ]
     },
     {

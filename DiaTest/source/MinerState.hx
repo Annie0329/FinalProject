@@ -236,14 +236,22 @@ class MinerState extends FlxState
 	// 讀檔啦
 	function loadFile()
 	{
+		// 一樣的
+		// 包包
 		bag.diamondUi.visible = true;
 		bag.bananaCounter = save.data.bananaValue;
 		bag.diamondCounter = save.data.diamondValue;
+		bag.shibaInvest = save.data.shibaInvest;
+		bag.shibaWave = save.data.shibaWave;
 		bag.updateBag();
 
-		dia.saveStoneIntro = save.data.saveStoneIntro;
-		dia.stoneTextYes = save.data.stoneTextYes;
+		if (bag.shibaInvest != 0)
+			bag.countShibaWave();
 
+		dia.saveStoneIntro = save.data.saveStoneIntro;
+
+		// 不一樣的
+		dia.stoneTextYes = save.data.stoneTextYes;
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "miner")
@@ -264,16 +272,21 @@ class MinerState extends FlxState
 	// 存檔啦
 	function saveFile()
 	{
+		// 一樣的
 		// 能量幣和香蕉數目
 		save.data.bananaValue = bag.bananaCounter;
 		save.data.diamondValue = bag.diamondCounter;
+		save.data.shibaInvest = bag.shibaInvest;
+		save.data.shibaWave = bag.shibaWave;
 
 		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
-		save.data.stoneTextYes = dia.stoneTextYes;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
+
+		// 不一樣的
+		save.data.stoneTextYes = dia.stoneTextYes;
 		save.data.place = "miner";
 
 		save.flush();
