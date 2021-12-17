@@ -418,6 +418,10 @@ class MinerState extends FlxState
 		{
 			stoneCounter--;
 			stoneCounterText.text = Std.string(stoneCounter);
+			if (stoneCounter >= stoneGoal)
+				stoneCounterText.color = FlxColor.RED;
+			else
+				stoneCounterText.color = FlxColor.BLACK;
 		});
 	}
 
@@ -430,7 +434,7 @@ class MinerState extends FlxState
 			bag.diamondCounter += Std.int(car * 10);
 			stoneCounter = stoneCounter % stoneGoal;
 			stoneCounterText.text = Std.string(stoneCounter);
-
+			stoneCounterText.color = FlxColor.BLACK;
 			box.loadGraphic(AssetPaths.boxFull__png);
 
 			bag.updateBag();
@@ -450,7 +454,7 @@ class MinerState extends FlxState
 	function updateTimer()
 	{
 		// 計時開始時要做的事
-		if (minerTimerText.visible)
+		if (minerTimerIcon.visible)
 		{
 			// 只剩5秒字就變紅色
 			minerTimerText.text = Std.string(Std.int(timer.timeLeft));
