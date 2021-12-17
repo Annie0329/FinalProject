@@ -383,7 +383,8 @@ class PlayState extends FlxState
 						name = ":D:沒有關係，流行趨勢本來就是瞬息萬變的。";
 					else
 						name = ":D:NFT還不錯，下次試試看吧。";
-				case spartanMiner:
+
+				case rod, spartanMiner:
 			}
 			txt = false;
 			playerUpDown();
@@ -401,7 +402,7 @@ class PlayState extends FlxState
 				inCombat = true;
 				player.active = false;
 				enemies.active = false;
-				combatHud.initCombat(bag.diamondCounter, bag.diamondText, enemy);
+				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin,enemy);
 			}
 			else
 			{

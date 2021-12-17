@@ -53,7 +53,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var dilog_boxes:Array<String>;
 	var name:String;
 	var txt:Bool = true;
-	var investNumText:FlxText;
 	var textIn:Bool = false;
 
 	// NFT
@@ -64,7 +63,18 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var shibaCounter:Int = 0;
 	var shibaLose:Bool = false;
 
+	// 槓桿
+	var rodTalk:Bool = false;
+	var rodNum:Int = 2;
+	var rodNumText:FlxText;
+
+	public var appleRod:Float;
+	public var bananaCoin:Float;
+
+	// 投資
 	public var investNum:Int = 5;
+
+	var investNumText:FlxText;
 
 	// UI
 	var enemyNameText:FlxText;
@@ -107,6 +117,13 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(investNumText);
 		investNumText.alignment = CENTER;
 		investNumText.visible = false;
+
+		// 槓桿多少倍
+		rodNumText = new FlxText(choices[YES].x, choices[YES].y, 170, "2", 44);
+		add(rodNumText);
+		rodNumText.alignment = CENTER;
+		rodNumText.color = FlxColor.YELLOW;
+		rodNumText.visible = false;
 
 		// nft花樣選擇圖示
 		nftStyle = new FlxSprite(choices[YES].x + choices[YES].width / 2, choices[YES].y).loadGraphic(AssetPaths.nft__png, true, 56, 64);
@@ -151,15 +168,17 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		*當打架開始時PlayerState會啟動這個功能。這會架好螢幕，讓一切都準備好
 		*@param diamond
 		*@param diamondUiText
+		*@param bananaCoin
 		*@param enemy 我們打的是哪種敵人，這樣才能叫出正確的類型
 
 	 */
 	// 準備介面
-	public function initCombat(diamond:Float, diamondUiText:FlxText, enemy:Enemy)
+	public function initCombat(diamond:Float, diamondUiText:FlxText, bananaCoin:Float, enemy:Enemy)
 	{
 		this.enemy = enemy; // 把這裡的敵人設成我們在別地方拿到的敵人
 		this.diamond = diamond;
 		this.diamondUiText = diamondUiText;
+		this.bananaCoin = bananaCoin;
 		diamondText.text = Std.string(diamond);
 
 		enemySprite.changeType(enemy.type); // 換成普通敵人或是魔王
@@ -185,15 +204,32 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				shibaCounter++;
 				if (shibaCounter == shibaLoseNum)
 					shibaLose = true;
+				txt = false;
 			case cloudMiner:
 				enemyNameText.text = "雲挖礦";
 				name = ":哈囉~猩猩，只要你付給我 5 能量幣，:就可以租到一台高效率機器幫你挖礦賺大錢喔！快來加入我吧！";
+				txt = false;
 			case nft:
 				enemyNameText.text = "NFT";
 				name = ":要不要買些特別的圖像啊？:這些獨一無二的藝術品可以留著珍藏也可以拿去商店賣，如果是爆紅款式還可以賣出天價喔！";
+				txt = false;
+			case rod:
+				enemyNameText.text = "槓桿";
+				if (rodTalk)
+				{
+					name = ":你要開槓桿用香蕉幣買蘋果幣嗎？";
+					txt = false;
+				}
+				else
+				{
+					name = AssetPaths.rodTalk__txt;
+					txt = true;
+					rodTalk = true;
+				}
+
 			case spartanMiner:
 		}
-		combatText.show(name, false);
+		combatText.show(name, txt);
 
 		state = 1;
 		visible = true; // 讓打架介面出現
@@ -393,6 +429,65 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				else if (state == 3)
 					doneResultsIn();
 			}
+			// 槓桿
+			else if (enemy.type == rod)
+			{
+				if (state == 1)
+				{
+					if (combatText.over && !pointer.visible)
+					{
+						pointer.visible = true;
+					}
+					else if (pointer.visible)
+					{
+						state++;
+						pointer.visible = false;
+						switch (pointer.selected)
+						{
+							case "YES":
+								choices[YES].visible = false;
+								choices[NO].visible = false;
+								investNumText.visible = true;
+								lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
+
+								name = ':你現在有$bananaCoin 香蕉幣。請選擇你要投資多少？最少 5 香蕉幣。好了就按enter。';
+								combatText.show(name, false);
+
+							case "NO":
+								outcome = FLEE;
+								doneResultsIn();
+						}
+					}
+				}
+				else if (state == 2)
+				{
+					state++;
+					investNumText.visible = false;
+					rodNumText.visible = true;
+
+					name = ":請選擇你槓桿多少倍？好了就按enter。";
+					combatText.show(name, false);
+				}
+				else if (state == 3)
+				{
+					state++;
+					if (FlxG.random.bool(40))
+					{
+						appleRod += investNum * rodNum;
+						name = ':你得到 $appleRod 蘋果幣！';
+						outcome = WIN;
+					}
+					else
+					{
+						name = ":你什麼都沒得到。";
+						outcome = LOSE;
+					}
+					bananaCoin -= investNum;
+					combatText.show(name, false);
+				}
+				else if (state == 4)
+					doneResultsIn();
+			}
 			diamond = FlxMath.roundDecimal(diamond, 2);
 			diamondText.text = Std.string(diamond);
 			diamondUiText.text = Std.string(diamond);
@@ -401,11 +496,30 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			if (investNumText.visible)
 			{
-				if (left && investNum != 5)
-					investNum -= 5;
-				else if (right && investNum / 5 != Std.int(diamond / 5))
-					investNum += 5;
-				investNumText.text = Std.string(investNum);
+				if (enemy.type == rod)
+				{
+					if (left && investNum != 5)
+						investNum -= 5;
+					else if (right && investNum / 5 != Std.int(bananaCoin / 5))
+						investNum += 5;
+					investNumText.text = Std.string(investNum);
+				}
+				else
+				{
+					if (left && investNum != 5)
+						investNum -= 5;
+					else if (right && investNum / 5 != Std.int(diamond / 5))
+						investNum += 5;
+					investNumText.text = Std.string(investNum);
+				}
+			}
+			else if (rodNumText.visible)
+			{
+				if (left && rodNum != 2)
+					rodNum--;
+				else if (right)
+					rodNum++;
+				rodNumText.text = Std.string(rodNum);
 			}
 			else if (nftStyle.visible)
 			{

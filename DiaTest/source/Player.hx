@@ -91,7 +91,7 @@ class Player extends FlxSprite
 			velocity.set(SPEED, 0);
 			velocity.rotate(FlxPoint.weak(0, 0), newAngle);
 
-			if (velocity.x != 0 || velocity.y != 0)
+			if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE)
 			{
 				// 什麼時候臉該面向哪邊
 				if (shift)

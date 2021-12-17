@@ -255,10 +255,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					stoneTextYes = true;
 				}
 
-			case sign:
+			case signDefi:
 				name = AssetPaths.streetSign__txt;
 				txt = true;
-
+			case signApple:
+				name = AssetPaths.appleAd__txt;
+				txt = true;
 			case p1:
 				name = AssetPaths.house1Talk__txt;
 				txt = true;

@@ -16,7 +16,8 @@ enum NpcType
 	saveStone;
 
 	spartan;
-	sign;
+	signDefi;
+	signApple;
 	p1;
 	p1BaToCoMach;
 	p1CoToApMach;
@@ -24,7 +25,6 @@ enum NpcType
 	p2;
 	p2Mach;
 	p3;
-	rod;
 }
 
 class NPC extends FlxSprite
@@ -60,8 +60,10 @@ class NPC extends FlxSprite
 			case spartan:
 				loadGraphic(AssetPaths.spartan__png);
 
-			case sign:
-				makeGraphic(80, 80, FlxColor.BROWN);
+			case signDefi:
+				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+			case signApple:
+				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p1:
 				loadGraphic(AssetPaths.p1__png);
 			case p1BaToCoMach:
@@ -76,8 +78,6 @@ class NPC extends FlxSprite
 				makeGraphic(80, 80, FlxColor.GRAY);
 			case p3:
 				makeGraphic(80, 80, FlxColor.GREEN);
-			case rod:
-				makeGraphic(80, 80, FlxColor.RED);
 		}
 
 		immovable = true;

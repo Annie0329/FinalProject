@@ -32,6 +32,8 @@ class MinerState extends FlxState
 	var enemies:FlxTypedGroup<Enemy>;
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
+
+	var shop:FlxSprite;
 	var monumentDoor:FlxSprite;
 	var streetDoor:FlxSprite;
 	var minerGate:FlxSprite;
@@ -48,7 +50,8 @@ class MinerState extends FlxState
 	var stoneCounterText:FlxText;
 	var stoneCounterIcon:FlxSprite;
 	var stoneYes:Bool = false;
-	var minerTimer:FlxText;
+	var minerTimerText:FlxText;
+	var minerTimerIcon:FlxSprite;
 	var timer:FlxTimer;
 	var minerTimeSet:Int = 60;
 
@@ -111,6 +114,11 @@ class MinerState extends FlxState
 		add(streetDoor);
 		streetDoor.animation.play("glowStreet");
 
+		// 商店
+		shop = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		shop.immovable = true;
+		add(shop);
+
 		// 石頭
 		stone = new FlxTypedGroup<FlxSprite>();
 		add(stone);
@@ -145,26 +153,34 @@ class MinerState extends FlxState
 		dia = new Dia();
 		add(dia);
 
-		// 計時器
-		minerTimer = new FlxText(0, 0, 200, "0", 20);
-		minerTimer.scrollFactor.set(0, 0);
-		add(minerTimer);
-		minerTimer.visible = false;
-
 		// 角色擺位置
 		map.loadEntities(placeEntities, "entities");
 
 		// 石頭圖示
-		stoneCounterIcon = new FlxSprite(120, 10).loadGraphic(AssetPaths.stone__png);
+		stoneCounterIcon = new FlxSprite(FlxG.width - 109, 10).loadGraphic(AssetPaths.stoneIcon__png);
 		stoneCounterIcon.scrollFactor.set(0, 0);
 		add(stoneCounterIcon);
 		stoneCounterIcon.visible = false;
 
 		// 石頭數目
-		stoneCounterText = new FlxText(stoneCounterIcon.x + stoneCounterIcon.width + 10, stoneCounterIcon.y, 200, "0", 20);
+		stoneCounterText = new FlxText(stoneCounterIcon.x + 45, stoneCounterIcon.y + stoneCounterIcon.height / 2 - 13, "0", 20);
 		stoneCounterText.scrollFactor.set(0, 0);
+		stoneCounterText.color = FlxColor.BLACK;
 		add(stoneCounterText);
 		stoneCounterText.visible = false;
+
+		// 計時器
+		minerTimerIcon = new FlxSprite(stoneCounterIcon.x, stoneCounterIcon.y + stoneCounterIcon.height + 10, AssetPaths.minerTimerIcon__png);
+		minerTimerIcon.scrollFactor.set(0, 0);
+		add(minerTimerIcon);
+		minerTimerIcon.visible = false;
+
+		minerTimerText = new FlxText(minerTimerIcon.x, minerTimerIcon.y + 25, minerTimerIcon.width, "0", 20);
+		minerTimerText.color = FlxColor.BLACK;
+		minerTimerText.alignment = CENTER;
+		minerTimerText.scrollFactor.set(0, 0);
+		add(minerTimerText);
+		minerTimerText.visible = false;
 
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 200, "ufo", 20);
@@ -203,6 +219,8 @@ class MinerState extends FlxState
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
 
+			case "shop":
+				shop.setPosition(x, y);
 			case "monumentDoor":
 				monumentDoor.setPosition(x + 28, y);
 			case "streetDoor":
@@ -320,8 +338,10 @@ class MinerState extends FlxState
 
 		FlxG.collide(player, npc, npcTalk);
 
+		FlxG.collide(player, shop, shopOpen);
 		FlxG.collide(player, monumentDoor, goToMonument);
 		FlxG.collide(player, streetDoor, goToStreet);
+
 		FlxG.overlap(player, stone, playerGotStone);
 		FlxG.collide(player, box, stoneInsideBox);
 		FlxG.overlap(player, enemies, touchEnemy);
@@ -370,6 +390,10 @@ class MinerState extends FlxState
 		stoneCounter++;
 		stoneCounterText.text = Std.string(stoneCounter);
 		stone.kill();
+		if (stoneCounter >= stoneGoal)
+			stoneCounterText.color = FlxColor.RED;
+		else
+			stoneCounterText.color = FlxColor.BLACK;
 		new FlxTimer().start(3, function(timer:FlxTimer)
 		{
 			stone.revive();
@@ -426,34 +450,31 @@ class MinerState extends FlxState
 	function updateTimer()
 	{
 		// 計時開始時要做的事
-		if (minerTimer.visible)
+		if (minerTimerText.visible)
 		{
 			// 只剩5秒字就變紅色
-			minerTimer.text = Std.string(Std.int(timer.timeLeft));
+			minerTimerText.text = Std.string(Std.int(timer.timeLeft));
 			if (Std.int(timer.timeLeft) <= 5)
-				minerTimer.color = FlxColor.RED;
+				minerTimerText.color = FlxColor.RED;
 			else
-				minerTimer.color = FlxColor.WHITE;
+				minerTimerText.color = FlxColor.BLACK;
 			// 時間到玩家就不准動
 			if (timer.finished)
 				player.active = false;
-
-			if (stoneCounter >= stoneGoal)
-				stoneCounterText.color = FlxColor.YELLOW;
-			else
-				stoneCounterText.color = FlxColor.WHITE;
 		}
 			// 如果玩家經過門就啟動計時
 		// 用else if是為了避免重複計時(看不見計時器才開始計時)
-		else if (player.y < minerGate.y - 40)
+		else if (player.y < minerGate.y - 40 && player.x < minerGate.x + minerGate.width)
 		{
 			minerGate.x -= minerGate.width;
 			timer = new FlxTimer().start(minerTimeSet, function(timer:FlxTimer)
 			{
+				minerTimerText.visible = false;
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
 					player.setPosition(minerGate.x, minerGate.y + 200);
-					minerTimer.visible = false;
+
+					minerTimerIcon.visible = false;
 					stoneCounterIcon.visible = false;
 					stoneCounterText.visible = false;
 					stoneCounter = 0;
@@ -462,10 +483,20 @@ class MinerState extends FlxState
 					FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
 				});
 			});
-			minerTimer.visible = true;
+			minerTimerText.visible = true;
+			minerTimerIcon.visible = true;
 			stoneCounterIcon.visible = true;
 			stoneCounterText.visible = true;
 		}
+	}
+
+	// 商店開門
+	function shopOpen(player:Player, shop:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			bag.buyAndSell();
+		});
 	}
 
 	// 對話大滿貫

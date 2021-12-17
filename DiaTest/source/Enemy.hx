@@ -7,6 +7,7 @@ import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
 import flixel.system.FlxSound;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -17,6 +18,7 @@ enum EnemyType
 	cloudMiner;
 	nft;
 	spartanMiner;
+	rod;
 }
 
 class FSM
@@ -87,6 +89,9 @@ class Enemy extends FlxSprite
 				loadGraphic(AssetPaths.spartanMiner__png, true, 64, 64);
 				animation.add("lrSpartan", [0, 1, 2, 3], 6, false);
 				immovable = true;
+			case rod:
+				makeGraphic(80, 80, FlxColor.RED);
+				immovable = true;
 		}
 		// 面向右邊時使用鏡像的左邊圖片
 		setFacingFlip(FlxObject.LEFT, false, false);
@@ -125,7 +130,7 @@ class Enemy extends FlxSprite
 				}
 				animation.play("lrSpartan");
 			}
-			else
+			else if (type != rod)
 			{
 				// 如果隨機選到1的話就不動
 				if (FlxG.random.bool(1))
@@ -182,7 +187,7 @@ class Enemy extends FlxSprite
 		{
 			switch (type)
 			{
-				case cloudMiner, nft:
+				case cloudMiner, nft, spartanMiner, rod:
 				case shibaCoin: // 什麼時候臉該面向哪邊，以x、y的速度方向判斷
 					if (Math.abs(velocity.x) > Math.abs(velocity.y))
 					{
@@ -208,7 +213,6 @@ class Enemy extends FlxSprite
 							animation.play("d");
 						case _:
 					}
-				case spartanMiner:
 			}
 		}
 

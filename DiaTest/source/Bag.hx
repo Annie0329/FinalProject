@@ -96,6 +96,61 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// 背景
 		background = new FlxSprite();
 
+		
+		// 商店組
+		shopUi.add(background);
+
+		// 箭頭
+		pointer = new Pointer();
+		pointer.color = 0xffF0433D;
+		shopUi.add(pointer);
+
+		// 商店選項
+		shopCho = new FlxText(background.x + 90 + pointer.width + 10, FlxG.height / 2 + 10, "買\n賣\n聊天\n離開\n", 26, true);
+		shopCho.color = 0xff2D5925;
+		shopCho.font = AssetPaths.silver__ttf;
+		shopUi.add(shopCho);
+
+		// 商店的字
+		shopText = new Text(background.x + 280, shopCho.y, 270, "歡迎來到我的店！", 28, true);
+		shopText.color = 0xff2D5925;
+		shopUi.add(shopText);
+
+		// 賣的東西擁有量
+		sellAmoText = new FlxText(background.x + 450, shopCho.y, 270, "oui", 28, true);
+		sellAmoText.color = 0xff2D5925;
+		sellAmoText.font = AssetPaths.silver__ttf;
+		shopUi.add(sellAmoText);
+
+		add(shopUi);
+		shopUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		shopUi.visible = false;
+
+		// 能量幣組
+		diamondIcon = new FlxSprite(10, 10).loadGraphic(AssetPaths.diamondIcon__png);
+		diamondUi.add(diamondIcon);
+
+		diamondText = new FlxText(diamondIcon.x + 45, diamondIcon.y + diamondIcon.height / 2 - 13, "0", 20);
+		diamondText.color = 0xff2D5925;
+		diamondUi.add(diamondText);
+
+		add(diamondUi);
+		diamondUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		diamondUi.visible = false;
+
+		// 買幣組
+		// 狗狗幣
+		shiba = new FlxSprite(diamondIcon.x, diamondIcon.y + diamondIcon.height + 10, AssetPaths.shibaCoinIcon__png);
+		shibaUi.add(shiba);
+
+		shibaWaveText = new FlxText(diamondText.x, shiba.y + shiba.height / 2 - 11, 0, "+0", 16);
+		shibaWaveText.color = FlxColor.GREEN;
+		shibaUi.add(shibaWaveText);
+
+		add(shibaUi);
+		shibaUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		shibaUi.visible = false;
+
 		// 包包組
 		bagUi.add(background);
 
@@ -134,62 +189,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bagUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 		bagUi.visible = false;
 
-		// 商店組
-		shopUi.add(background);
-
-		// 箭頭
-		pointer = new Pointer();
-		pointer.color = 0xffF0433D;
-		shopUi.add(pointer);
-
-		// 商店選項
-		shopCho = new FlxText(background.x + 90 + pointer.width + 10, FlxG.height / 2 + 10, "買\n賣\n聊天\n離開\n", 26, true);
-		shopCho.color = 0xff2D5925;
-		shopCho.font = AssetPaths.silver__ttf;
-		shopUi.add(shopCho);
-
-		// 商店的字
-		shopText = new Text(background.x + 280, shopCho.y, 270, "歡迎來到我的店！", 28, true);
-		shopText.color = 0xff2D5925;
-		shopUi.add(shopText);
-
-		// 賣的東西擁有量
-		sellAmoText = new FlxText(background.x + 450, shopCho.y, 270, "oui", 28, true);
-		sellAmoText.color = 0xff2D5925;
-		sellAmoText.font = AssetPaths.silver__ttf;
-		shopUi.add(sellAmoText);
-
-		add(shopUi);
-		shopUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
-		shopUi.visible = false;
-
-		// 買幣組
-		// 狗狗幣
-		shiba = new FlxSprite(320, 10).loadGraphic(AssetPaths.shibaCoin__png, true, 64, 64);
-		shiba.animation.frameIndex = 0;
-		shibaUi.add(shiba);
-
-		shibaWaveText = new FlxText(shiba.x + shiba.width, shiba.y, 0, "+0", 20);
-		shibaWaveText.color = FlxColor.GREEN;
-		shibaUi.add(shibaWaveText);
-
-		add(shibaUi);
-		shibaUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
-		shibaUi.visible = false;
-
-		// 能量幣組
-		diamondIcon = new FlxSprite(10, 10).loadGraphic(AssetPaths.diamondIcon__png);
-		diamondUi.add(diamondIcon);
-
-		diamondText = new FlxText(diamondIcon.x + 40, diamondIcon.y + 7, "0", 20);
-		diamondText.color = 0xff2D5925;
-		diamondUi.add(diamondText);
-
-		add(diamondUi);
-		diamondUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
-		diamondUi.visible = false;
-
-		// 別跟著攝影機動
 		active = false;
 	}
 

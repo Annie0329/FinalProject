@@ -13,6 +13,8 @@ import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 
+using flixel.util.FlxSpriteUtil;
+
 class StreetState extends FlxState
 {
 	// 玩家
@@ -26,11 +28,17 @@ class StreetState extends FlxState
 	var txt:Bool = true;
 	var talkYes:Bool = false;
 
-	// 其他角色
+	// 敵人
 	var enemies:FlxTypedGroup<Enemy>;
+	var inCombat:Bool = false;
+	var combatHud:CombatHUD;
+	var enemyFlicker:Bool = false;
+
+	// 其他角色
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
 	var minerDoor:FlxSprite;
+	var shop:FlxSprite;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -110,6 +118,11 @@ class StreetState extends FlxState
 		house3Door.immovable = true;
 		add(house3Door);
 
+		// 商店
+		shop = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		shop.immovable = true;
+		add(shop);
+
 		// 敵人
 		enemies = new FlxTypedGroup<Enemy>();
 		add(enemies);
@@ -130,6 +143,10 @@ class StreetState extends FlxState
 		// 包包介面
 		bag = new Bag();
 		add(bag);
+
+		// 打人介面
+		combatHud = new CombatHUD();
+		add(combatHud);
 
 		// 對話框
 		dia = new Dia();
@@ -170,8 +187,10 @@ class StreetState extends FlxState
 
 		switch (entity.name)
 		{
-			case "sign":
-				npc.add(new NPC(x, y, sign));
+			case "signDefi":
+				npc.add(new NPC(x, y, signDefi));
+			case "signApple":
+				npc.add(new NPC(x, y, signApple));
 
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
@@ -197,6 +216,9 @@ class StreetState extends FlxState
 			case "house3Door":
 				house3Door.setPosition(x, y);
 
+			case "shop":
+				shop.setPosition(x, y);
+
 			case "p1":
 				npc.add(new NPC(x, y, p1));
 			case "p1BaToCoMach":
@@ -212,7 +234,7 @@ class StreetState extends FlxState
 			case "p3":
 				npc.add(new NPC(x, y, p3));
 			case "rod":
-				npc.add(new NPC(x, y, rod));
+				enemies.add(new Enemy(x, y, rod));
 			case "sea":
 				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
 				s.flipX = true;
@@ -280,6 +302,7 @@ class StreetState extends FlxState
 	{
 		super.update(elapsed);
 		updateWhenDiaInvisible();
+		updateInCombat();
 		updateTalking();
 		updateEsc();
 		updateC();
@@ -303,6 +326,8 @@ class StreetState extends FlxState
 		FlxG.collide(player, npc, npcTalk);
 
 		FlxG.collide(player, minerDoor, goToMiner);
+		FlxG.collide(player, shop, shopOpen);
+
 		FlxG.collide(player, house1, houseIn);
 		FlxG.collide(player, house2, houseIn);
 		FlxG.collide(player, house3, houseIn);
@@ -311,7 +336,7 @@ class StreetState extends FlxState
 		FlxG.collide(player, house2Door, houseOut);
 		FlxG.collide(player, house3Door, houseOut);
 
-		FlxG.overlap(player, enemies);
+		FlxG.collide(player, enemies, playerTouchEnemy);
 
 		FlxG.collide(enemies, walls);
 		FlxG.collide(enemies);
@@ -340,7 +365,7 @@ class StreetState extends FlxState
 	{
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
-			player.setPosition(house.x + (house.width - player.width) / 2, house.y + houseDis);
+			player.setPosition(house.x + (house.width - player.width) / 2, house.y + houseDis - 40);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 		});
 	}
@@ -352,6 +377,69 @@ class StreetState extends FlxState
 		{
 			player.setPosition(houseDoor.x + (houseDoor.width - player.width) / 2, houseDoor.y - houseDis + 80);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+		});
+	}
+
+	// 如果你碰了敵人，就代表敵人碰了你
+	function playerTouchEnemy(player:Player, enemy:Enemy)
+	{
+		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
+		{
+			if (bag.bananaCoin >= 5)
+			{
+				inCombat = true;
+				player.active = false;
+				enemies.active = false;
+				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, enemy);
+			}
+			else
+			{
+				name = ":N:你沒有足夠的香蕉幣！你需要至少 5 香蕉幣！";
+				txt = false;
+				playerUpDown();
+				dia.show(name, txt);
+				combatHud.enemy = enemy;
+				enemyFlicker = true;
+			}
+		}
+	}
+
+	// 打架結束囉
+	function updateInCombat()
+	{
+		if (inCombat && !combatHud.visible)
+		{
+			if (combatHud.enemy.type == rod)
+			{
+				if (combatHud.outcome == WIN)
+					name = ":D:你真幸運，開槓桿成功了。";
+				else if (combatHud.outcome == LOSE)
+					name = ":D:下次該槓桿要小心點喔。";
+				else
+					name = ":D:槓桿可以賺很多，下次試試看吧。";
+
+				bag.appleCoin += combatHud.appleRod;
+				bag.bananaCoin = combatHud.bananaCoin;
+				bag.bananaCoinText.text = Std.string(FlxMath.roundDecimal(bag.bananaCoin, 2));
+				bag.appleCoinText.text = Std.string(FlxMath.roundDecimal(bag.appleCoin, 2));
+				enemyFlicker = true;
+			}
+			bag.diamondCounter = combatHud.diamond;
+			bag.updateBag();
+			inCombat = false;
+
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+		}
+	}
+
+	// 商店開門
+	function shopOpen(player:Player, shop:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			bag.buyAndSell();
 		});
 	}
 
@@ -386,7 +474,8 @@ class StreetState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible)
+		// 對話框顯示時玩家就不能動
+		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemies.active = false;
