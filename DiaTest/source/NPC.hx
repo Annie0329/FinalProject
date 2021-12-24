@@ -19,6 +19,7 @@ enum NpcType
 	signDefi;
 	signApple;
 	p1;
+	mathChart;
 	p1BaToCoMach;
 	p1CoToApMach;
 	p1ApToCoMach;
@@ -66,12 +67,14 @@ class NPC extends FlxSprite
 				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p1:
 				loadGraphic(AssetPaths.p1__png);
+			case mathChart:
+				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p1BaToCoMach:
-				makeGraphic(80, 80, FlxColor.GRAY);
+				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p1CoToApMach:
-				makeGraphic(80, 80, FlxColor.BLUE);
+				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p1ApToCoMach:
-				makeGraphic(80, 80, FlxColor.RED);
+				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p2:
 				makeGraphic(80, 80, FlxColor.BLUE);
 			case p2Mach:

@@ -61,6 +61,9 @@ class StreetState extends FlxState
 	var ufo:FlxText;
 	var save:FlxSave;
 
+	// 有沒有投資APESTARTER
+	var starterYes:Bool = false;
+
 	// 加好加滿
 	override public function create()
 	{
@@ -221,6 +224,8 @@ class StreetState extends FlxState
 
 			case "p1":
 				npc.add(new NPC(x, y, p1));
+			case "mathChart":
+				npc.add(new NPC(x, y, mathChart));
 			case "p1BaToCoMach":
 				npc.add(new NPC(x, y, p1BaToCoMach));
 			case "p1CoToApMach":
@@ -235,6 +240,8 @@ class StreetState extends FlxState
 				npc.add(new NPC(x, y, p3));
 			case "rod":
 				enemies.add(new Enemy(x, y, rod));
+			case "starter":
+				enemies.add(new Enemy(x, y, starter));
 			case "sea":
 				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 160, 80);
 				s.flipX = true;
@@ -259,7 +266,8 @@ class StreetState extends FlxState
 
 		if (bag.shibaInvest != 0)
 			bag.countShibaWave();
-
+		else
+			bag.shibaUi.visible = false;
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
 		// 不一樣的
@@ -385,16 +393,19 @@ class StreetState extends FlxState
 	{
 		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
 		{
-			if (bag.bananaCoin >= 5)
+			if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.appleCoin >= 5))
 			{
 				inCombat = true;
 				player.active = false;
 				enemies.active = false;
-				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, enemy);
+				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, enemy);
 			}
 			else
 			{
-				name = ":N:你沒有足夠的香蕉幣！你需要至少 5 香蕉幣！";
+				if (enemy.type == rod)
+					name = ":N:你沒有足夠的香蕉幣！你需要至少 5 香蕉幣！";
+				else if (enemy.type == starter)
+					name = ":N:你沒有足夠的APS幣！你需要至少 5 APS幣！";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -417,14 +428,22 @@ class StreetState extends FlxState
 					name = ":D:下次該槓桿要小心點喔。";
 				else
 					name = ":D:槓桿可以賺很多，下次試試看吧。";
-
-				bag.appleCoin += combatHud.appleRod;
-				bag.bananaCoin = combatHud.bananaCoin;
-				bag.bananaCoinText.text = Std.string(FlxMath.roundDecimal(bag.bananaCoin, 2));
-				bag.appleCoinText.text = Std.string(FlxMath.roundDecimal(bag.appleCoin, 2));
-				enemyFlicker = true;
 			}
+			else if (combatHud.enemy.type == starter)
+			{
+				if (combatHud.outcome == WIN)
+				{
+					name = ":D:你投資了APESTARTER啊！";
+					starterYes = true;
+				}
+				else
+					name = ":D:下次可以試試看投資APESTARTER喔。";
+			}
+
+			enemyFlicker = true;
 			bag.diamondCounter = combatHud.diamond;
+			bag.bananaCoin = combatHud.bananaCoin;
+			bag.appleCoin = combatHud.appleCoin;
 			bag.updateBag();
 			inCombat = false;
 

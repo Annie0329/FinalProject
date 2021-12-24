@@ -265,7 +265,8 @@ class MinerState extends FlxState
 
 		if (bag.shibaInvest != 0)
 			bag.countShibaWave();
-
+		else
+			bag.shibaUi.visible = false;
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
 		// 不一樣的

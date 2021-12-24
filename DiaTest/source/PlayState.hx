@@ -283,6 +283,8 @@ class PlayState extends FlxState
 
 		if (bag.shibaInvest != 0)
 			bag.countShibaWave();
+		else
+			bag.shibaUi.visible = false;
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
@@ -384,7 +386,7 @@ class PlayState extends FlxState
 					else
 						name = ":D:NFT還不錯，下次試試看吧。";
 
-				case rod, spartanMiner:
+				case rod, spartanMiner, starter:
 			}
 			txt = false;
 			playerUpDown();
@@ -402,7 +404,7 @@ class PlayState extends FlxState
 				inCombat = true;
 				player.active = false;
 				enemies.active = false;
-				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin,enemy);
+				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, enemy);
 			}
 			else
 			{

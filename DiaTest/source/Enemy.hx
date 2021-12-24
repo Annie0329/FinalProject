@@ -5,7 +5,6 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.math.FlxVelocity;
-import flixel.system.FlxSound;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 
@@ -19,6 +18,7 @@ enum EnemyType
 	nft;
 	spartanMiner;
 	rod;
+	starter;
 }
 
 class FSM
@@ -88,14 +88,17 @@ class Enemy extends FlxSprite
 			case spartanMiner:
 				loadGraphic(AssetPaths.spartanMiner__png, true, 64, 64);
 				animation.add("lrSpartan", [0, 1, 2, 3], 6, false);
-				immovable = true;
+
 			case rod:
 				makeGraphic(80, 80, FlxColor.RED);
-				immovable = true;
+
+			case starter:
+				makeGraphic(80, 80, FlxColor.PURPLE);
 		}
 		// 面向右邊時使用鏡像的左邊圖片
 		setFacingFlip(FlxObject.LEFT, false, false);
 		setFacingFlip(FlxObject.RIGHT, true, false);
+		immovable = true;
 	}
 
 	// 燃燒的錢
@@ -116,38 +119,38 @@ class Enemy extends FlxSprite
 			brain.activeState = chase;
 		else if (idleTimer <= 0)
 		{
-			if (type == spartanMiner)
+			switch (type)
 			{
-				if (x == enemiesStart)
-				{
-					FlxTween.tween(this, {x: enemiesEnd}, 3);
-					facing = RIGHT;
-				}
-				else if (x == enemiesEnd)
-				{
-					FlxTween.tween(this, {x: enemiesStart}, 3);
-					facing = LEFT;
-				}
-				animation.play("lrSpartan");
-			}
-			else if (type != rod)
-			{
-				// 如果隨機選到1的話就不動
-				if (FlxG.random.bool(1))
-				{
-					moveDirection = -1;
-					velocity.x = velocity.y = 0;
-				}
-				else
-				{
-					// 隨機選角度移動
-					moveDirection = FlxG.random.int(0, 8) * 45;
-					velocity.set(SPEED, 0);
+				case spartanMiner:
+					if (x == enemiesStart)
+					{
+						FlxTween.tween(this, {x: enemiesEnd}, 3);
+						facing = RIGHT;
+					}
+					else if (x == enemiesEnd)
+					{
+						FlxTween.tween(this, {x: enemiesStart}, 3);
+						facing = LEFT;
+					}
+					animation.play("lrSpartan");
+				case shibaCoin, cloudMiner, nft:
+					// 如果隨機選到1的話就不動
+					if (FlxG.random.bool(1))
+					{
+						moveDirection = -1;
+						velocity.x = velocity.y = 0;
+					}
+					else
+					{
+						// 隨機選角度移動
+						moveDirection = FlxG.random.int(0, 8) * 45;
+						velocity.set(SPEED, 0);
 
-					velocity.rotate(FlxPoint.weak(), moveDirection);
-				}
-				// 隨機選個數
-				idleTimer = FlxG.random.int(1, 4);
+						velocity.rotate(FlxPoint.weak(), moveDirection);
+					}
+					// 隨機選個數
+					idleTimer = FlxG.random.int(1, 4);
+				case rod, starter:
 			}
 		}
 		else
@@ -187,7 +190,7 @@ class Enemy extends FlxSprite
 		{
 			switch (type)
 			{
-				case cloudMiner, nft, spartanMiner, rod:
+				case cloudMiner, nft, spartanMiner, rod, starter:
 				case shibaCoin: // 什麼時候臉該面向哪邊，以x、y的速度方向判斷
 					if (Math.abs(velocity.x) > Math.abs(velocity.y))
 					{

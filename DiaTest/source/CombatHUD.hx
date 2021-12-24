@@ -59,17 +59,14 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var nftStyle:FlxSprite;
 	var nftStyleNum:Int = 0;
 
-	var shibaLoseNum:Int = FlxG.random.int(1, 3);
-	var shibaCounter:Int = 0;
-	var shibaLose:Bool = false;
-
 	// 槓桿
 	var rodTalk:Bool = false;
 	var rodNum:Int = 2;
 	var rodNumText:FlxText;
 
-	public var appleRod:Float;
+	public var appleRod:Float; // 槓桿賺了多少蘋果幣
 	public var bananaCoin:Float;
+	public var appleCoin:Float;
 
 	// 投資
 	public var investNum:Int = 5;
@@ -173,12 +170,13 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	 */
 	// 準備介面
-	public function initCombat(diamond:Float, diamondUiText:FlxText, bananaCoin:Float, enemy:Enemy)
+	public function initCombat(diamond:Float, diamondUiText:FlxText, bananaCoin:Float, appleCoin:Float, enemy:Enemy)
 	{
 		this.enemy = enemy; // 把這裡的敵人設成我們在別地方拿到的敵人
 		this.diamond = diamond;
 		this.diamondUiText = diamondUiText;
 		this.bananaCoin = bananaCoin;
+		this.appleCoin = appleCoin;
 		diamondText.text = Std.string(diamond);
 
 		enemySprite.changeType(enemy.type); // 換成普通敵人或是魔王
@@ -201,9 +199,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			case shibaCoin:
 				enemyNameText.text = "狗狗幣";
 				name = ":要不要買點狗狗幣啊？:誰不喜歡可愛的狗狗呢？";
-				shibaCounter++;
-				if (shibaCounter == shibaLoseNum)
-					shibaLose = true;
 				txt = false;
 			case cloudMiner:
 				enemyNameText.text = "雲挖礦";
@@ -217,7 +212,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				enemyNameText.text = "槓桿";
 				if (rodTalk)
 				{
-					name = ":你要開槓桿用香蕉幣買蘋果幣嗎？";
+					name = ":你要開槓桿用香蕉幣買APS幣嗎？";
 					txt = false;
 				}
 				else
@@ -226,7 +221,10 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					txt = true;
 					rodTalk = true;
 				}
-
+			case starter:
+				enemyNameText.text = "APESTARTER";
+				name = AssetPaths.starterTalk__txt;
+				txt = true;
 			case spartanMiner:
 		}
 		combatText.show(name, txt);
@@ -463,6 +461,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				{
 					state++;
 					investNumText.visible = false;
+					rodNum = 2;
+					rodNumText.text = Std.string(rodNum);
 					rodNumText.visible = true;
 
 					name = ":請選擇你槓桿多少倍？好了就按enter。";
@@ -471,10 +471,14 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				else if (state == 3)
 				{
 					state++;
+					rodNumText.visible = false;
+					pointerLeft.visible = false;
+					pointerRight.visible = false;
 					if (FlxG.random.bool(40))
 					{
 						appleRod += investNum * rodNum;
-						name = ':你得到 $appleRod 蘋果幣！';
+						appleCoin += appleRod;
+						name = ':你得到 $appleRod APS幣！';
 						outcome = WIN;
 					}
 					else
@@ -482,10 +486,57 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 						name = ":你什麼都沒得到。";
 						outcome = LOSE;
 					}
+
 					bananaCoin -= investNum;
 					combatText.show(name, false);
 				}
 				else if (state == 4)
+					doneResultsIn();
+			}
+			// ApeStarter
+			if (enemy.type == starter)
+			{
+				if (state == 1)
+				{
+					if (combatText.over && !pointer.visible)
+					{
+						pointer.visible = true;
+					}
+					else if (pointer.visible)
+					{
+						state++;
+						pointer.visible = false;
+						switch (pointer.selected)
+						{
+							case "YES":
+								choices[YES].visible = false;
+								choices[NO].visible = false;
+								investNumText.visible = true;
+								lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
+
+								name = ':你現在有$appleCoin APS幣。請選擇你要投資多少？最少 5 APS幣。好了就按enter。';
+								combatText.show(name, false);
+
+							case "NO":
+								outcome = FLEE;
+								doneResultsIn();
+						}
+					}
+				}
+				else if (state == 2)
+				{
+					state++;
+
+					appleCoin -= investNum;
+					name = ":謝謝你！";
+					outcome = WIN;
+
+					combatText.show(name, false);
+					investNumText.visible = false;
+					pointerLeft.visible = false;
+					pointerRight.visible = false;
+				}
+				else if (state == 3)
 					doneResultsIn();
 			}
 			diamond = FlxMath.roundDecimal(diamond, 2);
@@ -496,6 +547,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			if (investNumText.visible)
 			{
+				// 槓桿用的是香蕉幣投資
 				if (enemy.type == rod)
 				{
 					if (left && investNum != 5)
@@ -504,6 +556,16 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 						investNum += 5;
 					investNumText.text = Std.string(investNum);
 				}
+				// ApeStarter用的是蘋果幣
+				else if (enemy.type == starter)
+				{
+					if (left && investNum != 5)
+						investNum -= 5;
+					else if (right && investNum / 5 != Std.int(appleCoin / 5))
+						investNum += 5;
+					investNumText.text = Std.string(investNum);
+				}
+				// 其他人都用能量幣
 				else
 				{
 					if (left && investNum != 5)
