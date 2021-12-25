@@ -262,6 +262,8 @@ class StreetState extends FlxState
 		bag.diamondCounter = save.data.diamondValue;
 		bag.shibaInvest = save.data.shibaInvest;
 		bag.shibaWave = save.data.shibaWave;
+		bag.bananaCoin = save.data.bananaCoin;
+		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
 
 		if (bag.shibaInvest != 0)
@@ -271,6 +273,8 @@ class StreetState extends FlxState
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
 		// 不一樣的
+		combatHud.touchStarter = save.data.touchStarter;
+
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "street")
@@ -292,7 +296,8 @@ class StreetState extends FlxState
 		save.data.diamondValue = bag.diamondCounter;
 		save.data.shibaInvest = bag.shibaInvest;
 		save.data.shibaWave = bag.shibaWave;
-
+		save.data.bananaCoin = bag.bananaCoin;
+		save.data.appleCoin = bag.appleCoin;
 		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
 
@@ -301,7 +306,7 @@ class StreetState extends FlxState
 
 		// 不一樣的
 		save.data.place = "street";
-
+		save.data.touchStarter = combatHud.touchStarter;
 		save.flush();
 	}
 
@@ -393,7 +398,7 @@ class StreetState extends FlxState
 	{
 		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
 		{
-			if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.appleCoin >= 5))
+			if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.diamondCounter >= 5))
 			{
 				inCombat = true;
 				player.active = false;
@@ -405,7 +410,7 @@ class StreetState extends FlxState
 				if (enemy.type == rod)
 					name = ":N:你沒有足夠的香蕉幣！你需要至少 5 香蕉幣！";
 				else if (enemy.type == starter)
-					name = ":N:你沒有足夠的APS幣！你需要至少 5 APS幣！";
+					name = ":N:你沒有足夠的能量幣！你需要至少 5 能量幣！";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);

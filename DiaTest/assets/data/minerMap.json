@@ -47,7 +47,8 @@
         {"name": "stone", "id": 77, "_eid": "55350965", "x": 640, "y": 960, "originX": 0, "originY": 0},
         {"name": "spartanMiner", "id": 78, "_eid": "37336764", "x": 200, "y": 800, "originX": 0, "originY": 0},
         {"name": "torch", "id": 79, "_eid": "36690179", "x": 1640, "y": 1600, "originX": 0, "originY": 0},
-        {"name": "shop", "id": 80, "_eid": "26908707", "x": 1560, "y": 1400, "originX": 0, "originY": 0}
+        {"name": "shop", "id": 80, "_eid": "26908707", "x": 1560, "y": 1400, "originX": 0, "originY": 0},
+        {"name": "starter", "id": 81, "_eid": "31653610", "x": 920, "y": 1720, "originX": 0, "originY": 0}
       ]
     },
     {

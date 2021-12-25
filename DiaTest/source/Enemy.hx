@@ -79,26 +79,26 @@ class Enemy extends FlxSprite
 				animation.add("lr", [3, 4, 5, 4], 6, false);
 				animation.add("u", [7, 6, 8, 6], 6, false);
 				animation.add("d", [1, 0, 2, 0], 6, false);
-
 			case cloudMiner:
 				loadGraphic(AssetPaths.cloudMiner__png);
 			case nft:
 				loadGraphic(AssetPaths.nft__png, true, 56, 64);
 				animation.frameIndex = 0;
+
 			case spartanMiner:
 				loadGraphic(AssetPaths.spartanMiner__png, true, 64, 64);
 				animation.add("lrSpartan", [0, 1, 2, 3], 6, false);
-
+				immovable = true;
 			case rod:
 				makeGraphic(80, 80, FlxColor.RED);
-
+				immovable = true;
 			case starter:
 				makeGraphic(80, 80, FlxColor.PURPLE);
+				immovable = true;
 		}
 		// 面向右邊時使用鏡像的左邊圖片
 		setFacingFlip(FlxObject.LEFT, false, false);
 		setFacingFlip(FlxObject.RIGHT, true, false);
-		immovable = true;
 	}
 
 	// 燃燒的錢

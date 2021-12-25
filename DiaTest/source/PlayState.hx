@@ -255,6 +255,8 @@ class PlayState extends FlxState
 		save.data.diamondValue = bag.diamondCounter;
 		save.data.shibaInvest = bag.shibaInvest;
 		save.data.shibaWave = bag.shibaWave;
+		save.data.bananaCoin = bag.bananaCoin;
+		save.data.appleCoin = bag.appleCoin;
 
 		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
@@ -279,6 +281,8 @@ class PlayState extends FlxState
 		bag.diamondCounter = save.data.diamondValue;
 		bag.shibaInvest = save.data.shibaInvest;
 		bag.shibaWave = save.data.shibaWave;
+		bag.bananaCoin = save.data.bananaCoin;
+		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
 
 		if (bag.shibaInvest != 0)

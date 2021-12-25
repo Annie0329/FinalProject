@@ -267,7 +267,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		var l = FlxG.keys.anyJustReleased([LEFT]);
 		var r = FlxG.keys.anyJustReleased([RIGHT]);
 
-		diamondText.text = Std.string(shopText.over);
+		// diamondText.text = Std.string(shopText.over);
 
 		// 包包功能
 		if (bagUi.visible)

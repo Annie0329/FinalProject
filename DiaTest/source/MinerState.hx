@@ -28,8 +28,13 @@ class MinerState extends FlxState
 	var txt:Bool = true;
 	var talkYes:Bool = false;
 
-	// 其他角色
+	// 敵人
 	var enemies:FlxTypedGroup<Enemy>;
+	var inCombat:Bool = false;
+	var combatHud:CombatHUD;
+	var enemyFlicker:Bool = false;
+
+	// 其他角色
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
 
@@ -149,6 +154,10 @@ class MinerState extends FlxState
 		bag = new Bag();
 		add(bag);
 
+		// 打人介面
+		combatHud = new CombatHUD();
+		add(combatHud);
+
 		// 對話框
 		dia = new Dia();
 		add(dia);
@@ -241,6 +250,8 @@ class MinerState extends FlxState
 
 			case "spartanMiner":
 				enemies.add(new Enemy(x, y, spartanMiner));
+			case "starter":
+				enemies.add(new Enemy(x, y, starter));
 
 			case "torch":
 				var t = new FlxSprite(x, y).loadGraphic(AssetPaths.torch__png, true, 40, 80);
@@ -261,6 +272,8 @@ class MinerState extends FlxState
 		bag.diamondCounter = save.data.diamondValue;
 		bag.shibaInvest = save.data.shibaInvest;
 		bag.shibaWave = save.data.shibaWave;
+		bag.bananaCoin = save.data.bananaCoin;
+		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
 
 		if (bag.shibaInvest != 0)
@@ -271,6 +284,7 @@ class MinerState extends FlxState
 
 		// 不一樣的
 		dia.stoneTextYes = save.data.stoneTextYes;
+		combatHud.touchStarter = save.data.touchStarter;
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "miner")
@@ -297,7 +311,8 @@ class MinerState extends FlxState
 		save.data.diamondValue = bag.diamondCounter;
 		save.data.shibaInvest = bag.shibaInvest;
 		save.data.shibaWave = bag.shibaWave;
-
+		save.data.bananaCoin = bag.bananaCoin;
+		save.data.appleCoin = bag.appleCoin;
 		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
 
@@ -307,7 +322,7 @@ class MinerState extends FlxState
 		// 不一樣的
 		save.data.stoneTextYes = dia.stoneTextYes;
 		save.data.place = "miner";
-
+		save.data.touchStarter = combatHud.touchStarter;
 		save.flush();
 	}
 
@@ -316,6 +331,7 @@ class MinerState extends FlxState
 	{
 		super.update(elapsed);
 		updateWhenDiaInvisible();
+		updateInCombat();
 		updateTalking();
 		updateEsc();
 		updateC();
@@ -345,7 +361,7 @@ class MinerState extends FlxState
 
 		FlxG.overlap(player, stone, playerGotStone);
 		FlxG.collide(player, box, stoneInsideBox);
-		FlxG.overlap(player, enemies, touchEnemy);
+		FlxG.collide(player, enemies, touchEnemy);
 
 		FlxG.collide(enemies, walls);
 		FlxG.overlap(enemies, stone, enemyGotStone);
@@ -414,16 +430,63 @@ class MinerState extends FlxState
 	// 如果你碰了敵人代表敵人碰了你
 	function touchEnemy(player:Player, enemy:Enemy)
 	{
-		ufo.text = Std.string(enemy.velocity);
-		FlxG.camera.shake(0.01, 0.1, function()
+		if (enemy.type == spartanMiner)
 		{
-			stoneCounter--;
-			stoneCounterText.text = Std.string(stoneCounter);
-			if (stoneCounter >= stoneGoal)
-				stoneCounterText.color = FlxColor.RED;
-			else
-				stoneCounterText.color = FlxColor.BLACK;
-		});
+			FlxG.camera.shake(0.01, 0.1, function()
+			{
+				stoneCounter--;
+				stoneCounterText.text = Std.string(stoneCounter);
+				if (stoneCounter >= stoneGoal)
+					stoneCounterText.color = FlxColor.RED;
+				else
+					stoneCounterText.color = FlxColor.BLACK;
+			});
+		}
+		else if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.diamondCounter >= 5))
+		{
+			inCombat = true;
+			player.active = false;
+			enemies.active = false;
+			combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, enemy);
+		}
+		else
+		{
+			if (enemy.type == rod)
+				name = ":N:你沒有足夠的香蕉幣！你需要至少 5 香蕉幣！";
+			else if (enemy.type == starter)
+				name = ":N:你沒有足夠的能量幣！你需要至少 5 能量幣！";
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+			combatHud.enemy = enemy;
+			enemyFlicker = true;
+		}
+	}
+
+	// 打架結束囉
+	function updateInCombat()
+	{
+		if (inCombat && !combatHud.visible)
+		{
+			if (combatHud.enemy.type == starter)
+			{
+				combatHud.enemy.kill();
+				if (combatHud.outcome == WIN)
+					name = ":D:你投資了APESTARTER啊！";
+				else
+					name = ":D:下次可以試試看投資APESTARTER喔。";
+			}
+
+			bag.diamondCounter = combatHud.diamond;
+			bag.bananaCoin = combatHud.bananaCoin;
+			bag.appleCoin = combatHud.appleCoin;
+			bag.updateBag();
+			inCombat = false;
+
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+		}
 	}
 
 	// 石頭放到車子裡了
@@ -537,7 +600,7 @@ class MinerState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible)
+		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemies.active = false;

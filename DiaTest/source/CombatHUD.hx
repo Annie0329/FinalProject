@@ -68,6 +68,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	public var bananaCoin:Float;
 	public var appleCoin:Float;
 
+	// ApeStarter
+	var starterPrize:Int = 5;
+
+	public var touchStarter:Bool = false; // 有沒有碰過ApeStarter
+
 	// 投資
 	public var investNum:Int = 5;
 
@@ -223,8 +228,20 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				}
 			case starter:
 				enemyNameText.text = "APESTARTER";
-				name = AssetPaths.starterTalk__txt;
-				txt = true;
+				if (appleCoin == 0)
+				{
+					name = AssetPaths.starterTalk__txt;
+					txt = true;
+					if (touchStarter)
+						starterPrize = 2;
+					else
+						touchStarter = true;
+				}
+				else if (touchStarter)
+				{
+					name = ":要不要投資新項目？";
+					txt = false;
+				}
 			case spartanMiner:
 		}
 		combatText.show(name, txt);
@@ -496,48 +513,83 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// ApeStarter
 			if (enemy.type == starter)
 			{
-				if (state == 1)
+				if (appleCoin == 0) // 沒有蘋果幣就問要不要買蘋果幣
 				{
-					if (combatText.over && !pointer.visible)
+					if (state == 1)
 					{
-						pointer.visible = true;
-					}
-					else if (pointer.visible)
-					{
-						state++;
-						pointer.visible = false;
-						switch (pointer.selected)
+						if (combatText.over && !pointer.visible)
 						{
-							case "YES":
-								choices[YES].visible = false;
-								choices[NO].visible = false;
-								investNumText.visible = true;
-								lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
+							pointer.visible = true;
+						}
+						else if (pointer.visible)
+						{
+							state++;
+							pointer.visible = false;
+							switch (pointer.selected)
+							{
+								case "YES":
+									choices[YES].visible = false;
+									choices[NO].visible = false;
+									investNumText.visible = true;
+									lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
 
-								name = ':你現在有$appleCoin APS幣。請選擇你要投資多少？最少 5 APS幣。好了就按enter。';
-								combatText.show(name, false);
+									name = ':請選擇你要投資多少？最少 5 能量幣。現在 1 能量幣可以買 $starterPrize APS幣。好了就按enter。';
+									combatText.show(name, false);
 
-							case "NO":
-								outcome = FLEE;
-								doneResultsIn();
+								case "NO":
+									outcome = FLEE;
+									doneResultsIn();
+							}
 						}
 					}
+					else if (state == 2)
+					{
+						state++;
+						diamond -= investNum;
+
+						name = ':謝謝你！你買了' + investNum * starterPrize + 'APS幣。';
+						outcome = WIN;
+						combatText.show(name, false);
+						investNumText.visible = false;
+						pointerLeft.visible = false;
+						pointerRight.visible = false;
+					}
+					else if (state == 3)
+					{
+						appleCoin += investNum * starterPrize;
+						doneResultsIn();
+					}
 				}
-				else if (state == 2)
+				else
 				{
-					state++;
+					if (state == 1)
+					{
+						if (combatText.over && !pointer.visible)
+						{
+							pointer.visible = true;
+						}
+						else if (pointer.visible)
+						{
+							state++;
+							switch (pointer.selected)
+							{
+								case "YES":
+									pointer.visible = false;
+									choices[YES].visible = false;
+									choices[NO].visible = false;
+									outcome = WIN;
+									name = ':謝謝你買了我的新項目！';
+									combatText.show(name, false);
 
-					appleCoin -= investNum;
-					name = ":謝謝你！";
-					outcome = WIN;
-
-					combatText.show(name, false);
-					investNumText.visible = false;
-					pointerLeft.visible = false;
-					pointerRight.visible = false;
+								case "NO":
+									outcome = FLEE;
+									doneResultsIn();
+							}
+						}
+					}
+					else if (state == 2)
+						doneResultsIn();
 				}
-				else if (state == 3)
-					doneResultsIn();
 			}
 			diamond = FlxMath.roundDecimal(diamond, 2);
 			diamondText.text = Std.string(diamond);
@@ -553,15 +605,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					if (left && investNum != 5)
 						investNum -= 5;
 					else if (right && investNum / 5 != Std.int(bananaCoin / 5))
-						investNum += 5;
-					investNumText.text = Std.string(investNum);
-				}
-				// ApeStarter用的是蘋果幣
-				else if (enemy.type == starter)
-				{
-					if (left && investNum != 5)
-						investNum -= 5;
-					else if (right && investNum / 5 != Std.int(appleCoin / 5))
 						investNum += 5;
 					investNumText.text = Std.string(investNum);
 				}
