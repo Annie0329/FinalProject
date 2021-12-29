@@ -154,28 +154,31 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bagUi.add(background);
 
 		// 香蕉圖示
-		bananaCounterIcon = new FlxSprite(140, 110, AssetPaths.bananaIcon__png);
+		bananaCounterIcon = new FlxSprite(168, 100, AssetPaths.bananaIcon__png);
 		bagUi.add(bananaCounterIcon);
 
 		// 香蕉數目
-		bananaCounterText = new FlxText(bananaCounterIcon.x + bananaCounterIcon.width, bananaCounterIcon.y + 5, "0", 20);
+		bananaCounterText = new FlxText(bananaCounterIcon.x - 30, bananaCounterIcon.y + bananaCounterIcon.height, 106, "0", 16);
 		bananaCounterText.color = 0xff2D5925;
+		bananaCounterText.alignment = CENTER;
 		bagUi.add(bananaCounterText);
 
 		// 香蕉幣
-		bananaCoinIcon = new FlxSprite(bananaCounterIcon.x + 100, bananaCounterIcon.y, AssetPaths.bananaCoinIcon__png);
+		bananaCoinIcon = new FlxSprite(298, 100, AssetPaths.bananaCoinIcon__png);
 		bagUi.add(bananaCoinIcon);
 
-		bananaCoinText = new FlxText(bananaCoinIcon.x + bananaCoinIcon.width, bananaCoinIcon.y + 5, 0, "0", 20);
+		bananaCoinText = new FlxText(bananaCoinIcon.x - 30, bananaCoinIcon.y + bananaCoinIcon.height, 106, "0", 16);
 		bananaCoinText.color = 0xff2D5925;
+		bananaCoinText.alignment = CENTER;
 		bagUi.add(bananaCoinText);
 
 		// APS幣
-		appleCoinIcon = new FlxSprite(bananaCounterIcon.x + 200, bananaCounterIcon.y, AssetPaths.appleCoinIcon__png);
+		appleCoinIcon = new FlxSprite(428, 100, AssetPaths.appleCoinIcon__png);
 		bagUi.add(appleCoinIcon);
 
-		appleCoinText = new FlxText(appleCoinIcon.x + appleCoinIcon.width, appleCoinIcon.y + 5, 0, "0", 20);
+		appleCoinText = new FlxText(appleCoinIcon.x - 30, appleCoinIcon.y + appleCoinIcon.height, 106, "0", 16);
 		appleCoinText.color = 0xff2D5925;
+		appleCoinText.alignment = CENTER;
 		bagUi.add(appleCoinText);
 
 		// 交易紀錄

@@ -42,20 +42,20 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	// 香蕉換能量
 	var bck = 100000;
-	var bcBananaCoinIn:Int = 1000; // 機器裡有多少香蕉
+	var bcBananaCoinIn:Int = 10000; // 機器裡有多少香蕉
 	var bcCoinIn:Float = 10;
 
 	// 蘋果換能量
 	var ack = 8000;
-	var acAppleCoinIn:Int = 2; // 機器裡有多少APS，蘋果就是APS
-	var acCoinIn:Float = 4000;
+	var acAppleCoinIn:Int = 4000; // 機器裡有多少APS，蘋果就是APS
+	var acCoinIn:Float = 2;
 
 	// 能量換蘋果
 	var cak = 8000;
-	var caCoinIn:Int = 2;
-	var caAppleCoinIn:Float = 4000;
+	var caCoinIn:Int = 4000;
+	var caAppleCoinIn:Float = 2;
 
-	var coinOut:Int = 1; // 玩家決定要塞多少幣進去
+	var coinOut:Int = 10; // 玩家決定要塞多少幣進去
 	var machGain:Float = 0; // 玩家到底從機器得到多少錢
 
 	// 穩定幣
@@ -189,37 +189,37 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		{
 			if (npcType == p1BaToCoMach)
 			{
-				if (left && coinOut != 1)
-					coinOut--;
-				if (right && coinOut != Std.int(bananaCoin))
-					coinOut++;
-				machGain = FlxMath.roundDecimal(bcCoinIn - (bck / (bcBananaCoinIn + coinOut)), 2);
+				if (left && coinOut != 10)
+					coinOut -= 10;
+				if (right && coinOut / 10 != Std.int(bananaCoin / 10))
+					coinOut += 10;
+				machGain = FlxMath.roundDecimal(bcCoinIn - (bck / (bcBananaCoinIn + coinOut)), 3);
 				coinText.text = '$coinOut  香蕉幣換 $machGain 能量幣';
 			}
 			else if (npcType == p1ApToCoMach)
 			{
-				if (left && coinOut != 1)
-					coinOut--;
-				if (right && coinOut != Std.int(appleCoin))
-					coinOut++;
-				machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 2);
+				if (left && coinOut != 10)
+					coinOut -= 10;
+				if (right && coinOut / 10 != Std.int(appleCoin / 10))
+					coinOut += 10;
+				machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 3);
 				coinText.text = '$coinOut  APS幣換 $machGain 能量幣';
 			}
 			else if (npcType == p1CoToApMach)
 			{
-				if (left && coinOut != 1)
-					coinOut--;
-				if (right && coinOut != Std.int(diamond))
-					coinOut++;
-				machGain = FlxMath.roundDecimal(caAppleCoinIn - (cak / (caCoinIn + coinOut)), 2);
+				if (left && coinOut != 10)
+					coinOut -= 10;
+				if (right && coinOut / 10 != Std.int(diamond / 10))
+					coinOut += 10;
+				machGain = FlxMath.roundDecimal(caAppleCoinIn - (cak / (caCoinIn + coinOut)), 3);
 				coinText.text = '$coinOut  能量幣換 $machGain APS幣';
 			}
 			else if (npcType == p2Mach)
 			{
-				if (left && coinOut != 1)
-					coinOut--;
-				if (right && coinOut != Std.int(diamond))
-					coinOut++;
+				if (left && coinOut != 10)
+					coinOut -= 10;
+				if (right && coinOut / 10 != Std.int(diamond / 10))
+					coinOut += 10;
 				machGain = coinOut * bananaPrize;
 				coinText.text = '$coinOut 能量幣換 $machGain 香蕉幣';
 			}
@@ -298,43 +298,43 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				name = ":N:是很難的數學。";
 				txt = false;
 			case p1BaToCoMach:
-				if (bananaCoin > 0)
+				if (bananaCoin >= 10)
 				{
-					name = ':N:你想用多少香蕉幣買能量幣？你目前有 $bananaCoin 香蕉幣'; // ， 1 香蕉幣可買 $p1Prize 能量幣。';
+					name = ':N:你想用多少香蕉幣買能量幣？你目前有 $bananaCoin 香蕉幣。按X退出。'; // ， 1 香蕉幣可買 $p1Prize 能量幣。';
 					coinText.visible = true;
 				}
 				else
-					name = ":N:你沒有香蕉幣。";
+					name = ":N:你沒有足夠的香蕉幣，至少要10香蕉幣。";
 				txt = false;
 			case p1ApToCoMach:
-				if (appleCoin > 0)
+				if (appleCoin >= 10)
 				{
-					name = ':N:你想用多少APS幣買能量幣？你目前有 $appleCoin APS幣'; // ， 1 APS幣可買 $p1Prize 能量幣。';
+					name = ':N:你想用多少APS幣買能量幣？你目前有 $appleCoin APS幣。按X退出。'; // ， 1 APS幣可買 $p1Prize 能量幣。';
 					coinText.visible = true;
 				}
 				else
-					name = ":N:你沒有APS幣。";
+					name = ":N:你沒有足夠的APS幣，至少要10APS幣。";
 				txt = false;
 			case p1CoToApMach:
-				if (diamond > 0)
+				if (diamond >= 10)
 				{
-					name = ':N:你想用多少能量幣買APS幣？你目前有 $diamond 能量幣'; // ， 1 能量幣可買 $p1Prize APS幣。';
+					name = ':N:你想用多少能量幣買APS幣？你目前有 $diamond 能量幣。按X退出。'; // ， 1 能量幣可買 $p1Prize APS幣。';
 					coinText.visible = true;
 				}
 				else
-					name = ":N:你沒有能量幣。";
+					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
 				txt = false;
 			case p2:
 				name = AssetPaths.house2Talk__txt;
 				txt = true;
 			case p2Mach:
-				if (diamond > 0)
+				if (diamond >= 10)
 				{
 					name = ':N:你想用多少能量幣買香蕉幣？ 你目前有 $diamond 能量幣';
 					coinText.visible = true;
 				}
 				else
-					name = ":N:你沒有能量幣。";
+					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
 				txt = false;
 			case p3:
 				name = AssetPaths.house3Talk__txt;
@@ -359,7 +359,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		updateEnter();
 		updateSkip();
 		updateLr();
-
+		var x = FlxG.keys.anyJustReleased([X]);
+		if (coinText.visible && x)
+		{
+			visible = false;
+			active = false;
+		}
 		super.update(elapsed);
 	}
 
@@ -394,7 +399,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					bcBananaCoinIn += coinOut;
 					bcCoinIn -= machGain;
 
-					coinOut = 1;
+					coinOut = 10;
 					coinText.visible = false;
 					coinText.text = Std.string(coinOut);
 					updateDiamond = true;
@@ -414,7 +419,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					acAppleCoinIn += coinOut;
 					acCoinIn -= machGain;
 
-					coinOut = 1;
+					coinOut = 10;
 					coinText.visible = false;
 					coinText.text = Std.string(coinOut);
 					updateDiamond = true;
@@ -432,7 +437,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					caCoinIn += coinOut;
 					caAppleCoinIn -= machGain;
 
-					coinOut = 1;
+					coinOut = 10;
 					coinText.visible = false;
 					coinText.text = Std.string(coinOut);
 					updateDiamond = true;

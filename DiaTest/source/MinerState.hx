@@ -162,9 +162,6 @@ class MinerState extends FlxState
 		dia = new Dia();
 		add(dia);
 
-		// 角色擺位置
-		map.loadEntities(placeEntities, "entities");
-
 		// 石頭圖示
 		stoneCounterIcon = new FlxSprite(FlxG.width - 109, 10).loadGraphic(AssetPaths.stoneIcon__png);
 		stoneCounterIcon.scrollFactor.set(0, 0);
@@ -191,6 +188,9 @@ class MinerState extends FlxState
 		add(minerTimerText);
 		minerTimerText.visible = false;
 
+		// 角色擺位置
+		// map.loadEntities(placeEntities, "entities");
+
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 200, "ufo", 20);
 		// ufo.color = FlxColor.BLACK;
@@ -203,6 +203,9 @@ class MinerState extends FlxState
 		save.bind("DiaTest");
 
 		loadFile();
+
+		// 角色擺位置
+		map.loadEntities(placeEntities, "entities");
 
 		// 播音樂
 		// 最終上傳記得消除註解
@@ -223,8 +226,6 @@ class MinerState extends FlxState
 
 		switch (entity.name)
 		{
-			case "player":
-				player.setPosition(x, y);
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
 
@@ -250,8 +251,10 @@ class MinerState extends FlxState
 
 			case "spartanMiner":
 				enemies.add(new Enemy(x, y, spartanMiner));
+
 			case "starter":
-				enemies.add(new Enemy(x, y, starter));
+				if (!combatHud.touchStarter)
+					enemies.add(new Enemy(x, y, starter));
 
 			case "torch":
 				var t = new FlxSprite(x, y).loadGraphic(AssetPaths.torch__png, true, 40, 80);
@@ -291,12 +294,12 @@ class MinerState extends FlxState
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 			else if (save.data.place == "monument")
 			{
-				player.setPosition(monumentDoor.x + (monumentDoor.width - player.width) / 2, monumentDoor.y - 20);
+				player.setPosition(135, 1980);
 				saveFile();
 			}
 			else if (save.data.place == "street")
 			{
-				player.setPosition(streetDoor.x + (streetDoor.width - player.width) / 2, streetDoor.y - 20);
+				player.setPosition(1535, 1980);
 				saveFile();
 			}
 		}
@@ -338,7 +341,7 @@ class MinerState extends FlxState
 		updateTimer();
 
 		// 除錯大隊
-		// ufo.text = Std.string(player.getPosition());
+		ufo.text = Std.string(monumentDoor.x + (monumentDoor.width - player.width) / 2) + Std.string(monumentDoor.y - 20);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -432,15 +435,16 @@ class MinerState extends FlxState
 	{
 		if (enemy.type == spartanMiner)
 		{
-			FlxG.camera.shake(0.01, 0.1, function()
-			{
-				stoneCounter--;
-				stoneCounterText.text = Std.string(stoneCounter);
-				if (stoneCounter >= stoneGoal)
-					stoneCounterText.color = FlxColor.RED;
-				else
-					stoneCounterText.color = FlxColor.BLACK;
-			});
+			if (stoneCounter > 0)
+				FlxG.camera.shake(0.01, 0.1, function()
+				{
+					stoneCounter--;
+					stoneCounterText.text = Std.string(stoneCounter);
+					if (stoneCounter >= stoneGoal)
+						stoneCounterText.color = FlxColor.RED;
+					else
+						stoneCounterText.color = FlxColor.BLACK;
+				});
 		}
 		else if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.diamondCounter >= 5))
 		{
@@ -470,7 +474,7 @@ class MinerState extends FlxState
 		{
 			if (combatHud.enemy.type == starter)
 			{
-				combatHud.enemy.kill();
+				combatHud.enemy.x += 3000;
 				if (combatHud.outcome == WIN)
 					name = ":D:你投資了APESTARTER啊！";
 				else

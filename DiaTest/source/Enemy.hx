@@ -45,8 +45,8 @@ class Enemy extends FlxSprite
 	var idleTimer:Float;
 	var moveDirection:Float;
 
-	var enemiesStart:Int = 200;
-	var enemiesEnd:Int = 1080;
+	var enemiesStart:Int = 80;
+	var enemiesEnd:Int = 920;
 
 	public var type(default, null):EnemyType;
 	public var seesPlayer:Bool;

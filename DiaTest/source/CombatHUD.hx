@@ -313,7 +313,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					state++;
 
 					diamond -= investNum;
-					name = ":謝謝你！";
+					name = ":謝謝你！如果想賣掉狗狗幣的話可以去商店喔。";
 					outcome = WIN;
 
 					combatText.show(name, false);

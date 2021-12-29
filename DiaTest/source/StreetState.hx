@@ -55,7 +55,9 @@ class StreetState extends FlxState
 	var house2Door:FlxSprite;
 	var house3:FlxSprite;
 	var house3Door:FlxSprite;
-	var houseDis:Int = 1560;
+	var house4:FlxSprite;
+	var house4Door:FlxSprite;
+	var houseDis:Int = 1680;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -120,6 +122,14 @@ class StreetState extends FlxState
 		house3Door = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
 		house3Door.immovable = true;
 		add(house3Door);
+
+		house4 = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house4.immovable = true;
+		add(house4);
+
+		house4Door = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
+		house4Door.immovable = true;
+		add(house4Door);
 
 		// 商店
 		shop = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
@@ -218,6 +228,12 @@ class StreetState extends FlxState
 
 			case "house3Door":
 				house3Door.setPosition(x, y);
+
+			case "house4":
+				house4.setPosition(x, y);
+
+			case "house4Door":
+				house4Door.setPosition(x, y);
 
 			case "shop":
 				shop.setPosition(x, y);
@@ -344,10 +360,12 @@ class StreetState extends FlxState
 		FlxG.collide(player, house1, houseIn);
 		FlxG.collide(player, house2, houseIn);
 		FlxG.collide(player, house3, houseIn);
+		FlxG.collide(player, house4, houseIn);
 
 		FlxG.collide(player, house1Door, houseOut);
 		FlxG.collide(player, house2Door, houseOut);
 		FlxG.collide(player, house3Door, houseOut);
+		FlxG.collide(player, house4Door, houseOut);
 
 		FlxG.collide(player, enemies, playerTouchEnemy);
 
