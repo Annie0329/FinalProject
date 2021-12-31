@@ -38,6 +38,7 @@ class StreetState extends FlxState
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
 	var minerDoor:FlxSprite;
+	var homeDoor:FlxSprite;
 	var shop:FlxSprite;
 
 	// 地圖組
@@ -97,6 +98,15 @@ class StreetState extends FlxState
 		minerDoor.immovable = true;
 		add(minerDoor);
 		minerDoor.animation.play("glow");
+
+		// 礦場傳送門
+		homeDoor = new FlxSprite().loadGraphic(AssetPaths.homeDoor__png, true, 136, 160);
+		homeDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
+		homeDoor.setSize(136, 60);
+		homeDoor.offset.set(0, 100);
+		homeDoor.immovable = true;
+		add(homeDoor);
+		homeDoor.animation.play("glow");
 
 		// 各種房間
 		house1 = new FlxSprite().makeGraphic(80, 80, FlxColor.TRANSPARENT);
@@ -210,6 +220,8 @@ class StreetState extends FlxState
 
 			case "minerDoor":
 				minerDoor.setPosition(x + 28, y);
+			case "homeDoor":
+				homeDoor.setPosition(x + 12, y);
 
 			case "house1":
 				house1.setPosition(x, y);
@@ -355,6 +367,7 @@ class StreetState extends FlxState
 		FlxG.collide(player, npc, npcTalk);
 
 		FlxG.collide(player, minerDoor, goToMiner);
+		FlxG.collide(player, homeDoor, goHome);
 		FlxG.collide(player, shop, shopOpen);
 
 		FlxG.collide(player, house1, houseIn);
@@ -388,6 +401,15 @@ class StreetState extends FlxState
 		{
 			saveFile();
 			FlxG.switchState(new MinerState());
+		});
+	}
+
+	// 遊戲結束
+	function goHome(player:Player, homeDoor:FlxSprite)
+	{
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		{
+			FlxG.switchState(new WinState());
 		});
 	}
 

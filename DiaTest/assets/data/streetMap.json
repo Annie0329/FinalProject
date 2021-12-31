@@ -57,7 +57,8 @@
         {"name": "house2", "id": 46, "_eid": "13333697", "x": 2200, "y": 400, "originX": 0, "originY": 0},
         {"name": "starter", "id": 47, "_eid": "31653610", "x": 520, "y": 1800, "originX": 0, "originY": 0},
         {"name": "house4", "id": 48, "_eid": "79075406", "x": 440, "y": 400, "originX": 0, "originY": 0},
-        {"name": "house4Door", "id": 49, "_eid": "79071429", "x": 440, "y": 2080, "originX": 0, "originY": 0}
+        {"name": "house4Door", "id": 49, "_eid": "79071429", "x": 440, "y": 2080, "originX": 0, "originY": 0},
+        {"name": "homeDoor", "id": 50, "_eid": "95034402", "x": 3280, "y": 1240, "originX": 0, "originY": 0}
       ]
     },
     {
