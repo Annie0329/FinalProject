@@ -12,6 +12,8 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 import flixel.util.FlxTimer;
 
+using flixel.util.FlxSpriteUtil;
+
 class MinerState extends FlxState
 {
 	// 玩家
@@ -480,7 +482,7 @@ class MinerState extends FlxState
 				else
 					name = ":D:下次可以試試看投資APESTARTER喔。";
 			}
-
+			enemyFlicker = true;
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
 			bag.appleCoin = combatHud.appleCoin;
@@ -623,6 +625,11 @@ class MinerState extends FlxState
 			{
 				FlxTween.tween(minerGate, {x: minerGate.x + minerGate.width}, 0.5);
 				stoneYes = false;
+			}
+			if (enemyFlicker)
+			{
+				combatHud.enemy.flicker();
+				enemyFlicker = false;
 			}
 		}
 	}

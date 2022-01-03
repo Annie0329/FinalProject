@@ -18,13 +18,16 @@ enum NpcType
 	spartan;
 	signDefi;
 	signApple;
+	house1Sign;
 	p1;
 	mathChart;
 	p1BaToCoMach;
 	p1CoToApMach;
 	p1ApToCoMach;
+	house2Sign;
 	p2;
 	p2Mach;
+	house3Sign;
 	p3;
 }
 
@@ -65,6 +68,8 @@ class NPC extends FlxSprite
 				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case signApple:
 				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+			case house1Sign:
+				makeGraphic(120, 80, FlxColor.TRANSPARENT);
 			case p1:
 				loadGraphic(AssetPaths.p1__png);
 			case mathChart:
@@ -75,12 +80,17 @@ class NPC extends FlxSprite
 				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p1ApToCoMach:
 				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+
+			case house2Sign:
+				makeGraphic(120, 80, FlxColor.TRANSPARENT);
 			case p2:
-				makeGraphic(80, 80, FlxColor.BLUE);
+				loadGraphic(AssetPaths.p2__png);
 			case p2Mach:
 				makeGraphic(80, 80, FlxColor.GRAY);
+			case house3Sign:
+				makeGraphic(120, 80, FlxColor.TRANSPARENT);
 			case p3:
-				makeGraphic(80, 80, FlxColor.GREEN);
+				loadGraphic(AssetPaths.p3__png);
 		}
 
 		immovable = true;

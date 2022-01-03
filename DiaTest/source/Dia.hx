@@ -291,6 +291,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case signApple:
 				name = AssetPaths.appleAd__txt;
 				txt = true;
+			case house1Sign:
+				name = ":N:交易所";
+				txt = false;
 			case p1:
 				name = AssetPaths.house1Talk__txt;
 				txt = true;
@@ -324,6 +327,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
 				txt = false;
+			case house2Sign:
+				name = ":N:穩定幣";
+				txt = false;
 			case p2:
 				name = AssetPaths.house2Talk__txt;
 				txt = true;
@@ -335,6 +341,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				}
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
+				txt = false;
+			case house3Sign:
+				name = ":N:借貸";
 				txt = false;
 			case p3:
 				name = AssetPaths.house3Talk__txt;
@@ -362,6 +371,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var x = FlxG.keys.anyJustReleased([X]);
 		if (coinText.visible && x)
 		{
+			coinOut = 10;
+			coinText.text = Std.string(coinOut);
 			visible = false;
 			active = false;
 		}
@@ -398,11 +409,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					// 算機器的錢
 					bcBananaCoinIn += coinOut;
 					bcCoinIn -= machGain;
-
-					coinOut = 10;
-					coinText.visible = false;
-					coinText.text = Std.string(coinOut);
-					updateDiamond = true;
 				}
 				else if (npcType == p1ApToCoMach)
 				{
@@ -418,11 +424,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					// 算機器的錢
 					acAppleCoinIn += coinOut;
 					acCoinIn -= machGain;
-
-					coinOut = 10;
-					coinText.visible = false;
-					coinText.text = Std.string(coinOut);
-					updateDiamond = true;
 				}
 				else if (npcType == p1CoToApMach)
 				{
@@ -436,11 +437,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 					caCoinIn += coinOut;
 					caAppleCoinIn -= machGain;
-
-					coinOut = 10;
-					coinText.visible = false;
-					coinText.text = Std.string(coinOut);
-					updateDiamond = true;
 				}
 				// 穩定幣
 				else if (npcType == p2Mach)
@@ -451,11 +447,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					diamond -= coinOut;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
 					bananaCoin += bananaPrize * coinOut;
-					coinOut = 1;
-					coinText.visible = false;
-					coinText.text = Std.string(coinOut);
-					updateDiamond = true;
 				}
+				coinOut = 10;
+				coinText.text = Std.string(coinOut);
+				coinText.visible = false;
+				updateDiamond = true;
 			}
 			// 對話換行
 			else

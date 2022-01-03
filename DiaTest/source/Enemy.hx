@@ -93,7 +93,7 @@ class Enemy extends FlxSprite
 				makeGraphic(80, 80, FlxColor.RED);
 				immovable = true;
 			case starter:
-				makeGraphic(80, 80, FlxColor.PURPLE);
+				loadGraphic(AssetPaths.apeStarter__png);
 				immovable = true;
 		}
 		// 面向右邊時使用鏡像的左邊圖片

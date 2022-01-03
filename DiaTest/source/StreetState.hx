@@ -249,7 +249,8 @@ class StreetState extends FlxState
 
 			case "shop":
 				shop.setPosition(x, y);
-
+			case "house1Sign":
+				npc.add(new NPC(x, y, house1Sign));
 			case "p1":
 				npc.add(new NPC(x, y, p1));
 			case "mathChart":
@@ -260,10 +261,14 @@ class StreetState extends FlxState
 				npc.add(new NPC(x, y, p1CoToApMach));
 			case "p1ApToCoMach":
 				npc.add(new NPC(x, y, p1ApToCoMach));
+			case "house2Sign":
+				npc.add(new NPC(x, y, house2Sign));
 			case "p2":
 				npc.add(new NPC(x, y, p2));
 			case "p2Mach":
 				npc.add(new NPC(x, y, p2Mach));
+			case "house3Sign":
+				npc.add(new NPC(x, y, house3Sign));
 			case "p3":
 				npc.add(new NPC(x, y, p3));
 			case "rod":
@@ -465,6 +470,7 @@ class StreetState extends FlxState
 	{
 		if (inCombat && !combatHud.visible)
 		{
+			// Doge的反應
 			if (combatHud.enemy.type == rod)
 			{
 				if (combatHud.outcome == WIN)
@@ -562,6 +568,11 @@ class StreetState extends FlxState
 				bag.appleCoin = FlxMath.roundDecimal(dia.appleCoin, 2);
 				bag.appleCoinText.text = Std.string(bag.appleCoin);
 				bag.updateBag();
+			}
+			if (enemyFlicker)
+			{
+				combatHud.enemy.flicker();
+				enemyFlicker = false;
 			}
 		}
 	}
