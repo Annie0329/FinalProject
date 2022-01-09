@@ -58,7 +58,7 @@ class StreetState extends FlxState
 	var house3Door:FlxSprite;
 	var house4:FlxSprite;
 	var house4Door:FlxSprite;
-	var houseDis:Int = 1680;
+	var houseDis:Int = 0;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -246,6 +246,7 @@ class StreetState extends FlxState
 
 			case "house4Door":
 				house4Door.setPosition(x, y);
+				houseDis = Std.int(house4Door.y - house4.y);
 
 			case "shop":
 				shop.setPosition(x, y);
@@ -271,6 +272,10 @@ class StreetState extends FlxState
 				npc.add(new NPC(x, y, house3Sign));
 			case "p3":
 				npc.add(new NPC(x, y, p3));
+			case "p3Mach":
+				npc.add(new NPC(x, y, p3Mach));
+			case "house4Sign":
+				npc.add(new NPC(x, y, house4Sign));
 			case "rod":
 				enemies.add(new Enemy(x, y, rod));
 			case "starter":
@@ -533,7 +538,7 @@ class StreetState extends FlxState
 				saveFile();
 
 			// 準備小屋交易
-			if (npcType == p1BaToCoMach || npcType == p1CoToApMach || npcType == p1ApToCoMach || npcType == p2Mach)
+			if (npcType == p1BaToCoMach || npcType == p1CoToApMach || npcType == p1ApToCoMach || npcType == p2Mach || npcType == p3Mach)
 				dia.getDiamond(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin);
 
 			dia.context(npcType);

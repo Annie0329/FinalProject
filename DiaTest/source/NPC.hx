@@ -29,6 +29,8 @@ enum NpcType
 	p2Mach;
 	house3Sign;
 	p3;
+	p3Mach;
+	house4Sign;
 }
 
 class NPC extends FlxSprite
@@ -69,28 +71,32 @@ class NPC extends FlxSprite
 			case signApple:
 				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case house1Sign:
-				makeGraphic(120, 80, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.house1Sign__png);
 			case p1:
 				loadGraphic(AssetPaths.p1__png);
 			case mathChart:
 				makeGraphic(80, 80, FlxColor.TRANSPARENT);
 			case p1BaToCoMach:
-				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.p1BaToCoMach__png);
 			case p1CoToApMach:
-				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.p1CoToApMach__png);
 			case p1ApToCoMach:
-				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.p1CoToApMach__png);
 
 			case house2Sign:
-				makeGraphic(120, 80, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.house2Sign__png);
 			case p2:
 				loadGraphic(AssetPaths.p2__png);
 			case p2Mach:
-				makeGraphic(80, 80, FlxColor.GRAY);
+				loadGraphic(AssetPaths.p2Mach__png);
 			case house3Sign:
-				makeGraphic(120, 80, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.house3Sign__png);
+			case p3Mach:
+				loadGraphic(AssetPaths.p3Mach__png);
 			case p3:
 				loadGraphic(AssetPaths.p3__png);
+			case house4Sign:
+				loadGraphic(AssetPaths.house4Sign__png);
 		}
 
 		immovable = true;
