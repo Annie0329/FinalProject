@@ -42,19 +42,19 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var coinText:FlxText;
 
 	// 香蕉換能量
-	var bck = 100000;
-	var bcBananaCoinIn:Int = 10000; // 機器裡有多少香蕉
+	var bck = 1000;
+	var bcBananaCoinIn:Int = 100; // 機器裡有多少香蕉
 	var bcCoinIn:Float = 10;
 
 	// 蘋果換能量
-	var ack = 8000;
-	var acAppleCoinIn:Int = 4000; // 機器裡有多少APS，蘋果就是APS
-	var acCoinIn:Float = 2;
+	var ack = 800;
+	var acAppleCoinIn:Int = 40; // 機器裡有多少APS，蘋果就是APS
+	var acCoinIn:Float = 20;
 
 	// 能量換蘋果
-	var cak = 8000;
-	var caCoinIn:Int = 4000;
-	var caAppleCoinIn:Float = 2;
+	var cak = 800;
+	var caCoinIn:Int = 40;
+	var caAppleCoinIn:Float = 20;
 
 	var coinOut:Int = 10; // 玩家決定要塞多少幣進去
 	var machGain:Float = 0; // 玩家到底從機器得到多少錢
@@ -303,7 +303,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
 				txt = false;
 			case house3Sign:
-				name = ":N:借貸";
+				name = ":N:借貸所";
 				txt = false;
 			case p3:
 				name = AssetPaths.house3Talk__txt;

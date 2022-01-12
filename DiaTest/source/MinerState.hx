@@ -44,6 +44,7 @@ class MinerState extends FlxState
 	var monumentDoor:FlxSprite;
 	var streetDoor:FlxSprite;
 	var minerGate:FlxSprite;
+	var minerGaveMoney:Bool = false;
 
 	// 箱子
 	var box:FlxSprite;
@@ -211,8 +212,8 @@ class MinerState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		// if (FlxG.sound.music == null)
-		// 	FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
 
 		FlxG.mouse.visible = false;
 
@@ -289,6 +290,7 @@ class MinerState extends FlxState
 
 		// 不一樣的
 		dia.stoneTextYes = save.data.stoneTextYes;
+		minerGaveMoney = save.data.minerGaveMoney;
 		combatHud.touchStarter = save.data.touchStarter;
 		if (save.data.playerPos != null && save.data.place != null)
 		{
@@ -297,6 +299,16 @@ class MinerState extends FlxState
 			else if (save.data.place == "monument")
 			{
 				player.setPosition(135, 1980);
+				if (!minerGaveMoney)
+				{
+					minerGaveMoney = true;
+					name = ":N:送你100能量幣。";
+					txt = false;
+					playerUpDown();
+					dia.show(name, txt);
+					bag.diamondCounter += 100;
+					bag.updateBag();
+				}
 				saveFile();
 			}
 			else if (save.data.place == "street")
@@ -326,6 +338,7 @@ class MinerState extends FlxState
 
 		// 不一樣的
 		save.data.stoneTextYes = dia.stoneTextYes;
+		save.data.minerGaveMoney = minerGaveMoney;
 		save.data.place = "miner";
 		save.data.touchStarter = combatHud.touchStarter;
 		save.flush();
@@ -369,6 +382,7 @@ class MinerState extends FlxState
 		FlxG.collide(player, enemies, touchEnemy);
 
 		FlxG.collide(enemies, walls);
+		FlxG.collide(enemies, road);
 		FlxG.overlap(enemies, stone, enemyGotStone);
 		FlxG.collide(enemies);
 		FlxG.collide(enemies, npc);
@@ -628,7 +642,7 @@ class MinerState extends FlxState
 			}
 			if (enemyFlicker)
 			{
-				combatHud.enemy.flicker();
+				combatHud.enemy.flicker(5);
 				enemyFlicker = false;
 			}
 		}

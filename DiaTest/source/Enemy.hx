@@ -90,8 +90,8 @@ class Enemy extends FlxSprite
 				animation.add("lrSpartan", [0, 1, 2, 3], 6, false);
 				immovable = true;
 			case rod:
-				makeGraphic(80, 80, FlxColor.RED);
-				immovable = true;
+				loadGraphic(AssetPaths.rod__png);
+
 			case starter:
 				loadGraphic(AssetPaths.apeStarter__png);
 				immovable = true;
@@ -115,9 +115,10 @@ class Enemy extends FlxSprite
 	function idle(elapsed:Float)
 	{
 		// 如果看見玩家就變成追趕狀態
-		if (seesPlayer && alive)
-			brain.activeState = chase;
-		else if (idleTimer <= 0)
+		// if (seesPlayer && alive)
+		// 	brain.activeState = chase;
+		// else
+		if (idleTimer <= 0)
 		{
 			switch (type)
 			{
@@ -133,7 +134,7 @@ class Enemy extends FlxSprite
 						facing = LEFT;
 					}
 					animation.play("lrSpartan");
-				case shibaCoin, cloudMiner, nft:
+				case shibaCoin, cloudMiner, nft, rod:
 					// 如果隨機選到1的話就不動
 					if (FlxG.random.bool(1))
 					{
@@ -150,24 +151,24 @@ class Enemy extends FlxSprite
 					}
 					// 隨機選個數
 					idleTimer = FlxG.random.int(1, 4);
-				case rod, starter:
+				case starter:
 			}
 		}
 		else
 			idleTimer -= elapsed;
 	}
 
-	// 追趕玩家狀態
-	function chase(elapsed:Float)
-	{
-		// 如果沒看見玩家就變閒閒狀態
-		if (!seesPlayer)
-			brain.activeState = idle;
-		else
-		{
-			FlxVelocity.moveTowardsPoint(this, playerPosition, Std.int(SPEED));
-		}
-	}
+	// // 追趕玩家狀態
+	// function chase(elapsed:Float)
+	// {
+	// 	// 如果沒看見玩家就變閒閒狀態
+	// 	if (!seesPlayer)
+	// 		brain.activeState = idle;
+	// 	else
+	// 	{
+	// 		FlxVelocity.moveTowardsPoint(this, playerPosition, Std.int(SPEED));
+	// 	}
+	// }
 
 	public function changeType(type:EnemyType)
 	{
@@ -219,7 +220,7 @@ class Enemy extends FlxSprite
 			}
 		}
 
-		if (this.isFlickering())
+		if (this.alpha == 0.5)
 			return;
 		brain.update(elapsed);
 		super.update(elapsed);

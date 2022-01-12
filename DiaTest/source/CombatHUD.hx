@@ -203,7 +203,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			case shibaCoin:
 				enemyNameText.text = "狗狗幣";
-				name = ":要不要買點狗狗幣啊？:誰不喜歡可愛的狗狗呢？";
+				name = ":嘿，猩猩！要不要買點可愛的狗狗幣啊？:誰不喜歡又可愛又能賺錢的狗狗幣呢？";
 				txt = false;
 			case cloudMiner:
 				enemyNameText.text = "雲挖礦";
@@ -211,7 +211,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				txt = false;
 			case nft:
 				enemyNameText.text = "NFT";
-				name = ":要不要買些特別的圖像啊？:這些獨一無二的藝術品可以留著珍藏也可以拿去商店賣，如果是爆紅款式還可以賣出天價喔！";
+				name = ":要買一張嗎？:這些獨一無二的藝術品可以留著珍藏或是賣錢，爆紅的款式還能賣出天價喔！";
 				txt = false;
 			case rod:
 				enemyNameText.text = "槓桿";

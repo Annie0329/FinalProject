@@ -12,6 +12,7 @@ import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
+import flixel.util.FlxTimer;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -59,6 +60,10 @@ class StreetState extends FlxState
 	var house4:FlxSprite;
 	var house4Door:FlxSprite;
 	var houseDis:Int = 0;
+
+	var p1Talk:Bool = false;
+	var p2Talk:Bool = false;
+	var p3Talk:Bool = false;
 
 	// 除錯ufo
 	var ufo:FlxText;
@@ -193,8 +198,8 @@ class StreetState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		// if (FlxG.sound.music == null)
-		// 	FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
 
 		FlxG.mouse.visible = false;
 
@@ -211,9 +216,9 @@ class StreetState extends FlxState
 		switch (entity.name)
 		{
 			case "signDefi":
-				npc.add(new NPC(x, y, signDefi));
+				npc.add(new NPC(x + 20, y, signDefi));
 			case "signApple":
-				npc.add(new NPC(x, y, signApple));
+				npc.add(new NPC(x + 20, y, signApple));
 
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
@@ -393,6 +398,7 @@ class StreetState extends FlxState
 		FlxG.collide(player, enemies, playerTouchEnemy);
 
 		FlxG.collide(enemies, walls);
+		FlxG.collide(enemies, road);
 		FlxG.collide(enemies);
 		FlxG.collide(enemies, npc);
 	}
@@ -430,6 +436,27 @@ class StreetState extends FlxState
 		{
 			player.setPosition(house.x + (house.width - player.width) / 2, house.y + houseDis - 40);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+			if (house == house1 && !p1Talk)
+			{
+				p1Talk = true;
+				name = AssetPaths.house1Talk__txt;
+				playerUpDown();
+				dia.show(name, true);
+			}
+			else if (house == house2 && !p2Talk)
+			{
+				p2Talk = true;
+				name = AssetPaths.house2Talk__txt;
+				playerUpDown();
+				dia.show(name, true);
+			}
+			else if (house == house3 && !p3Talk)
+			{
+				p3Talk = true;
+				name = AssetPaths.house3Talk__txt;
+				playerUpDown();
+				dia.show(name, true);
+			}
 		});
 	}
 
@@ -446,7 +473,7 @@ class StreetState extends FlxState
 	// 如果你碰了敵人，就代表敵人碰了你
 	function playerTouchEnemy(player:Player, enemy:Enemy)
 	{
-		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
+		if (player.alive && player.exists && enemy.alive && enemy.exists && enemy.alpha != 0.5)
 		{
 			if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.diamondCounter >= 5))
 			{
@@ -465,6 +492,7 @@ class StreetState extends FlxState
 				playerUpDown();
 				dia.show(name, txt);
 				combatHud.enemy = enemy;
+				combatHud.enemy.alpha = 0.5;
 				enemyFlicker = true;
 			}
 		}
@@ -495,7 +523,7 @@ class StreetState extends FlxState
 				else
 					name = ":D:下次可以試試看投資APESTARTER喔。";
 			}
-
+			combatHud.enemy.alpha = 0.5;
 			enemyFlicker = true;
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
@@ -576,7 +604,10 @@ class StreetState extends FlxState
 			}
 			if (enemyFlicker)
 			{
-				combatHud.enemy.flicker();
+				new FlxTimer().start(5, function(timer:FlxTimer)
+				{
+					combatHud.enemy.alpha = 1;
+				});
 				enemyFlicker = false;
 			}
 		}

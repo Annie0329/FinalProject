@@ -67,9 +67,9 @@ class NPC extends FlxSprite
 				loadGraphic(AssetPaths.spartan__png);
 
 			case signDefi:
-				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+				makeGraphic(40, 80, FlxColor.TRANSPARENT);
 			case signApple:
-				makeGraphic(80, 80, FlxColor.TRANSPARENT);
+				makeGraphic(40, 80, FlxColor.TRANSPARENT);
 			case house1Sign:
 				loadGraphic(AssetPaths.house1Sign__png);
 			case p1:
@@ -81,7 +81,7 @@ class NPC extends FlxSprite
 			case p1CoToApMach:
 				loadGraphic(AssetPaths.p1CoToApMach__png);
 			case p1ApToCoMach:
-				loadGraphic(AssetPaths.p1CoToApMach__png);
+				loadGraphic(AssetPaths.p1ApToCoMach__png);
 
 			case house2Sign:
 				loadGraphic(AssetPaths.house2Sign__png);

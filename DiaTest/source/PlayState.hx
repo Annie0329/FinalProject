@@ -10,6 +10,7 @@ import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
+import flixel.util.FlxTimer;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -178,8 +179,8 @@ class PlayState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		// if (FlxG.sound.music == null)
-		// 	FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+		if (FlxG.sound.music == null)
+			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
 
 		// 滑鼠退散
 		FlxG.mouse.visible = false;
@@ -339,7 +340,6 @@ class PlayState extends FlxState
 
 		FlxG.collide(enemies, walls);
 		FlxG.collide(enemies, road);
-		enemies.forEachAlive(checkEnemyVision);
 		FlxG.collide(player, enemies, playerTouchEnemy);
 	}
 
@@ -351,7 +351,6 @@ class PlayState extends FlxState
 			bag.diamondCounter = combatHud.diamond;
 			bag.updateBag();
 			inCombat = false;
-
 			// 敵人的下場
 			switch (combatHud.outcome)
 			{
@@ -367,7 +366,7 @@ class PlayState extends FlxState
 				case shibaCoin:
 					if (combatHud.outcome == WIN)
 					{
-						name = ":D:你買了狗狗幣啊！";
+						name = ":D:你買了狗狗幣啊！你可以在左邊看到你買的狗狗幣漲或跌了幾塊。";
 						bag.shibaInvest += combatHud.investNum;
 						bag.shibaWave += bag.shibaInvest;
 						if (!bag.shibaUi.visible)
@@ -401,7 +400,7 @@ class PlayState extends FlxState
 	// 如果你碰了敵人，就代表敵人碰了你
 	function playerTouchEnemy(player:Player, enemy:Enemy)
 	{
-		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering())
+		if (player.alive && player.exists && enemy.alive && enemy.exists && enemy.alpha != 0.5)
 		{
 			if (bag.diamondCounter >= 20)
 			{
@@ -417,22 +416,10 @@ class PlayState extends FlxState
 				playerUpDown();
 				dia.show(name, txt);
 				combatHud.enemy = enemy;
+				combatHud.enemy.alpha = 0.5;
 				enemyFlicker = true;
 			}
 		}
-	}
-
-	// 檢查敵人視野
-	function checkEnemyVision(enemy:Enemy)
-	{
-		if (enemy.alive && walls.ray(enemy.getMidpoint(), player.getMidpoint()) && road.ray(enemy.getMidpoint(), player.getMidpoint()))
-		{
-			enemy.seesPlayer = true;
-			// ！！是在這裡定位玩家位置的！
-			enemy.playerPosition = player.getMidpoint();
-		}
-		else
-			enemy.seesPlayer = false;
 	}
 
 	// 跟NPC講話
@@ -553,8 +540,11 @@ class PlayState extends FlxState
 			}
 			if (enemyFlicker)
 			{
-				combatHud.enemy.flicker();
-				enemyFlicker = false;
+				new FlxTimer().start(1, function(timer:FlxTimer)
+				{
+					combatHud.enemy.alpha = 1;
+					enemyFlicker = false;
+				});
 			}
 		}
 	}
