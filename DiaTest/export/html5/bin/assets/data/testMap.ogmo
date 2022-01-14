@@ -459,7 +459,7 @@
           {"x": 1, "y": 1}
         ]
       },
-      "color": "#cf00ff00",
+      "color": "#cf00ffff",
       "tileX": false,
       "tileY": false,
       "tileSize": {"x": 80, "y": 80},

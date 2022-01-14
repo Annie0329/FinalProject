@@ -18,7 +18,7 @@
         {"name": "guy", "id": 0, "_eid": "75207174", "x": 280, "y": 1160, "originX": 0, "originY": 0},
         {"name": "monument", "id": 2, "_eid": "06338076", "x": 720, "y": 400, "originX": 0, "originY": 0},
         {"name": "ming", "id": 3, "_eid": "04473691", "x": 960, "y": 720, "originX": 0, "originY": 0},
-        {"name": "shop", "id": 4, "_eid": "26908707", "x": 2120, "y": 1040, "originX": 0, "originY": 0},
+        {"name": "shop", "id": 4, "_eid": "26908707", "x": 2080, "y": 1040, "originX": 0, "originY": 0},
         {"name": "player", "id": 7, "_eid": "23272829", "x": 360, "y": 1160, "originX": 0, "originY": 0},
         {"name": "lake", "id": 11, "_eid": "60160066", "x": 1160, "y": 1800, "originX": 0, "originY": 0},
         {"name": "sbGreen", "id": 12, "_eid": "04478069", "x": 1600, "y": 920, "originX": 0, "originY": 0},

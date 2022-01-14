@@ -296,7 +296,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p2Mach:
 				if (diamond >= 10)
 				{
-					name = ':N:你想用多少能量幣買香蕉幣？ 你目前有 $diamond 能量幣';
+					name = ':N:你想用多少能量幣買香蕉幣？ 你目前有 $diamond 能量幣。按X退出。';
 					coinText.visible = true;
 				}
 				else
@@ -311,7 +311,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p3Mach:
 				if (diamond >= 10)
 				{
-					name = ':N:你想放多少能量幣借貸？ 你目前有 $diamond 能量幣';
+					name = ':N:你想放多少能量幣借貸？ 你目前有 $diamond 能量幣。按X退出。';
 					coinText.visible = true;
 				}
 				else
@@ -347,7 +347,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					coinOut -= 10;
 				if (right && coinOut / 10 != Std.int(bananaCoin / 10))
 					coinOut += 10;
-				machGain = FlxMath.roundDecimal(bcCoinIn - (bck / (bcBananaCoinIn + coinOut)), 3);
+				machGain = FlxMath.roundDecimal(bcCoinIn - (bck / (bcBananaCoinIn + coinOut)), 2);
 				coinText.text = '$coinOut  香蕉幣換 $machGain 能量幣';
 			}
 			else if (npcType == p1ApToCoMach)
@@ -356,7 +356,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					coinOut -= 10;
 				if (right && coinOut / 10 != Std.int(appleCoin / 10))
 					coinOut += 10;
-				machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 3);
+				machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 2);
 				coinText.text = '$coinOut  APS幣換 $machGain 能量幣';
 			}
 			else if (npcType == p1CoToApMach)
@@ -365,7 +365,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					coinOut -= 10;
 				if (right && coinOut / 10 != Std.int(diamond / 10))
 					coinOut += 10;
-				machGain = FlxMath.roundDecimal(caAppleCoinIn - (cak / (caCoinIn + coinOut)), 3);
+				machGain = FlxMath.roundDecimal(caAppleCoinIn - (cak / (caCoinIn + coinOut)), 2);
 				coinText.text = '$coinOut  能量幣換 $machGain APS幣';
 			}
 			else if (npcType == p2Mach)
@@ -383,7 +383,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					coinOut -= 10;
 				if (right && coinOut / 10 != Std.int(diamond / 10))
 					coinOut += 10;
-				machGain = (loanGain + coinOut) * interest;
+				machGain = FlxMath.roundDecimal((loanGain + coinOut) * interest, 2);
 				coinText.text = '已投資' + (loanGain + coinOut) + '能量幣 利息10秒 $machGain 能量幣';
 			}
 		}
