@@ -33,7 +33,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 	// 能量幣和香蕉葉
 	public var bananaCounter:Int = 0;
-	public var diamondCounter:Float = 0;
+	public var diamondCounter:Float = 200;
 	public var diamondText:FlxText;
 
 	var diamondIcon:FlxSprite;
@@ -129,7 +129,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		diamondIcon = new FlxSprite(10, 10).loadGraphic(AssetPaths.diamondIcon__png);
 		diamondUi.add(diamondIcon);
 
-		diamondText = new FlxText(diamondIcon.x + 45, diamondIcon.y + diamondIcon.height / 2 - 13, "0", 20);
+		diamondText = new FlxText(diamondIcon.x + 45, diamondIcon.y + diamondIcon.height / 2 - 13, "200", 20);
 		diamondText.color = 0xff2D5925;
 		diamondUi.add(diamondText);
 
@@ -339,6 +339,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				// 主選單
 				if (shopChoice == main)
 				{
+					background.loadGraphic(AssetPaths.shopkeeper__png);
 					switch (pointer.selected)
 					{
 						// 買
@@ -446,11 +447,13 @@ class Bag extends FlxTypedGroup<FlxBasic>
 						case "yelling":
 							name = AssetPaths.shopYellingTalk__txt;
 							txt = true;
+							background.loadGraphic(AssetPaths.shopkeeperTalk__png);
 							shopChatStart(name, txt);
 						case "branch":
 							name = AssetPaths.shopBranchTalk__txt;
 							txt = true;
 							shopChatStart(name, txt);
+							background.loadGraphic(AssetPaths.shopkeeperSmile__png);
 						case "exit":
 							mainChat = "猩猩跟老闆聊天了！";
 							setMainShop();
@@ -484,6 +487,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	function setMainShop()
 	{
 		textRunDone = false;
+		background.loadGraphic(AssetPaths.shopkeeperTalk__png);
 		shopText.resetText(mainChat);
 		shopText.start(false, false, function()
 		{

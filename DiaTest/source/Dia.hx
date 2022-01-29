@@ -35,6 +35,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	public var saveStoneIntro:Bool = false;
 	public var stoneTextYes:Bool = false;
+	public var leafYes:Bool = false;
 
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
@@ -193,7 +194,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		switch (npcType)
 		{
 			case doge:
-				name = AssetPaths.forestMission__txt;
+				if (leafYes)
+					name = AssetPaths.missionYes__txt;
+				else
+					name = AssetPaths.missionNo__txt;
 				txt = true;
 
 			case ming:

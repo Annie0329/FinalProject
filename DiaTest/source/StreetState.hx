@@ -96,18 +96,18 @@ class StreetState extends FlxState
 		add(sea);
 
 		// 礦場傳送門
-		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
+		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 120, 160);
 		minerDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
-		minerDoor.setSize(104, 40);
+		minerDoor.setSize(120, 40);
 		minerDoor.offset.set(0, 120);
 		minerDoor.immovable = true;
 		add(minerDoor);
 		minerDoor.animation.play("glow");
 
-		// 礦場傳送門
-		homeDoor = new FlxSprite().loadGraphic(AssetPaths.homeDoor__png, true, 136, 160);
+		// 過關送門
+		homeDoor = new FlxSprite().loadGraphic(AssetPaths.homeDoor__png, true, 144, 160);
 		homeDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
-		homeDoor.setSize(136, 60);
+		homeDoor.setSize(144, 60);
 		homeDoor.offset.set(0, 100);
 		homeDoor.immovable = true;
 		add(homeDoor);
@@ -509,7 +509,7 @@ class StreetState extends FlxState
 				if (combatHud.outcome == WIN)
 					name = ":D:你真幸運，開槓桿成功了。";
 				else if (combatHud.outcome == LOSE)
-					name = ":D:下次該槓桿要小心點喔。";
+					name = ":D:下次開槓桿要小心點喔。";
 				else
 					name = ":D:槓桿可以賺很多，下次試試看吧。";
 			}

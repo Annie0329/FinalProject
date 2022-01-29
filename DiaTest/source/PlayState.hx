@@ -28,7 +28,7 @@ class PlayState extends FlxState
 	var txt:Bool = true;
 	var talkYes:Bool = false;
 
-	// 香蕉和他的變數
+	// 香蕉
 	var banana:FlxTypedGroup<FlxSprite> = null;
 
 	// 敵人
@@ -40,6 +40,7 @@ class PlayState extends FlxState
 	// NPC
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
+	var dogeYes:FlxSprite;
 
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
@@ -102,10 +103,10 @@ class PlayState extends FlxState
 		add(banana);
 
 		// 礦場門
-		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
+		minerDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 120, 160);
 		minerDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
 		minerDoor.immovable = true;
-		minerDoor.setSize(104, 40);
+		minerDoor.setSize(120, 40);
 		minerDoor.offset.set(0, 120);
 		add(minerDoor);
 		minerDoor.animation.play("glow");
@@ -118,6 +119,10 @@ class PlayState extends FlxState
 		// NPC
 		npc = new FlxTypedGroup<NPC>();
 		add(npc);
+
+		dogeYes = new FlxSprite().makeGraphic(40, 40, FlxColor.RED);
+		dogeYes.visible = false;
+		add(dogeYes);
 
 		// 敵人
 		enemies = new FlxTypedGroup<Enemy>();
@@ -199,7 +204,8 @@ class PlayState extends FlxState
 				player.setPosition(x, y + 32);
 			case "guy":
 				npc.add(new NPC(x, y, doge));
-
+			case "dogeYes":
+				dogeYes.setPosition(x, y);
 			case "ming":
 				npc.add(new NPC(x, y, ming));
 			case "sbRed":
@@ -319,6 +325,13 @@ class PlayState extends FlxState
 			ufo.visible = true;
 			FlxG.mouse.visible = true;
 		}
+
+		if (bag.bananaCounter >= 10 && !dia.leafYes)
+		{
+			dia.leafYes = true;
+			dogeYes.visible = true;
+		}
+
 		updateInCombat();
 		updateWhenDiaInvisible();
 		updateTalking();
@@ -366,7 +379,7 @@ class PlayState extends FlxState
 				case shibaCoin:
 					if (combatHud.outcome == WIN)
 					{
-						name = ":D:你買了狗狗幣啊！你可以在左邊看到你買的狗狗幣漲或跌了幾塊。";
+						name = ":D:你買了狗狗幣啊！你可以在左邊看到你買的狗狗幣漲或跌了幾塊。:D:隨時注意出現的新聞快報！它會影響到你狗狗幣的漲跌。";
 						bag.shibaInvest += combatHud.investNum;
 						bag.shibaWave += bag.shibaInvest;
 						if (!bag.shibaUi.visible)
@@ -491,6 +504,9 @@ class PlayState extends FlxState
 		{
 			talkYes = false;
 			playerUpDown();
+
+			if (dogeYes.visible)
+				dogeYes.visible = false;
 
 			// 存檔點
 			if (npcType == saveStone)

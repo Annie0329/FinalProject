@@ -105,18 +105,18 @@ class MinerState extends FlxState
 		add(torch);
 
 		// 紀念碑傳送門
-		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
+		monumentDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 120, 160);
 		monumentDoor.animation.add("glow", [0, 1, 2, 3], 3, true);
-		monumentDoor.setSize(104, 40);
+		monumentDoor.setSize(120, 40);
 		monumentDoor.offset.set(0, 120);
 		monumentDoor.immovable = true;
 		add(monumentDoor);
 		monumentDoor.animation.play("glow");
 
 		// defi街傳送門
-		streetDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 104, 160);
+		streetDoor = new FlxSprite().loadGraphic(AssetPaths.minerDoor__png, true, 120, 160);
 		streetDoor.animation.add("glowStreet", [0, 1, 2, 3], 3, true);
-		streetDoor.setSize(104, 40);
+		streetDoor.setSize(120, 40);
 		streetDoor.offset.set(0, 120);
 		streetDoor.immovable = true;
 		add(streetDoor);
@@ -306,7 +306,8 @@ class MinerState extends FlxState
 					txt = false;
 					playerUpDown();
 					dia.show(name, txt);
-					bag.diamondCounter += 100;
+					// bag.diamondCounter += 100;
+					bag.diamondCounter++;
 					bag.updateBag();
 				}
 				saveFile();
@@ -369,7 +370,7 @@ class MinerState extends FlxState
 		FlxG.overlap(player, road);
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, through);
-		FlxG.collide(player, minerGate);
+		FlxG.collide(player, minerGate, timeToStop);
 
 		FlxG.collide(player, npc, npcTalk);
 
@@ -418,6 +419,25 @@ class MinerState extends FlxState
 			saveFile();
 			FlxG.switchState(new StreetState());
 		});
+	}
+
+	function timeToStop(player:Player, minerGate:FlxSprite)
+	{
+		if (minerTimerText.visible)
+		{
+			minerTimerText.visible = false;
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			{
+				player.setPosition(minerGate.x, minerGate.y + 200);
+				// minerGate.x -= minerGate.width;
+				minerTimerIcon.visible = false;
+				stoneCounterIcon.visible = false;
+				stoneCounterText.visible = false;
+				stoneCounter = 0;
+				stoneCounterText.text = Std.string(stoneCounter);
+				FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
+			});
+		}
 	}
 
 	// 玩家收集到石頭了
@@ -561,13 +581,12 @@ class MinerState extends FlxState
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
 					player.setPosition(minerGate.x, minerGate.y + 200);
-
+					// minerGate.x -= minerGate.width;
 					minerTimerIcon.visible = false;
 					stoneCounterIcon.visible = false;
 					stoneCounterText.visible = false;
 					stoneCounter = 0;
 					stoneCounterText.text = Std.string(stoneCounter);
-
 					FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
 				});
 			});
