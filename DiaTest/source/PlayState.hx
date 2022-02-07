@@ -41,6 +41,10 @@ class PlayState extends FlxState
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
 	var dogeYes:FlxSprite;
+	var srYes:FlxSprite;
+	var sgYes:FlxSprite;
+	var sbYes:FlxSprite;
+	var mingYes:FlxSprite;
 
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
@@ -54,6 +58,7 @@ class PlayState extends FlxState
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 	var sea:FlxTypedGroup<FlxSprite> = null;
+	var treeBar:FlxSprite;
 
 	var loadsave:Bool;
 
@@ -98,6 +103,11 @@ class PlayState extends FlxState
 		sea = new FlxTypedGroup<FlxSprite>();
 		add(sea);
 
+		// 樹牆
+		treeBar = new FlxSprite(AssetPaths.treeBar__png);
+		treeBar.immovable = true;
+		add(treeBar);
+
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
 		add(banana);
@@ -120,9 +130,24 @@ class PlayState extends FlxState
 		npc = new FlxTypedGroup<NPC>();
 		add(npc);
 
-		dogeYes = new FlxSprite().makeGraphic(40, 40, FlxColor.RED);
+		dogeYes = new FlxSprite().makeGraphic(40, 40, FlxColor.BROWN);
 		dogeYes.visible = false;
 		add(dogeYes);
+
+		srYes = new FlxSprite().makeGraphic(40, 40, FlxColor.RED);
+		srYes.visible = false;
+		add(srYes);
+
+		sgYes = new FlxSprite().makeGraphic(40, 40, FlxColor.GREEN);
+		sgYes.visible = false;
+		add(sgYes);
+
+		sbYes = new FlxSprite().makeGraphic(40, 40, FlxColor.BLUE);
+		sbYes.visible = false;
+		add(sbYes);
+		mingYes = new FlxSprite().makeGraphic(40, 40, FlxColor.BLUE);
+		mingYes.visible = false;
+		add(mingYes);
 
 		// 敵人
 		enemies = new FlxTypedGroup<Enemy>();
@@ -210,11 +235,18 @@ class PlayState extends FlxState
 				npc.add(new NPC(x, y, ming));
 			case "sbRed":
 				npc.add(new NPC(x, y, sbRed));
-			case "sbBlue":
-				npc.add(new NPC(x, y, sbBlue));
+			case "srYes":
+				srYes.setPosition(x, y);
 			case "sbGreen":
 				npc.add(new NPC(x, y, sbGreen));
-
+			case "sgYes":
+				sgYes.setPosition(x, y);
+			case "sbBlue":
+				npc.add(new NPC(x, y, sbBlue));
+			case "sbYes":
+				sbYes.setPosition(x, y);
+			case "mingYes":
+				mingYes.setPosition(x, y);
 			// 敵人
 			case "shibaCoin":
 				enemies.add(new Enemy(x, y, shibaCoin));
@@ -236,6 +268,8 @@ class PlayState extends FlxState
 				s.animation.play("oui");
 				s.immovable = true;
 				sea.add(s);
+			case "treeBar":
+				treeBar.setPosition(x, y);
 
 			case "lake":
 				npc.add(new NPC(x, y, lake));
@@ -274,6 +308,7 @@ class PlayState extends FlxState
 		// 不一樣的
 		save.data.minerYes = minerYes;
 		save.data.place = "monument";
+		save.data.talkDone = dia.talkDone;
 
 		save.flush();
 	}
@@ -301,6 +336,7 @@ class PlayState extends FlxState
 
 		// 不一樣的
 		minerYes = save.data.minerYes;
+		dia.talkDone = save.data.talkDone;
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "monument")
@@ -326,11 +362,28 @@ class PlayState extends FlxState
 			FlxG.mouse.visible = true;
 		}
 
-		if (bag.bananaCounter >= 10 && !dia.leafYes)
+		// 達成葉子目標
+		if (bag.bananaCounter >= 10 && !dia.leafYes && !dia.talkDone)
 		{
 			dia.leafYes = true;
 			dogeYes.visible = true;
 		}
+		// 跟Doge回報完葉子就可以跟島民說話
+		if (dia.leafYes && !dia.talkMiss && !dogeYes.visible)
+		{
+			dia.talkMiss = true;
+			srYes.visible = true;
+			sgYes.visible = true;
+			sbYes.visible = true;
+			mingYes.visible = true;
+		}
+		if (dia.talkMiss && !srYes.visible && !sgYes.visible && !sbYes.visible && !mingYes.visible && !dia.talkDone)
+		{
+			dia.talkDone = true;
+			dogeYes.visible = true;
+		}
+		if (dia.talkDone && !dogeYes.visible)
+			treeBar.kill();
 
 		updateInCombat();
 		updateWhenDiaInvisible();
@@ -343,6 +396,7 @@ class PlayState extends FlxState
 		FlxG.overlap(player, road);
 		FlxG.collide(player, walls);
 		FlxG.overlap(player, through);
+		FlxG.collide(player, treeBar);
 
 		FlxG.collide(player, npc, npcTalk);
 
@@ -505,9 +559,17 @@ class PlayState extends FlxState
 			talkYes = false;
 			playerUpDown();
 
-			if (dogeYes.visible)
+			// 消除頭上的驚嘆號
+			if (npcType == doge && dogeYes.visible)
 				dogeYes.visible = false;
-
+			if (npcType == sbRed && srYes.visible)
+				srYes.visible = false;
+			if (npcType == sbGreen && sgYes.visible)
+				sgYes.visible = false;
+			if (npcType == sbBlue && sbYes.visible)
+				sbYes.visible = false;
+			if (npcType == ming && mingYes.visible)
+				mingYes.visible = false;
 			// 存檔點
 			if (npcType == saveStone)
 				saveFile();

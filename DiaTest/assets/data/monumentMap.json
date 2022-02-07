@@ -103,7 +103,11 @@
         {"name": "sea", "id": 122, "_eid": "88252965", "x": -40, "y": 800, "originX": 0, "originY": 0},
         {"name": "sea", "id": 123, "_eid": "88252965", "x": -40, "y": 1520, "originX": 0, "originY": 0},
         {"name": "treeBar", "id": 124, "_eid": "46688566", "x": 2480, "y": 1080, "originX": 0, "originY": 0},
-        {"name": "dogeYes", "id": 126, "_eid": "46708020", "x": 1480, "y": 840, "originX": 0, "originY": 0}
+        {"name": "dogeYes", "id": 126, "_eid": "46708020", "x": 1480, "y": 840, "originX": 0, "originY": 0},
+        {"name": "srYes", "id": 127, "_eid": "23921419", "x": 280, "y": 1040, "originX": 0, "originY": 0},
+        {"name": "sgYes", "id": 128, "_eid": "23926481", "x": 560, "y": 1040, "originX": 0, "originY": 0},
+        {"name": "sbYes", "id": 129, "_eid": "23910738", "x": 400, "y": 1200, "originX": 0, "originY": 0},
+        {"name": "mingYes", "id": 130, "_eid": "24025839", "x": 960, "y": 680, "originX": 0, "originY": 0}
       ]
     },
     {

@@ -36,6 +36,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var saveStoneIntro:Bool = false;
 	public var stoneTextYes:Bool = false;
 	public var leafYes:Bool = false;
+	public var talkMiss:Bool = false;
+	public var talkDone:Bool = false;
 
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
@@ -194,27 +196,65 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		switch (npcType)
 		{
 			case doge:
-				if (leafYes)
-					name = AssetPaths.missionYes__txt;
+				if (talkDone)
+					name = AssetPaths.goToMiner__txt;
 				else
-					name = AssetPaths.missionNo__txt;
+				{
+					if (leafYes)
+						name = AssetPaths.missionYes__txt;
+					else
+						name = AssetPaths.missionNo__txt;
+				}
+
 				txt = true;
 
 			case ming:
-				name = AssetPaths.mingTalking__txt;
-				txt = true;
+				if (talkMiss)
+				{
+					name = AssetPaths.mingTalking__txt;
+					txt = true;
+				}
+				else
+				{
+					name = ":M:這裡視野真好。";
+					txt = false;
+				}
 
 			case sbRed:
-				name = AssetPaths.srTalk__txt;
-				txt = true;
+				if (talkMiss)
+				{
+					name = AssetPaths.srTalk__txt;
+					txt = true;
+				}
+				else
+				{
+					name = ":SR:呼呼，今天天氣真好。";
+					txt = false;
+				}
 
 			case sbBlue:
-				name = AssetPaths.sbTalk__txt;
-				txt = true;
+				if (talkMiss)
+				{
+					name = AssetPaths.sbTalk__txt;
+					txt = true;
+				}
+				else
+				{
+					name = ":SB:最近島上有怪人在賣奇怪的東西呢。";
+					txt = false;
+				}
 
 			case sbGreen:
-				name = AssetPaths.sgTalk__txt;
-				txt = true;
+				if (talkMiss)
+				{
+					name = AssetPaths.sgTalk__txt;
+					txt = true;
+				}
+				else
+				{
+					name = ":SG:狗狗幣長得真恐怖。";
+					txt = false;
+				}
 
 			case monument:
 				name = ":N:裡面似乎有毀壞的記帳本。";
