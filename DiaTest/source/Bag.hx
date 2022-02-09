@@ -28,6 +28,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	public var diamondUi = new FlxTypedGroup<FlxSprite>();
 
 	public var shibaUi = new FlxTypedGroup<FlxSprite>();
+	public var notifUi = new FlxTypedGroup<FlxSprite>();
 
 	var background:FlxSprite;
 
@@ -68,14 +69,20 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 	// 各種柴犬
 	var sellAmoText:FlxText;
-	var shibaPrizeNow:Float = 0;
+	var shibaPrizeNow:Float = 0; // 進商店時狗狗幣價值多少
 
 	var shiba:FlxSprite;
 	var shibaWaveText:FlxText;
-	var shibaTimer:FlxTimer;
+	var shibaTimer:FlxTimer; // 計時器
+	var firstShiba:Bool = false; // 第一隻狗狗幣才會跳通知
 
-	public var shibaInvest:Int = 0;
-	public var shibaWave:Float = 0;
+	public var shibaInvest:Int = 0; // 花多少買狗狗幣
+	public var shibaWave:Float = 0; // 狗狗幣漲跌
+
+	// 通知
+	var notif:FlxSprite;
+	var notifText:FlxText;
+	var notifTimer:FlxTimer;
 
 	// 香蕉幣
 	var bananaCoinIcon:FlxSprite;
@@ -149,6 +156,19 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		add(shibaUi);
 		shibaUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 		shibaUi.visible = false;
+
+		// 通知組
+		notif = new FlxSprite(300, 10).makeGraphic(40, 40, FlxColor.RED);
+		notifUi.add(notif);
+
+		notifText = new FlxText(notif.x, notif.y, "oui", 28);
+		notifText.color = 0xff2D5925;
+		notifText.font = AssetPaths.silver__ttf;
+		notifUi.add(notifText);
+
+		add(notifUi);
+		notifUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		notifUi.visible = false;
 
 		// 包包組
 		bagUi.add(background);
@@ -224,28 +244,39 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	}
 
 	// 狗狗幣漲跌
+	// 這個程式只會被呼叫一次，但漲跌計時器會不斷跑
 	public function countShibaWave()
 	{
-		shibaUi.visible = true;
-		if (shibaWave - shibaInvest >= 0)
-		{
-			shibaWaveText.text = "+" + Std.string(FlxMath.roundDecimal(shibaWave - shibaInvest, 2));
-			shibaWaveText.color = FlxColor.GREEN;
-		}
-		else
-		{
-			shibaWaveText.text = Std.string(FlxMath.roundDecimal(shibaWave - shibaInvest, 2));
-			shibaWaveText.color = FlxColor.RED;
-		}
+		// 漲跌計時器
 		shibaTimer = new FlxTimer().start(2, function(timer:FlxTimer)
 		{
-			// 70%機率漲
-			if (FlxG.random.bool(70))
-				shibaWave *= (1 + 0.01 * (FlxG.random.int(1, 50)));
-			// 30%機率跌
+			// 在第一則新聞的影響範圍內就跌
+			if (notifText.text == "中國宣布禁止所有與加密貨幣相關的活動！")
+				if (shibaWave - shibaInvest >= 0.01)
+					shibaWave *= 0.01 * (FlxG.random.int(20, 100));
+				else
+					shibaWave = 0.01;
+			// 在第二則新聞的影響範圍內就漲
+			else if (notifText.text == "馬斯克宣布特斯拉商品接受狗狗幣！")
+			{
+				shibaWave *= (1 + 0.01 * (FlxG.random.int(1, 70)));
+			}
+
+			// 其他時間隨機
 			else
-				shibaWave *= 0.01 * (FlxG.random.int(20, 100));
+			{
+				// 70%機率漲
+				if (FlxG.random.bool(70))
+					shibaWave *= (1 + 0.01 * (FlxG.random.int(1, 50)));
+				// 30%機率跌
+				else if (shibaWave - shibaInvest >= 0.01)
+					shibaWave *= 0.01 * (FlxG.random.int(20, 100));
+				// 防止跌到底
+				else
+					shibaWave = 0.01;
+			}
 			shibaWave = FlxMath.roundDecimal(shibaWave, 2);
+
 			// 如果漲字就變綠色；跌字就變紅色
 			if (shibaWave - shibaInvest >= 0)
 			{
@@ -258,6 +289,35 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				shibaWaveText.color = FlxColor.RED;
 			}
 		}, 0);
+
+		// 第一次買狗狗幣才會跳通知
+		if (!firstShiba)
+		{
+			firstShiba = true;
+			// 5秒後第一則快訊出現，維持10秒
+			notifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
+			{
+				notifUi.visible = true;
+				notifText.text = "中國宣布禁止所有與加密貨幣相關的活動！";
+				notifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
+				{
+					notifUi.visible = false;
+					notifText.text = "oui";
+					// 5秒後第二則快訊出現，維持10秒
+					notifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
+					{
+						notifUi.visible = true;
+						shibaWave = shibaInvest;
+						notifText.text = "馬斯克宣布特斯拉商品接受狗狗幣！";
+						notifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
+						{
+							notifUi.visible = false;
+							notifText.text = "oui";
+						});
+					});
+				});
+			});
+		}
 	}
 
 	// 更新啦
@@ -427,6 +487,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								shibaInvest = 0;
 								shibaPrizeNow = 0;
 								shibaTimer.cancel();
+								notifTimer.cancel();
+								notifUi.visible = false;
+								shibaWaveText.text = "+0";
+								shibaWaveText.color = FlxColor.GREEN;
 							}
 						case "money":
 							name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";

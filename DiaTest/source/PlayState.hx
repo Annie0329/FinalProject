@@ -36,6 +36,7 @@ class PlayState extends FlxState
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
 	var enemyFlicker:Bool = false;
+	var shibaYes:Bool = false;
 
 	// NPC
 	var npc:FlxTypedGroup<NPC>;
@@ -437,7 +438,10 @@ class PlayState extends FlxState
 						bag.shibaInvest += combatHud.investNum;
 						bag.shibaWave += bag.shibaInvest;
 						if (!bag.shibaUi.visible)
-							bag.countShibaWave();
+						{
+							bag.shibaUi.visible = true;
+							shibaYes = true;
+						}
 					}
 					else
 						name = ":D:狗狗幣很好賺呢，下次試試看跟他們交涉吧！";
@@ -596,11 +600,18 @@ class PlayState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
+			// 拿到背包
 			if (getBag)
 			{
 				player.animation.frameIndex = 0;
 				bag.diamondUi.visible = true;
 				getBag = false;
+			}
+			// 啟動狗狗幣計時器
+			if (shibaYes)
+			{
+				bag.countShibaWave();
+				shibaYes = false;
 			}
 			// 有錢就開礦場門
 			if (minerOpen)
