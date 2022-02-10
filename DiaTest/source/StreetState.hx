@@ -310,7 +310,10 @@ class StreetState extends FlxState
 		bag.updateBag();
 
 		if (bag.shibaInvest != 0)
+		{
+			bag.firstShiba = true;
 			bag.countShibaWave();
+		}
 		else
 			bag.shibaUi.visible = false;
 		dia.saveStoneIntro = save.data.saveStoneIntro;

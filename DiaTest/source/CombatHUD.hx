@@ -139,7 +139,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(enemyNameText);
 
 		// 錢的數量
-		diamondText = new FlxText(560, 20, "0", 20);
+		diamondText = new FlxText(550, 20, "0", 20);
 		add(diamondText);
 
 		// 那隻箭頭
@@ -422,24 +422,16 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				else if (state == 2)
 				{
 					state++;
-					nftStyle.visible = false;
-					pointerLeft.visible = false;
-					pointerRight.visible = false;
 
-					if (FlxG.random.bool(50))
-					{
-						diamond += 20;
-						name = ":哇！立刻有人用高價買你的NFT了！";
-						outcome = WIN;
-					}
-					else
-					{
-						diamond -= 20;
-						name = ":這張NFT沒人想買呢。";
-						outcome = LOSE;
-					}
+					diamond -= investNum;
+					name = ":謝謝你！如果想賣掉nft的話可以去商店喔。";
+					outcome = WIN;
 
 					combatText.show(name, false);
+					investNumText.visible = false;
+					pointerLeft.visible = false;
+					pointerRight.visible = false;
+					nftStyle.visible = false;
 				}
 				else if (state == 3)
 					doneResultsIn();

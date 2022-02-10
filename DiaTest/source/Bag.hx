@@ -28,7 +28,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	public var diamondUi = new FlxTypedGroup<FlxSprite>();
 
 	public var shibaUi = new FlxTypedGroup<FlxSprite>();
-	public var notifUi = new FlxTypedGroup<FlxSprite>();
+	public var nftUi = new FlxTypedGroup<FlxSprite>();
+
+	var shibaNotifUi = new FlxTypedGroup<FlxSprite>();
+	var nftNotifUi = new FlxTypedGroup<FlxSprite>();
 
 	var background:FlxSprite;
 
@@ -50,7 +53,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var mainChat:String;
 	var bananaSell:Int = 0;
 	var buyCho:String = "香蕉葉 2 能量幣\n離開";
-	var sellCho:String = "香蕉葉 1 能量幣\n狗狗幣\n原本世界的錢\n離開";
+	var sellCho:String = "香蕉葉 1 能量幣\n狗狗幣\nnft\n原本世界的錢\n離開";
 	var chatCho:String = "為什麼要對著包包大吼大叫\n請問有分店嗎\n離開";
 
 	var pointer:Pointer;
@@ -58,7 +61,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var shopChoice(default, null):ShopChoice;
 	var mainChoices:Array<String> = ["buy", "sell", "chat", "exit"];
 	var buyChoices:Array<String> = ["leaf", "exit"];
-	var sellChoices:Array<String> = ["leaf", "shibaCoin", "money", "exit"];
+	var sellChoices:Array<String> = ["leaf", "shibaCoin", "nft", "money", "exit"];
 	var chatChoices:Array<String> = ["yelling", "branch", "exit"];
 
 	// 字
@@ -67,22 +70,39 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var i:Int = 1;
 	var textRunDone:Bool = false;
 
-	// 各種柴犬
 	var sellAmoText:FlxText;
+
+	// 各種柴犬
 	var shibaPrizeNow:Float = 0; // 進商店時狗狗幣價值多少
 
 	var shiba:FlxSprite;
 	var shibaWaveText:FlxText;
 	var shibaTimer:FlxTimer; // 計時器
-	var firstShiba:Bool = false; // 第一隻狗狗幣才會跳通知
 
+	public var firstShiba:Bool = false; // 第一隻狗狗幣才會跳通知
 	public var shibaInvest:Int = 0; // 花多少買狗狗幣
 	public var shibaWave:Float = 0; // 狗狗幣漲跌
 
-	// 通知
-	var notif:FlxSprite;
-	var notifText:FlxText;
-	var notifTimer:FlxTimer;
+	// nft
+	var nftPrizeNow:Float = 0; // 進商店時nft價值多少
+
+	var nft:FlxSprite;
+	var nftWaveText:FlxText;
+	var nftTimer:FlxTimer; // 計時器
+	var firstNft:Bool = false; // 第一隻nft才會跳通知
+
+	public var nftInvest:Int = 0; // 花多少買nft
+	public var nftWave:Float = 0; // nft漲跌
+
+	// 狗狗幣通知
+	var shibaNotif:FlxSprite;
+	var shibaNotifText:FlxText;
+	var shibaNotifTimer:FlxTimer;
+
+	// nft通知
+	var nftNotif:FlxSprite;
+	var nftNotifText:FlxText;
+	var nftNotifTimer:FlxTimer;
 
 	// 香蕉幣
 	var bananaCoinIcon:FlxSprite;
@@ -157,18 +177,43 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shibaUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 		shibaUi.visible = false;
 
-		// 通知組
-		notif = new FlxSprite(300, 10).makeGraphic(40, 40, FlxColor.RED);
-		notifUi.add(notif);
+		// nft
+		nft = new FlxSprite(diamondIcon.x, shiba.y + shiba.height + 10, AssetPaths.nftIcon__png);
+		nftUi.add(nft);
 
-		notifText = new FlxText(notif.x, notif.y, "oui", 28);
-		notifText.color = 0xff2D5925;
-		notifText.font = AssetPaths.silver__ttf;
-		notifUi.add(notifText);
+		nftWaveText = new FlxText(diamondText.x, nft.y + nft.height / 2 - 11, 0, "+0", 16);
+		nftWaveText.color = FlxColor.GREEN;
+		nftUi.add(nftWaveText);
 
-		add(notifUi);
-		notifUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
-		notifUi.visible = false;
+		add(nftUi);
+		nftUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		nftUi.visible = false;
+
+		// 狗狗幣通知
+		shibaNotif = new FlxSprite(300, 10).makeGraphic(40, 40, FlxColor.RED);
+		shibaNotifUi.add(shibaNotif);
+
+		shibaNotifText = new FlxText(shibaNotif.x, shibaNotif.y, "oui", 28);
+		shibaNotifText.color = 0xff2D5925;
+		shibaNotifText.font = AssetPaths.silver__ttf;
+		shibaNotifUi.add(shibaNotifText);
+
+		add(shibaNotifUi);
+		shibaNotifUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		shibaNotifUi.visible = false;
+
+		// nft通知
+		nftNotif = new FlxSprite(shibaNotif.x, shibaNotif.y + shibaNotif.height + 10).makeGraphic(40, 40, FlxColor.WHITE);
+		nftNotifUi.add(nftNotif);
+
+		nftNotifText = new FlxText(nftNotif.x, nftNotif.y, "oui", 28);
+		nftNotifText.color = 0xff2D5925;
+		nftNotifText.font = AssetPaths.silver__ttf;
+		nftNotifUi.add(nftNotifText);
+
+		add(nftNotifUi);
+		nftNotifUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		nftNotifUi.visible = false;
 
 		// 包包組
 		bagUi.add(background);
@@ -247,17 +292,20 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	// 這個程式只會被呼叫一次，但漲跌計時器會不斷跑
 	public function countShibaWave()
 	{
+		shibaUi.visible = true;
+		redOrGreen(shibaWave, shibaInvest, shibaWaveText);
+
 		// 漲跌計時器
 		shibaTimer = new FlxTimer().start(2, function(timer:FlxTimer)
 		{
 			// 在第一則新聞的影響範圍內就跌
-			if (notifText.text == "中國宣布禁止所有與加密貨幣相關的活動！")
+			if (shibaNotifText.text == "中國宣布禁止所有與加密貨幣相關的活動！")
 				if (shibaWave - shibaInvest >= 0.01)
 					shibaWave *= 0.01 * (FlxG.random.int(20, 100));
 				else
 					shibaWave = 0.01;
 			// 在第二則新聞的影響範圍內就漲
-			else if (notifText.text == "馬斯克宣布特斯拉商品接受狗狗幣！")
+			else if (shibaNotifText.text == "馬斯克宣布特斯拉商品接受狗狗幣！")
 			{
 				shibaWave *= (1 + 0.01 * (FlxG.random.int(1, 70)));
 			}
@@ -269,25 +317,18 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				if (FlxG.random.bool(70))
 					shibaWave *= (1 + 0.01 * (FlxG.random.int(1, 50)));
 				// 30%機率跌
-				else if (shibaWave - shibaInvest >= 0.01)
-					shibaWave *= 0.01 * (FlxG.random.int(20, 100));
-				// 防止跌到底
 				else
-					shibaWave = 0.01;
+				{
+					if (shibaWave - shibaInvest >= 0.01)
+						shibaWave *= 0.01 * (FlxG.random.int(20, 100));
+					// 防止跌到底
+					else
+						shibaWave = shibaInvest / 4;
+				}
 			}
 			shibaWave = FlxMath.roundDecimal(shibaWave, 2);
 
-			// 如果漲字就變綠色；跌字就變紅色
-			if (shibaWave - shibaInvest >= 0)
-			{
-				shibaWaveText.text = "+" + Std.string(FlxMath.roundDecimal(shibaWave - shibaInvest, 2));
-				shibaWaveText.color = FlxColor.GREEN;
-			}
-			else
-			{
-				shibaWaveText.text = Std.string(FlxMath.roundDecimal(shibaWave - shibaInvest, 2));
-				shibaWaveText.color = FlxColor.RED;
-			}
+			redOrGreen(shibaWave, shibaInvest, shibaWaveText);
 		}, 0);
 
 		// 第一次買狗狗幣才會跳通知
@@ -295,28 +336,114 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		{
 			firstShiba = true;
 			// 5秒後第一則快訊出現，維持10秒
-			notifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
+			shibaNotifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
 			{
-				notifUi.visible = true;
-				notifText.text = "中國宣布禁止所有與加密貨幣相關的活動！";
-				notifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
+				shibaNotifUi.visible = true;
+				shibaNotifText.text = "中國宣布禁止所有與加密貨幣相關的活動！";
+				shibaNotifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
 				{
-					notifUi.visible = false;
-					notifText.text = "oui";
+					shibaNotifUi.visible = false;
+					shibaNotifText.text = "oui";
 					// 5秒後第二則快訊出現，維持10秒
-					notifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
+					shibaNotifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
 					{
-						notifUi.visible = true;
+						shibaNotifUi.visible = true;
 						shibaWave = shibaInvest;
-						notifText.text = "馬斯克宣布特斯拉商品接受狗狗幣！";
-						notifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
+						shibaNotifText.text = "馬斯克宣布特斯拉商品接受狗狗幣！";
+						shibaNotifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
 						{
-							notifUi.visible = false;
-							notifText.text = "oui";
+							shibaNotifUi.visible = false;
+							shibaNotifText.text = "oui";
 						});
 					});
 				});
 			});
+		}
+	}
+
+	// nft漲跌
+	public function countNftWave()
+	{
+		nftUi.visible = true;
+		redOrGreen(nftWave, nftInvest, nftWaveText);
+
+		// 漲跌計時器
+		nftTimer = new FlxTimer().start(2, function(timer:FlxTimer)
+		{
+			// 在第一則新聞的影響範圍內就跌
+			if (nftNotifText.text == "nft跌！")
+				if (nftWave - nftInvest >= 0.01)
+					nftWave *= 0.01 * (FlxG.random.int(20, 100));
+				else
+					nftWave = 0.01;
+			// 在第二則新聞的影響範圍內就漲
+			else if (nftNotifText.text == "nft漲！")
+			{
+				nftWave *= (1 + 0.01 * (FlxG.random.int(1, 70)));
+			}
+
+			// 其他時間隨機
+			else
+			{
+				// 70%機率漲
+				if (FlxG.random.bool(70))
+					nftWave *= (1 + 0.01 * (FlxG.random.int(1, 50)));
+				// 30%機率跌
+				else
+				{
+					if (nftWave - nftInvest > 0.01)
+						nftWave *= 0.01 * (FlxG.random.int(20, 100));
+					// 防止跌到底
+					else
+						nftWave = nftInvest / 4;
+				}
+			}
+			nftWave = FlxMath.roundDecimal(nftWave, 2);
+			redOrGreen(nftWave, nftInvest, nftWaveText);
+		}, 0);
+
+		// 第一次買nft才會跳通知
+		if (!firstNft)
+		{
+			firstNft = true;
+			// 5秒後第一則快訊出現，維持10秒
+			nftNotifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
+			{
+				nftNotifUi.visible = true;
+				nftNotifText.text = "nft跌！";
+				nftNotifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
+				{
+					nftNotifUi.visible = false;
+					nftNotifText.text = "oui";
+					// 5秒後第二則快訊出現，維持10秒
+					nftNotifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
+					{
+						nftNotifUi.visible = true;
+						nftWave = nftInvest;
+						nftNotifText.text = "nft漲！";
+						nftNotifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
+						{
+							nftNotifUi.visible = false;
+							nftNotifText.text = "oui";
+						});
+					});
+				});
+			});
+		}
+	}
+
+	// 幫你判斷顯示什麼顏色的程式lol如果漲字就變綠色；跌字就變紅色
+	function redOrGreen(wave:Float, invest, waveText:FlxText)
+	{
+		if (wave - invest >= 0)
+		{
+			waveText.text = "+" + Std.string(FlxMath.roundDecimal(wave - invest, 2));
+			waveText.color = FlxColor.GREEN;
+		}
+		else
+		{
+			waveText.text = Std.string(FlxMath.roundDecimal(wave - invest, 2));
+			waveText.color = FlxColor.RED;
 		}
 	}
 
@@ -376,10 +503,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		mainChat = "歡迎來到我的店！";
 		setMainShop();
 		shibaPrizeNow = shibaWave;
-		sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow);
+		nftPrizeNow = nftWave;
+		sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow) + "\n" + Std.string(nftPrizeNow);
 		sellAmoText.visible = false;
 
 		shibaUi.visible = false;
+		nftUi.visible = false;
 		bagUi.visible = false;
 		shopUi.visible = true;
 		active = true;
@@ -470,7 +599,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								diamondCounter += bananaCounter;
 								bananaSell = bananaCounter;
 								bananaCounter = 0;
-								sellAmoText.text = "0\n" + Std.string(shibaPrizeNow);
+								sellAmoText.text = "0\n" + Std.string(shibaPrizeNow) + "\n" + Std.string(nftPrizeNow);
 								updateBag();
 								mainChat = "猩猩給老闆 " + bananaSell + " 片香蕉葉！\n老闆給猩猩 " + bananaSell + " 個能量石！";
 								dealText.text = mainChat + "\n";
@@ -479,7 +608,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							if (shibaPrizeNow > 0)
 							{
 								diamondCounter += shibaPrizeNow;
-								sellAmoText.text = Std.string(bananaCounter) + "\n0";
+								sellAmoText.text = Std.string(bananaCounter) + "\n0\n" + Std.string(nftPrizeNow);
 								updateBag();
 								mainChat = "猩猩以 " + shibaInvest + " 買進狗狗幣\n以 " + shibaPrizeNow + " 賣出\n賺了"
 									+ FlxMath.roundDecimal(shibaPrizeNow - shibaInvest, 2) + "能量幣！\n";
@@ -487,10 +616,31 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								shibaInvest = 0;
 								shibaPrizeNow = 0;
 								shibaTimer.cancel();
-								notifTimer.cancel();
-								notifUi.visible = false;
+								if (shibaNotifTimer.active)
+									shibaNotifTimer.cancel();
+								shibaNotifUi.visible = false;
 								shibaWaveText.text = "+0";
+								shibaNotifText.text = "oui";
 								shibaWaveText.color = FlxColor.GREEN;
+							}
+						case "nft":
+							if (nftPrizeNow > 0)
+							{
+								diamondCounter += nftPrizeNow;
+								sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow) + "\n0";
+								updateBag();
+								mainChat = "猩猩以 " + nftInvest + " 買進nft\n以 " + nftPrizeNow + " 賣出\n賺了" + FlxMath.roundDecimal(nftPrizeNow - nftInvest, 2)
+									+ "能量幣！\n";
+								nftWave = 0;
+								nftInvest = 0;
+								nftPrizeNow = 0;
+								nftTimer.cancel();
+								if (nftNotifTimer.active)
+									nftNotifTimer.cancel();
+								nftNotifUi.visible = false;
+								nftWaveText.text = "+0";
+								nftNotifText.text = "oui";
+								nftWaveText.color = FlxColor.GREEN;
 							}
 						case "money":
 							name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";

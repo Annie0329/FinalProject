@@ -37,6 +37,7 @@ class PlayState extends FlxState
 	var combatHud:CombatHUD;
 	var enemyFlicker:Bool = false;
 	var shibaYes:Bool = false;
+	var nftYes:Bool = false;
 
 	// NPC
 	var npc:FlxTypedGroup<NPC>;
@@ -329,7 +330,10 @@ class PlayState extends FlxState
 		bag.updateBag();
 
 		if (bag.shibaInvest != 0)
+		{
+			bag.firstShiba = true;
 			bag.countShibaWave();
+		}
 		else
 			bag.shibaUi.visible = false;
 
@@ -434,7 +438,7 @@ class PlayState extends FlxState
 				case shibaCoin:
 					if (combatHud.outcome == WIN)
 					{
-						name = ":D:你買了狗狗幣啊！你可以在左邊看到你買的狗狗幣漲或跌了幾塊。:D:隨時注意出現的新聞快報！它會影響到你狗狗幣的漲跌。";
+						name = ":D:你買了狗狗幣啊！你可以在左邊看到你買的狗狗幣漲或跌了多少。:D:隨時注意出現的新聞快報！它會影響到你狗狗幣的漲跌。";
 						bag.shibaInvest += combatHud.investNum;
 						bag.shibaWave += bag.shibaInvest;
 						if (!bag.shibaUi.visible)
@@ -454,9 +458,16 @@ class PlayState extends FlxState
 
 				case nft:
 					if (combatHud.outcome == WIN)
-						name = ":D:你真幸運，買到時下流行的NFT花樣。";
-					else if (combatHud.outcome == LOSE)
-						name = ":D:沒有關係，流行趨勢本來就是瞬息萬變的。";
+					{
+						name = ":D:你買了NFT啊！你可以在左邊看到你買的NFT漲或跌了多少。";
+						bag.nftInvest += combatHud.investNum;
+						bag.nftWave += bag.nftInvest;
+						if (!bag.nftUi.visible)
+						{
+							bag.nftUi.visible = true;
+							nftYes = true;
+						}
+					}
 					else
 						name = ":D:NFT還不錯，下次試試看吧。";
 
@@ -612,6 +623,12 @@ class PlayState extends FlxState
 			{
 				bag.countShibaWave();
 				shibaYes = false;
+			}
+			// 啟動nft計時器
+			if (nftYes)
+			{
+				bag.countNftWave();
+				nftYes = false;
 			}
 			// 有錢就開礦場門
 			if (minerOpen)
