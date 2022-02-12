@@ -132,6 +132,16 @@ class PlayState extends FlxState
 		npc = new FlxTypedGroup<NPC>();
 		add(npc);
 
+		// 敵人
+		enemies = new FlxTypedGroup<Enemy>();
+		add(enemies);
+
+		// 玩家
+		player = new Player();
+		add(player);
+
+		// 驚嘆號
+		FlxG.camera.follow(player, TOPDOWN, 1);
 		dogeYes = new FlxSprite().makeGraphic(40, 40, FlxColor.BROWN);
 		dogeYes.visible = false;
 		add(dogeYes);
@@ -147,18 +157,10 @@ class PlayState extends FlxState
 		sbYes = new FlxSprite().makeGraphic(40, 40, FlxColor.BLUE);
 		sbYes.visible = false;
 		add(sbYes);
+
 		mingYes = new FlxSprite().makeGraphic(40, 40, FlxColor.BLUE);
 		mingYes.visible = false;
 		add(mingYes);
-
-		// 敵人
-		enemies = new FlxTypedGroup<Enemy>();
-		add(enemies);
-
-		// 玩家
-		player = new Player();
-		add(player);
-		FlxG.camera.follow(player, TOPDOWN, 1);
 
 		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
@@ -296,8 +298,14 @@ class PlayState extends FlxState
 		// 能量幣和香蕉數目
 		save.data.bananaValue = bag.bananaCounter;
 		save.data.diamondValue = bag.diamondCounter;
+
 		save.data.shibaInvest = bag.shibaInvest;
 		save.data.shibaWave = bag.shibaWave;
+
+		save.data.nftInvest = bag.nftInvest;
+		save.data.nftWave = bag.nftWave;
+		save.data.nftStyle = combatHud.nftStyleNum;
+
 		save.data.bananaCoin = bag.bananaCoin;
 		save.data.appleCoin = bag.appleCoin;
 
@@ -323,19 +331,37 @@ class PlayState extends FlxState
 		bag.diamondUi.visible = true;
 		bag.bananaCounter = save.data.bananaValue;
 		bag.diamondCounter = save.data.diamondValue;
+
 		bag.shibaInvest = save.data.shibaInvest;
 		bag.shibaWave = save.data.shibaWave;
+
+		bag.nftInvest = save.data.nftInvest;
+		bag.nftWave = save.data.nftWave;
+		combatHud.nftStyleNum = save.data.nftStyle;
+
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
 
+		// 狗狗幣
 		if (bag.shibaInvest != 0)
 		{
 			bag.firstShiba = true;
+			bag.shibaNotifText.text = "done";
 			bag.countShibaWave();
 		}
 		else
 			bag.shibaUi.visible = false;
+
+		// nft
+		if (bag.nftInvest != 0)
+		{
+			bag.firstNft = true;
+			bag.nftNotifText.text = "done";
+			bag.countNftWave(combatHud.nftStyleNum);
+		}
+		else
+			bag.nftUi.visible = false;
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
@@ -359,7 +385,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(bag.nftNotifText.text); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -462,6 +488,7 @@ class PlayState extends FlxState
 						name = ":D:你買了NFT啊！你可以在左邊看到你買的NFT漲或跌了多少。";
 						bag.nftInvest += combatHud.investNum;
 						bag.nftWave += bag.nftInvest;
+						bag.nft.animation.frameIndex = combatHud.nftStyleNum;
 						if (!bag.nftUi.visible)
 						{
 							bag.nftUi.visible = true;
@@ -627,7 +654,7 @@ class PlayState extends FlxState
 			// 啟動nft計時器
 			if (nftYes)
 			{
-				bag.countNftWave();
+				bag.countNftWave(combatHud.nftStyleNum);
 				nftYes = false;
 			}
 			// 有錢就開礦場門

@@ -21,7 +21,7 @@ class GameOverState extends FlxState
 
 	override public function create()
 	{
-		gameOverTitle = new FlxText(0, 0, "GameOver", 44);
+		gameOverTitle = new FlxText(0, 0,0, "GameOver", 44);
 		gameOverTitle.screenCenter(FlxAxes.X);
 		add(gameOverTitle);
 
@@ -29,11 +29,11 @@ class GameOverState extends FlxState
 		continueText.screenCenter(FlxAxes.X);
 		add(continueText);
 
-		yes = new FlxText(FlxG.width / 4, FlxG.height / 4 * 3, "YES", 20);
+		yes = new FlxText(FlxG.width / 4, FlxG.height / 4 * 3,0, "YES", 20);
 		add(yes);
 		yes.visible = false;
 
-		no = new FlxText(yes.x + FlxG.width / 2, yes.y, "NO", 20);
+		no = new FlxText(yes.x + FlxG.width / 2, yes.y,0, "NO", 20);
 		add(no);
 		no.visible = false;
 

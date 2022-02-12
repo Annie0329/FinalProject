@@ -57,7 +57,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	// NFT
 	var nftStyle:FlxSprite;
-	var nftStyleNum:Int = 0;
+
+	public var nftStyleNum:Int = 0;
 
 	// 槓桿
 	var rodTalk:Bool = false;
@@ -134,12 +135,12 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		nftStyle.visible = false;
 
 		// 敵人名字
-		enemyNameText = new FlxText(70, 20, "enemyName", 36);
+		enemyNameText = new FlxText(70, 20, 0, "enemyName", 36);
 		enemyNameText.font = AssetPaths.silver__ttf;
 		add(enemyNameText);
 
 		// 錢的數量
-		diamondText = new FlxText(550, 20, "0", 20);
+		diamondText = new FlxText(550, 20, 0, "0", 20);
 		add(diamondText);
 
 		// 那隻箭頭
@@ -424,7 +425,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					state++;
 
 					diamond -= investNum;
-					name = ":謝謝你！如果想賣掉nft的話可以去商店喔。";
+					name = ":謝謝你！如果想賣掉NFT的話可以去商店喔。";
 					outcome = WIN;
 
 					combatText.show(name, false);
@@ -618,6 +619,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					rodNum++;
 				rodNumText.text = Std.string(rodNum);
 			}
+			// nft花樣選擇
 			else if (nftStyle.visible)
 			{
 				if (left)

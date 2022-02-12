@@ -56,7 +56,7 @@ class MenuState extends FlxState
 		aboutText.visible = false;
 
 		// 除錯ufo
-		ufo = new FlxText(0, 0, "ufo", 20);
+		ufo = new FlxText(0, 0,0, "ufo", 20);
 		ufo.borderColor = FlxColor.BLACK;
 		ufo.borderSize = 1;
 		ufo.color = FlxColor.BLACK;

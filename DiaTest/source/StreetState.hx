@@ -295,6 +295,36 @@ class StreetState extends FlxState
 		}
 	}
 
+	// 存檔啦
+	function saveFile()
+	{
+		// 一樣的
+		// 能量幣和香蕉數目
+		save.data.bananaValue = bag.bananaCounter;
+		save.data.diamondValue = bag.diamondCounter;
+
+		save.data.shibaInvest = bag.shibaInvest;
+		save.data.shibaWave = bag.shibaWave;
+
+		save.data.nftInvest = bag.nftInvest;
+		save.data.nftWave = bag.nftWave;
+		save.data.nftStyle = combatHud.nftStyleNum;
+
+		save.data.bananaCoin = bag.bananaCoin;
+		save.data.appleCoin = bag.appleCoin;
+
+		// 跟誰講過話
+		save.data.saveStoneIntro = dia.saveStoneIntro;
+
+		// 玩家位置
+		save.data.playerPos = player.getPosition();
+
+		// 不一樣的
+		save.data.place = "street";
+		save.data.touchStarter = combatHud.touchStarter;
+		save.flush();
+	}
+
 	// 讀檔啦
 	function loadFile()
 	{
@@ -303,19 +333,38 @@ class StreetState extends FlxState
 		bag.diamondUi.visible = true;
 		bag.bananaCounter = save.data.bananaValue;
 		bag.diamondCounter = save.data.diamondValue;
+
 		bag.shibaInvest = save.data.shibaInvest;
 		bag.shibaWave = save.data.shibaWave;
+
+		bag.nftInvest = save.data.nftInvest;
+		bag.nftWave = save.data.nftWave;
+		combatHud.nftStyleNum = save.data.nftStyle;
+
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
 
+		// 狗狗幣
 		if (bag.shibaInvest != 0)
 		{
 			bag.firstShiba = true;
+			bag.shibaNotifText.text = "done";
 			bag.countShibaWave();
 		}
 		else
 			bag.shibaUi.visible = false;
+
+		// nft
+		if (bag.nftInvest != 0)
+		{
+			bag.firstNft = true;
+			bag.nftNotifText.text = "done";
+			bag.countNftWave(combatHud.nftStyleNum);
+		}
+		else
+			bag.nftUi.visible = false;
+
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
 		// 不一樣的
@@ -331,29 +380,6 @@ class StreetState extends FlxState
 				saveFile();
 			}
 		}
-	}
-
-	// 存檔啦
-	function saveFile()
-	{
-		// 一樣的
-		// 能量幣和香蕉數目
-		save.data.bananaValue = bag.bananaCounter;
-		save.data.diamondValue = bag.diamondCounter;
-		save.data.shibaInvest = bag.shibaInvest;
-		save.data.shibaWave = bag.shibaWave;
-		save.data.bananaCoin = bag.bananaCoin;
-		save.data.appleCoin = bag.appleCoin;
-		// 跟誰講過話
-		save.data.saveStoneIntro = dia.saveStoneIntro;
-
-		// 玩家位置
-		save.data.playerPos = player.getPosition();
-
-		// 不一樣的
-		save.data.place = "street";
-		save.data.touchStarter = combatHud.touchStarter;
-		save.flush();
 	}
 
 	// 更新啦
