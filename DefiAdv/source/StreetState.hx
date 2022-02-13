@@ -461,7 +461,7 @@ class StreetState extends FlxState
 	{
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
-			player.setPosition(house.x + (house.width - player.width) / 2, house.y + houseDis - 40);
+			player.setPosition(house.x + (house.width - player.width) / 2, house.y + houseDis - 120);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 			if (house == house1 && !p1Talk)
 			{
@@ -492,7 +492,7 @@ class StreetState extends FlxState
 	{
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
-			player.setPosition(houseDoor.x + (houseDoor.width - player.width) / 2, houseDoor.y - houseDis + 80);
+			player.setPosition(houseDoor.x + (houseDoor.width - player.width) / 2, houseDoor.y - houseDis + 240);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 		});
 	}
