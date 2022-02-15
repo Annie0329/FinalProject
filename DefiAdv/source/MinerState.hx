@@ -463,6 +463,7 @@ class MinerState extends FlxState
 				stoneCounterText.visible = false;
 				stoneCounter = 0;
 				stoneCounterText.text = Std.string(stoneCounter);
+				timer.cancel();
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
 			});
 		}

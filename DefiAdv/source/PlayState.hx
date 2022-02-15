@@ -142,23 +142,23 @@ class PlayState extends FlxState
 
 		// 驚嘆號
 		FlxG.camera.follow(player, TOPDOWN, 1);
-		dogeYes = new FlxSprite().makeGraphic(120, 120, FlxColor.BROWN);
+		dogeYes = new FlxSprite(AssetPaths.exclamDoge__png);
 		dogeYes.visible = false;
 		add(dogeYes);
 
-		srYes = new FlxSprite().makeGraphic(120, 120, FlxColor.RED);
+		srYes = new FlxSprite(AssetPaths.exclam__png);
 		srYes.visible = false;
 		add(srYes);
 
-		sgYes = new FlxSprite().makeGraphic(120, 120, FlxColor.GREEN);
+		sgYes = new FlxSprite(AssetPaths.exclam__png);
 		sgYes.visible = false;
 		add(sgYes);
 
-		sbYes = new FlxSprite().makeGraphic(120, 120, FlxColor.BLUE);
+		sbYes = new FlxSprite(AssetPaths.exclam__png);
 		sbYes.visible = false;
 		add(sbYes);
 
-		mingYes = new FlxSprite().makeGraphic(120, 120, FlxColor.BLUE);
+		mingYes = new FlxSprite(AssetPaths.exclam__png);
 		mingYes.visible = false;
 		add(mingYes);
 
