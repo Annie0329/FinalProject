@@ -52,7 +52,7 @@ class Player extends FlxSprite
 		if (left && right)
 			left = right = false;
 
-		if (up || down || left || right)
+		if ((up || down || left || right) && animation.frameIndex != 11)
 		{
 			var newAngle:Float = 0;
 

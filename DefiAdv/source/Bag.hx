@@ -196,11 +196,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		nftUi.visible = false;
 
 		// 狗狗幣通知
-		shibaNotif = new FlxSprite(1200, 30).makeGraphic(120, 120, FlxColor.RED);
+		shibaNotif = new FlxSprite(720, 30).loadGraphic(AssetPaths.notfi__png);
 		shibaNotifUi.add(shibaNotif);
 
-		shibaNotifText = new FlxText(shibaNotif.x, shibaNotif.y, 0, "oui", 84);
-		shibaNotifText.color = 0xff2D5925;
+		shibaNotifText = new FlxText(shibaNotif.x + 100, shibaNotif.y + 15, 0, "oui", 84);
+		shibaNotifText.color = 0xff933D3D;
 		shibaNotifText.font = AssetPaths.silver__ttf;
 		shibaNotifUi.add(shibaNotifText);
 
@@ -209,11 +209,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shibaNotifUi.visible = false;
 
 		// nft通知
-		nftNotif = new FlxSprite(shibaNotif.x, shibaNotif.y + shibaNotif.height + 30).makeGraphic(120, 120, FlxColor.WHITE);
+		nftNotif = new FlxSprite(shibaNotif.x, shibaNotif.y + shibaNotif.height + 15).loadGraphic(AssetPaths.notfi__png);
 		nftNotifUi.add(nftNotif);
 
-		nftNotifText = new FlxText(nftNotif.x, nftNotif.y, 0, "oui", 84);
-		nftNotifText.color = 0xff2D5925;
+		nftNotifText = new FlxText(nftNotif.x + 100, nftNotif.y + 15, 0, "oui", 84);
+		nftNotifText.color = 0xff933D3D;
 		nftNotifText.font = AssetPaths.silver__ttf;
 		nftNotifUi.add(nftNotifText);
 
@@ -378,7 +378,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		nftTimer = new FlxTimer().start(2, function(timer:FlxTimer)
 		{
 			// 在第一則新聞的影響範圍內就跌
-			if (nftNotifText.text == "NFT跌！")
+			if (nftNotifText.text == "阿明賣掉了他的猩猩NFT！")
 				if (nftWave - nftInvest >= 0.01)
 					nftWave *= 0.01 * (FlxG.random.int(20, 100));
 				else
@@ -417,7 +417,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			nftNotifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
 			{
 				nftNotifUi.visible = true;
-				nftNotifText.text = "nft跌！";
+				nftNotifText.text = "阿明賣掉了他的猩猩NFT！";
 				nftNotifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
 				{
 					nftNotifUi.visible = false;
