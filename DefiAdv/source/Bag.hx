@@ -158,10 +158,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shopUi.visible = false;
 
 		// 能量幣組
-		diamondIcon = new FlxSprite(30, 30).loadGraphic(AssetPaths.diamondIcon__png);
+		diamondIcon = new FlxSprite(21, 21).loadGraphic(AssetPaths.diamondIcon__png);
 		diamondUi.add(diamondIcon);
 
-		diamondText = new FlxText(diamondIcon.x + 135, diamondIcon.y + diamondIcon.height / 2 - 39, 0, "200", 60);
+		diamondText = new FlxText(diamondIcon.x + 100, diamondIcon.y + diamondIcon.height / 2 - 39, 0, "200", 60);
 		diamondText.color = 0xff2D5925;
 		diamondUi.add(diamondText);
 
@@ -171,10 +171,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 		// 買幣組
 		// 狗狗幣
-		shiba = new FlxSprite(diamondIcon.x, diamondIcon.y + diamondIcon.height + 30, AssetPaths.shibaCoinIcon__png);
+		shiba = new FlxSprite(diamondIcon.x + diamondIcon.width + 30, 15, AssetPaths.shibaCoinIcon__png);
 		shibaUi.add(shiba);
 
-		shibaWaveText = new FlxText(diamondText.x, shiba.y + shiba.height / 2 - 33, 0, "+0", 48);
+		shibaWaveText = new FlxText(shiba.x + 120, shiba.y + shiba.height / 2 - 33, 0, "+0", 44);
 		shibaWaveText.color = FlxColor.GREEN;
 		shibaUi.add(shibaWaveText);
 
@@ -182,21 +182,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shibaUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 		shibaUi.visible = false;
 
-		// nft
-		nft = new FlxSprite(diamondIcon.x, shiba.y + shiba.height + 30).loadGraphic(AssetPaths.nftIcon__png, true, 366, 123);
-		nft.animation.frameIndex = 0;
-		nftUi.add(nft);
-
-		nftWaveText = new FlxText(diamondText.x, nft.y + nft.height / 2 - 33, 0, "+0", 48);
-		nftWaveText.color = FlxColor.GREEN;
-		nftUi.add(nftWaveText);
-
-		add(nftUi);
-		nftUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
-		nftUi.visible = false;
-
 		// 狗狗幣通知
-		shibaNotif = new FlxSprite(720, 30).loadGraphic(AssetPaths.notfi__png);
+		shibaNotif = new FlxSprite(shiba.x + shiba.width + 30, 21).loadGraphic(AssetPaths.notfi__png);
 		shibaNotifUi.add(shibaNotif);
 
 		shibaNotifText = new FlxText(shibaNotif.x + 100, shibaNotif.y + 15, 0, "oui", 84);
@@ -207,9 +194,21 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		add(shibaNotifUi);
 		shibaNotifUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
 		shibaNotifUi.visible = false;
+		// nft
+		nft = new FlxSprite(shiba.x, shiba.y + shiba.height + 6).loadGraphic(AssetPaths.nftIcon__png, true, 308, 108);
+		nft.animation.frameIndex = 0;
+		nftUi.add(nft);
+
+		nftWaveText = new FlxText(nft.x + 120, nft.y + nft.height / 2 - 33, 0, "+0", 44);
+		nftWaveText.color = FlxColor.GREEN;
+		nftUi.add(nftWaveText);
+
+		add(nftUi);
+		nftUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
+		nftUi.visible = false;
 
 		// nft通知
-		nftNotif = new FlxSprite(shibaNotif.x, shibaNotif.y + shibaNotif.height + 15).loadGraphic(AssetPaths.notfi__png);
+		nftNotif = new FlxSprite(shibaNotif.x, shibaNotif.y + shibaNotif.height + 24).loadGraphic(AssetPaths.notfi__png);
 		nftNotifUi.add(nftNotif);
 
 		nftNotifText = new FlxText(nftNotif.x + 100, nftNotif.y + 15, 0, "oui", 84);

@@ -146,7 +146,7 @@ class MinerState extends FlxState
 		// 玩家
 		player = new Player();
 		add(player);
-		FlxG.camera.follow(player, TOPDOWN, 1);
+		FlxG.camera.follow(player, TOPDOWN_TIGHT, 1);
 
 		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
@@ -351,7 +351,8 @@ class MinerState extends FlxState
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 			else if (save.data.place == "monument")
 			{
-				player.setPosition(405, 5940);
+				// minerDoor.x + 189,minerDoor.y - 60
+				player.setPosition(429, 6060);
 				if (!minerGaveMoney)
 				{
 					minerGaveMoney = true;
@@ -367,7 +368,7 @@ class MinerState extends FlxState
 			}
 			else if (save.data.place == "street")
 			{
-				player.setPosition(4605, 5940);
+				player.setPosition(4629, 6060);
 				saveFile();
 			}
 		}

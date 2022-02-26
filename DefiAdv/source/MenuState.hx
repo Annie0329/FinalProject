@@ -31,7 +31,7 @@ class MenuState extends FlxState
 	override public function create()
 	{
 		// 主選單
-		menuBackground = new FlxSprite(0, 0, AssetPaths.menuMain__png);
+		menuBackground = new FlxSprite(0, 0, AssetPaths.menuMainNew__png);
 		add(menuBackground);
 
 		// 箭頭
@@ -67,10 +67,18 @@ class MenuState extends FlxState
 		save = new FlxSave();
 		save.bind("DefiAdv");
 
+		// 有存檔紀錄
 		if (save.data.bananaValue != null)
+		{
 			pointer.y = pointerY;
+			menuBackground.loadGraphic(AssetPaths.menuMain__png);
+		}
 		else
+		{
 			pointer.y = pointerY + pointerBar;
+			menuBackground.loadGraphic(AssetPaths.menuMainNew__png);
+		}
+
 		if (save.data.place != null)
 		{
 			this.save.data.place = save.data.place;

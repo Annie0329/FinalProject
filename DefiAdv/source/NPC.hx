@@ -11,6 +11,7 @@ enum NpcType
 	sbRed;
 	sbBlue;
 	sbGreen;
+	sbBlack;
 	monument;
 	lake;
 	saveStone;
@@ -55,11 +56,12 @@ class NPC extends FlxSprite
 				loadGraphic(AssetPaths.sbBlue__png);
 			case sbGreen:
 				loadGraphic(AssetPaths.sbGreen__png);
-
+			case sbBlack:
+				loadGraphic(AssetPaths.sbBlack__png);
 			case monument:
 				loadGraphic(AssetPaths.monument__png);
 			case lake:
-				makeGraphic(80, 160, FlxColor.TRANSPARENT);
+				makeGraphic(240, 480, FlxColor.TRANSPARENT);
 			case saveStone:
 				loadGraphic(AssetPaths.saveStone__png, true, 240, 240);
 				animation.add("shine", [0, 1, 2, 3, 4, 5], 6, true);

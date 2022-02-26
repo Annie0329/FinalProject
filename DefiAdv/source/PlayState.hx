@@ -46,6 +46,7 @@ class PlayState extends FlxState
 	var srYes:FlxSprite;
 	var sgYes:FlxSprite;
 	var sbYes:FlxSprite;
+	var sblackYes:FlxSprite;
 	var mingYes:FlxSprite;
 
 	var shop:FlxSprite;
@@ -139,9 +140,9 @@ class PlayState extends FlxState
 		// 玩家
 		player = new Player();
 		add(player);
+		FlxG.camera.follow(player, TOPDOWN_TIGHT, 1);
 
 		// 驚嘆號
-		FlxG.camera.follow(player, TOPDOWN, 1);
 		dogeYes = new FlxSprite(AssetPaths.exclamDoge__png);
 		dogeYes.visible = false;
 		add(dogeYes);
@@ -161,6 +162,10 @@ class PlayState extends FlxState
 		mingYes = new FlxSprite(AssetPaths.exclam__png);
 		mingYes.visible = false;
 		add(mingYes);
+
+		sblackYes = new FlxSprite(AssetPaths.exclam__png);
+		sblackYes.visible = false;
+		add(sblackYes);
 
 		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
@@ -251,6 +256,10 @@ class PlayState extends FlxState
 				sbYes.setPosition(x, y);
 			case "mingYes":
 				mingYes.setPosition(x, y);
+			case "sbBlack":
+				npc.add(new NPC(x, y, sbBlack));
+			case "sblackYes":
+				sblackYes.setPosition(x, y);
 			// 敵人
 			case "shibaCoin":
 				enemies.add(new Enemy(x, y, shibaCoin));
@@ -408,12 +417,13 @@ class PlayState extends FlxState
 			sbYes.visible = true;
 			mingYes.visible = true;
 		}
+		// 跟島民講完話了
 		if (dia.talkMiss && !srYes.visible && !sgYes.visible && !sbYes.visible && !mingYes.visible && !dia.talkDone)
 		{
 			dia.talkDone = true;
-			dogeYes.visible = true;
+			sblackYes.visible = true;
 		}
-		if (dia.talkDone && !dogeYes.visible)
+		if (dia.talkDone && !sblackYes.visible)
 			treeBar.kill();
 
 		updateInCombat();
@@ -612,6 +622,8 @@ class PlayState extends FlxState
 				sbYes.visible = false;
 			if (npcType == ming && mingYes.visible)
 				mingYes.visible = false;
+			if (npcType == sbBlack && sblackYes.visible)
+				sblackYes.visible = false;
 			// 存檔點
 			if (npcType == saveStone)
 				saveFile();

@@ -161,7 +161,7 @@ class StreetState extends FlxState
 		// 玩家
 		player = new Player();
 		add(player);
-		FlxG.camera.follow(player, TOPDOWN, 1);
+		FlxG.camera.follow(player, TOPDOWN_TIGHT, 1);
 
 		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");

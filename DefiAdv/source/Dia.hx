@@ -162,6 +162,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaSbGreen__png;
 			case "SB":
 				profilePic = AssetPaths.diaSbBlue__png;
+			case "K":
+				profilePic = AssetPaths.diaSbBlack__png;
 		}
 
 		background.loadGraphic(profilePic);
@@ -255,7 +257,17 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					name = ":SG:狗狗幣長得真恐怖。";
 					txt = false;
 				}
-
+			case sbBlack:
+				if (talkDone)
+				{
+					name = AssetPaths.kingTalk__txt;
+					txt = true;
+				}
+				else
+				{
+					name = ":K:去找其他島民們聊天吧！現在的你還沒有資格跟我說話。";
+					txt = false;
+				}
 			case monument:
 				name = ":N:裡面似乎有毀壞的記帳本。";
 				txt = false;
