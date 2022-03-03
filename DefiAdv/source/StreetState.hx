@@ -41,6 +41,7 @@ class StreetState extends FlxState
 	var minerDoor:FlxSprite;
 	var homeDoor:FlxSprite;
 	var shop:FlxSprite;
+	var airdrop:FlxSprite;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -71,6 +72,7 @@ class StreetState extends FlxState
 
 	// 有沒有投資APESTARTER
 	var starterYes:Bool = false;
+	var firstLoan:Bool = false;
 
 	// 加好加滿
 	override public function create()
@@ -157,6 +159,10 @@ class StreetState extends FlxState
 
 		npc = new FlxTypedGroup<NPC>();
 		add(npc);
+
+		airdrop = new FlxSprite().makeGraphic(240, 240, FlxColor.CYAN);
+		airdrop.visible = false;
+		add(airdrop);
 
 		// 玩家
 		player = new Player();
@@ -285,6 +291,8 @@ class StreetState extends FlxState
 				enemies.add(new Enemy(x, y, rod));
 			case "starter":
 				enemies.add(new Enemy(x, y, starter));
+			case "airdrop":
+				airdrop.setPosition(x, y);
 			case "sea":
 				var s = new FlxSprite(x, y).loadGraphic(AssetPaths.sea__png, true, 480, 240);
 				s.flipX = true;
@@ -399,6 +407,19 @@ class StreetState extends FlxState
 		{
 			ufo.visible = true;
 		}
+		// 開始借貸算利息
+		if (dia.loan && !firstLoan && !dia.visible)
+		{
+			firstLoan = true;
+			airdrop.visible = true;
+			dia.loan = false;
+			new FlxTimer().start(10, function(timer:FlxTimer)
+			{
+				bag.diamondCounter += dia.loanGain * dia.interest;
+				bag.diamondText.text = Std.string(FlxMath.roundDecimal(bag.diamondCounter, 2));
+				bag.updateBag();
+			}, 0);
+		}
 
 		// 碰撞爆
 		FlxG.overlap(player, ground);
@@ -423,6 +444,7 @@ class StreetState extends FlxState
 		FlxG.collide(player, house4Door, houseOut);
 
 		FlxG.collide(player, enemies, playerTouchEnemy);
+		FlxG.overlap(player, airdrop, airdropMoney);
 
 		FlxG.collide(enemies, walls);
 		FlxG.collide(enemies, road);
@@ -561,6 +583,21 @@ class StreetState extends FlxState
 			txt = false;
 			playerUpDown();
 			dia.show(name, txt);
+		}
+	}
+
+	// 接收空投
+	function airdropMoney(player:Player, airdrop:FlxSprite)
+	{
+		if (airdrop.visible)
+		{
+			airdrop.kill();
+			name = ":N:你得到了5000新幣！";
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+			bag.airCoin = 5000;
+			bag.airCoinText.text = Std.string(bag.airCoin);
 		}
 	}
 

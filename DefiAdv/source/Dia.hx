@@ -50,8 +50,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var bcCoinIn:Float = 10;
 
 	// 蘋果換能量
-	var ack = 800;
-	var acAppleCoinIn:Int = 40; // 機器裡有多少APS，蘋果就是APS
+	var ack = 1000;
+	var acAppleCoinIn:Int = 50; // 機器裡有多少APS，蘋果就是APS
 	var acCoinIn:Float = 20;
 
 	// 能量換蘋果
@@ -66,9 +66,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var bananaPrize:Int = 10;
 
 	// 借貸
-	var interest:Float = 0.01;
-	var loan:Bool = false;
-	var loanGain:Float = 0;
+	public var interest:Float = 0.01;
+	public var loanGain:Float = 0;
+	public var loan:Bool = false;
 
 	public var diamond:Float;
 
@@ -152,7 +152,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaSpartan__png;
 			case "L":
 				profilePic = AssetPaths.diaLake__png;
-			case "N", "P1", "P2", "P3":
+			case "N":
 				profilePic = AssetPaths.diaNull__png;
 			case "M":
 				profilePic = AssetPaths.diaMing__png;
@@ -164,6 +164,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaSbBlue__png;
 			case "K":
 				profilePic = AssetPaths.diaSbBlack__png;
+			case "P1":
+				profilePic = AssetPaths.diaP1__png;
+			case "P2":
+				profilePic = AssetPaths.diaP2__png;
+			case "P3":
+				profilePic = AssetPaths.diaP3__png;
 		}
 
 		background.loadGraphic(profilePic);
@@ -412,7 +418,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					coinOut -= 10;
 				if (right && coinOut / 10 != Std.int(appleCoin / 10))
 					coinOut += 10;
-				machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 2);
+				machGain = FlxMath.roundDecimal(coinOut * (acCoinIn / acAppleCoinIn),
+					2); // FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 2);
 				coinText.text = '$coinOut  APS幣換 $machGain 能量幣';
 			}
 			else if (npcType == p1CoToApMach)
@@ -544,13 +551,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					if (!loan)
 					{
 						loan = true;
-
-						new FlxTimer().start(10, function(timer:FlxTimer)
-						{
-							diamond += loanGain * interest;
-							diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
-							updateDiamond = true;
-						}, 0);
 					}
 				}
 				coinOut = 10;

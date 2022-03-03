@@ -48,6 +48,7 @@ class PlayState extends FlxState
 	var sbYes:FlxSprite;
 	var sblackYes:FlxSprite;
 	var mingYes:FlxSprite;
+	var stoneYes:FlxSprite;
 
 	var shop:FlxSprite;
 	var minerDoor:FlxSprite;
@@ -166,6 +167,9 @@ class PlayState extends FlxState
 		sblackYes = new FlxSprite(AssetPaths.exclam__png);
 		sblackYes.visible = false;
 		add(sblackYes);
+
+		stoneYes = new FlxSprite(AssetPaths.exclamDoge__png);
+		add(stoneYes);
 
 		// 地圖在前面的物件
 		through = map.loadTilemap(AssetPaths.mtSmall__png, "through");
@@ -292,6 +296,9 @@ class PlayState extends FlxState
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
 
+			case "stoneYes":
+				stoneYes.setPosition(x + 60, y);
+
 			case "minerDoor":
 				minerDoor.setPosition(x + 84, y);
 
@@ -373,6 +380,8 @@ class PlayState extends FlxState
 			bag.nftUi.visible = false;
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
+		if (dia.saveStoneIntro)
+			stoneYes.visible = false;
 
 		// 不一樣的
 		minerYes = save.data.minerYes;
@@ -626,7 +635,11 @@ class PlayState extends FlxState
 				sblackYes.visible = false;
 			// 存檔點
 			if (npcType == saveStone)
+			{
 				saveFile();
+				if (stoneYes.visible && !dia.saveStoneIntro)
+					stoneYes.visible = false;
+			}
 
 			dia.context(npcType);
 		}

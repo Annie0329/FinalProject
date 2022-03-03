@@ -565,7 +565,7 @@ class MinerState extends FlxState
 		if (stoneCounter >= stoneGoal)
 		{
 			var car = Std.int(stoneCounter / stoneGoal);
-			bag.diamondCounter += Std.int(car * 10);
+			bag.diamondCounter += Std.int(car * 50);
 			stoneCounter = stoneCounter % stoneGoal;
 			stoneCounterText.text = Std.string(stoneCounter);
 			stoneCounterText.color = FlxColor.BLACK;

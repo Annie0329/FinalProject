@@ -54,7 +54,7 @@ class WinState extends FlxState
 	// 如果按enter鍵就回選單
 	function updateEnter()
 	{
-		var enter = FlxG.keys.anyJustReleased([ENTER]);
+		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 		if (enter && winText.visible)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
