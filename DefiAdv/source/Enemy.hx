@@ -45,8 +45,8 @@ class Enemy extends FlxSprite
 	var idleTimer:Float;
 	var moveDirection:Float;
 
-	var enemiesStart:Int = 240;
-	var enemiesEnd:Int = 2760;
+	var enemyStart:Int = 240;
+	var enemyEnd:Int = 2760;
 
 	public var type(default, null):EnemyType;
 	public var seesPlayer:Bool;
@@ -123,14 +123,14 @@ class Enemy extends FlxSprite
 			switch (type)
 			{
 				case spartanMiner:
-					if (x == enemiesStart)
+					if (x == enemyStart)
 					{
-						FlxTween.tween(this, {x: enemiesEnd}, 3);
+						FlxTween.tween(this, {x: enemyEnd}, 3);
 						facing = RIGHT;
 					}
-					else if (x == enemiesEnd)
+					else if (x == enemyEnd)
 					{
-						FlxTween.tween(this, {x: enemiesStart}, 3);
+						FlxTween.tween(this, {x: enemyStart}, 3);
 						facing = LEFT;
 					}
 					animation.play("lrSpartan");

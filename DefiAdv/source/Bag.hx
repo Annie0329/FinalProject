@@ -53,7 +53,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var mainChat:String;
 	var bananaSell:Int = 0;
 	var buyCho:String = "香蕉葉 2 能量幣\n離開";
-	var sellCho:String = "香蕉葉 1 能量幣\n狗狗幣\nNFT\n新幣\n離開";
+	var sellCho:String = "香蕉葉 1 能量幣\n狗狗幣\nNFT\n新臺幣\n離開";
 	var chatCho:String = "為什麼要對著包包大吼大叫\n請問有分店嗎\n我忘記該怎麼操控遊戲了\n離開";
 
 	var pointer:Pointer;
@@ -61,7 +61,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var shopChoice(default, null):ShopChoice;
 	var mainChoices:Array<String> = ["buy", "sell", "chat", "exit"];
 	var buyChoices:Array<String> = ["leaf", "exit"];
-	var sellChoices:Array<String> = ["leaf", "shibaCoin", "nft", "airCoin", "exit"];
+	var sellChoices:Array<String> = ["leaf", "shibaCoin", "nft", "money", "exit"];
 	var chatChoices:Array<String> = ["yelling", "branch", "gameGuide", "exit"];
 
 	// 字
@@ -121,11 +121,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	public var appleCoinText:FlxText;
 	public var appleCoin:Float = 0;
 
-	// 空投幣
-	var airCoinIcon:FlxSprite;
+	// 空投幣(青蛙幣)
+	var dexCoinIcon:FlxSprite;
 
-	public var airCoinText:FlxText;
-	public var airCoin:Float = 0;
+	public var dexCoinText:FlxText;
+	public var dexCoin:Float = 0;
 
 	public function new()
 	{
@@ -257,13 +257,13 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bagUi.add(appleCoinText);
 
 		// 空投幣
-		airCoinIcon = new FlxSprite(bananaCounterIcon.x, 550, AssetPaths.appleCoinIcon__png);
-		bagUi.add(airCoinIcon);
+		dexCoinIcon = new FlxSprite(bananaCounterIcon.x, 550, AssetPaths.dexCoinIcon__png);
+		bagUi.add(dexCoinIcon);
 
-		airCoinText = new FlxText(airCoinIcon.x - 90, airCoinIcon.y + airCoinIcon.height, 318, "0", 48);
-		airCoinText.color = 0xff2D5925;
-		airCoinText.alignment = CENTER;
-		bagUi.add(airCoinText);
+		dexCoinText = new FlxText(dexCoinIcon.x - 90, dexCoinIcon.y + dexCoinIcon.height, 318, "0", 48);
+		dexCoinText.color = 0xff2D5925;
+		dexCoinText.alignment = CENTER;
+		bagUi.add(dexCoinText);
 
 		// 交易紀錄
 		dealText = new FlxText(495, 360, 0, "目前並無交易紀錄\n", 84, true);
@@ -298,6 +298,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		diamondText.text = Std.string(diamondCounter);
 		bananaCoinText.text = Std.string(FlxMath.roundDecimal(bananaCoin, 2));
 		appleCoinText.text = Std.string(FlxMath.roundDecimal(appleCoin, 2));
+		dexCoinText.text = Std.string(FlxMath.roundDecimal(dexCoin, 2));
 		if (diamondCounter < 0)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
@@ -391,13 +392,13 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		nftTimer = new FlxTimer().start(2, function(timer:FlxTimer)
 		{
 			// 在第一則新聞的影響範圍內就跌
-			if (nftNotifText.text == "阿明賣掉了他的猩猩NFT！")
+			if (nftNotifText.text == "大明星美蛙賣掉了他的猩猩NFT！")
 				if (nftWave - nftInvest >= 0.01)
 					nftWave *= 0.01 * (FlxG.random.int(20, 100));
 				else
 					nftWave = 0.01;
 			// 在第二則新聞的影響範圍內就漲
-			else if (nftNotifText.text == "小賈斯汀花129萬美元買無聊猿NFT！")
+			else if (nftNotifText.text == "小賈斯汀花129萬美元買猩猩NFT！")
 			{
 				nftWave *= (1 + 0.01 * (FlxG.random.int(1, 70)));
 			}
@@ -430,7 +431,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			nftNotifTimer = new FlxTimer().start(5, function(timer:FlxTimer)
 			{
 				nftNotifUi.visible = true;
-				nftNotifText.text = "阿明賣掉了他的猩猩NFT！";
+				nftNotifText.text = "大明星美蛙賣掉了他的猩猩NFT！";
 				nftNotifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
 				{
 					nftNotifUi.visible = false;
@@ -440,7 +441,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 					{
 						nftNotifUi.visible = true;
 						nftWave = nftInvest;
-						nftNotifText.text = "小賈斯汀花129萬美元買無聊猿NFT！";
+						nftNotifText.text = "小賈斯汀花129萬美元買猩猩NFT！";
 						nftNotifTimer = new FlxTimer().start(10, function(timer:FlxTimer)
 						{
 							nftNotifUi.visible = false;
@@ -498,8 +499,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				bananaCoinText.visible = true;
 				appleCoinIcon.visible = true;
 				appleCoinText.visible = true;
-				airCoinIcon.visible = true;
-				airCoinText.visible = true;
+				dexCoinIcon.visible = true;
+				dexCoinText.visible = true;
 				dealText.visible = false;
 			}
 			// 交易紀錄
@@ -512,8 +513,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				bananaCoinText.visible = false;
 				appleCoinIcon.visible = false;
 				appleCoinText.visible = false;
-				airCoinIcon.visible = false;
-				airCoinText.visible = false;
+				dexCoinIcon.visible = false;
+				dexCoinText.visible = false;
 				dealText.visible = true;
 			}
 		}
@@ -534,7 +535,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			+ "\n"
 			+ Std.string(nftPrizeNow)
 			+ "\n"
-			+ Std.string(airCoin);
+			+ Std.string(dexCoin);
 		sellAmoText.visible = false;
 
 		shibaUi.visible = false;
@@ -631,7 +632,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								diamondCounter += bananaCounter;
 								bananaSell = bananaCounter;
 								bananaCounter = 0;
-								sellAmoText.text = "0\n" + Std.string(shibaPrizeNow) + "\n" + Std.string(nftPrizeNow) + "\n" + Std.string(airCoin);
+								sellAmoText.text = "0\n" + Std.string(shibaPrizeNow) + "\n" + Std.string(nftPrizeNow) + "\n" + Std.string(dexCoin);
 								updateBag();
 								mainChat = "猩猩給老闆 " + bananaSell + " 片香蕉葉！\n老闆給猩猩 " + bananaSell + " 個能量石！";
 								dealText.text = mainChat + "\n";
@@ -640,7 +641,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							if (shibaPrizeNow > 0)
 							{
 								diamondCounter += shibaPrizeNow;
-								sellAmoText.text = Std.string(bananaCounter) + "\n0\n" + Std.string(nftPrizeNow) + "\n" + Std.string(airCoin);
+								sellAmoText.text = Std.string(bananaCounter) + "\n0\n" + Std.string(nftPrizeNow) + "\n" + Std.string(dexCoin);
 								updateBag();
 								mainChat = "猩猩以 " + shibaInvest + " 買進狗狗幣\n以 " + shibaPrizeNow + " 賣出\n賺了"
 									+ FlxMath.roundDecimal(shibaPrizeNow - shibaInvest, 2) + "能量幣！\n";
@@ -659,7 +660,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							if (nftPrizeNow > 0)
 							{
 								diamondCounter += nftPrizeNow;
-								sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow) + "\n0\n" + Std.string(airCoin);
+								sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow) + "\n0\n" + Std.string(dexCoin);
 								updateBag();
 								mainChat = "猩猩以 " + nftInvest + " 買進NFT\n以 " + nftPrizeNow + " 賣出\n賺了" + FlxMath.roundDecimal(nftPrizeNow - nftInvest, 2)
 									+ "能量幣！\n";
@@ -673,16 +674,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								nftWaveText.text = "+0";
 								nftNotifText.text = "oui";
 								nftWaveText.color = FlxColor.GREEN;
-							}
-						case "airCoin":
-							if (airCoin > 0)
-							{
-								diamondCounter += 250;
-								airCoin = 0;
-								airCoinText.text = "0";
-								sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow) + "\n" + Std.string(nftPrizeNow) + "\n0";
-								updateBag();
-								mainChat = "猩猩得到空投，賺了250能量幣！";
 							}
 						case "money":
 							name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";

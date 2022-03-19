@@ -19,6 +19,8 @@ class MinerState extends FlxState
 	// 玩家
 	var player:Player;
 	var bag:Bag;
+	var tip:Tip;
+	var title:Tip.TipText;
 
 	// 各關目標
 	var stoneGoal:Int = 5;
@@ -31,7 +33,7 @@ class MinerState extends FlxState
 	var talkYes:Bool = false;
 
 	// 敵人
-	var enemies:FlxTypedGroup<Enemy>;
+	var enemy:FlxTypedGroup<Enemy>;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
 	var enemyFlicker:Bool = false;
@@ -137,8 +139,8 @@ class MinerState extends FlxState
 		add(box);
 
 		// 敵人
-		enemies = new FlxTypedGroup<Enemy>();
-		add(enemies);
+		enemy = new FlxTypedGroup<Enemy>();
+		add(enemy);
 
 		npc = new FlxTypedGroup<NPC>();
 		add(npc);
@@ -156,6 +158,10 @@ class MinerState extends FlxState
 		// 包包介面
 		bag = new Bag();
 		add(bag);
+
+		// 小紙條
+		tip = new Tip();
+		add(tip);
 
 		// 打人介面
 		combatHud = new CombatHUD();
@@ -253,11 +259,11 @@ class MinerState extends FlxState
 				boxPos = box.y;
 
 			case "spartanMiner":
-				enemies.add(new Enemy(x, y, spartanMiner));
+				enemy.add(new Enemy(x, y, spartanMiner));
 
 			case "starter":
-				if (!combatHud.touchStarter)
-					enemies.add(new Enemy(x, y, starter));
+				if (!combatHud.buyStarter)
+					enemy.add(new Enemy(x, y, starter));
 
 			case "torch":
 				var t = new FlxSprite(x, y).loadGraphic(AssetPaths.torch__png, true, 120, 240);
@@ -296,7 +302,7 @@ class MinerState extends FlxState
 		save.data.stoneTextYes = dia.stoneTextYes;
 		save.data.minerGaveMoney = minerGaveMoney;
 		save.data.place = "miner";
-		save.data.touchStarter = combatHud.touchStarter;
+		save.data.buyStarter = combatHud.buyStarter;
 		save.flush();
 	}
 
@@ -344,7 +350,7 @@ class MinerState extends FlxState
 		// 不一樣的
 		dia.stoneTextYes = save.data.stoneTextYes;
 		minerGaveMoney = save.data.minerGaveMoney;
-		combatHud.touchStarter = save.data.touchStarter;
+		combatHud.buyStarter = save.data.buyStarter;
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "miner")
@@ -409,13 +415,13 @@ class MinerState extends FlxState
 
 		FlxG.overlap(player, stone, playerGotStone);
 		FlxG.collide(player, box, stoneInsideBox);
-		FlxG.collide(player, enemies, touchEnemy);
+		FlxG.collide(player, enemy, touchEnemy);
 
-		FlxG.collide(enemies, walls);
-		FlxG.collide(enemies, road);
-		FlxG.overlap(enemies, stone, enemyGotStone);
-		FlxG.collide(enemies);
-		FlxG.collide(enemies, npc);
+		FlxG.collide(enemy, walls);
+		FlxG.collide(enemy, road);
+		FlxG.overlap(enemy, stone, enemyGotStone);
+		FlxG.collide(enemy);
+		FlxG.collide(enemy, npc);
 
 		FlxG.collide(stone);
 		FlxG.collide(stone, walls);
@@ -516,8 +522,8 @@ class MinerState extends FlxState
 		{
 			inCombat = true;
 			player.active = false;
-			enemies.active = false;
-			combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, enemy);
+			enemy.active = false;
+			combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, bag.dexCoin, enemy);
 		}
 		else
 		{
@@ -550,6 +556,7 @@ class MinerState extends FlxState
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
 			bag.appleCoin = combatHud.appleCoin;
+			bag.dexCoin = combatHud.dexCoin;
 			bag.updateBag();
 			inCombat = false;
 
@@ -672,12 +679,12 @@ class MinerState extends FlxState
 		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
 		{
 			player.active = false;
-			enemies.active = false;
+			enemy.active = false;
 		}
 		else
 		{
 			player.active = true;
-			enemies.active = true;
+			enemy.active = true;
 		}
 
 		// 對話結束時要做什麼合集

@@ -1,6 +1,5 @@
 package;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 
@@ -25,6 +24,8 @@ enum NpcType
 	p1BaToCoMach;
 	p1CoToApMach;
 	p1ApToCoMach;
+	p1CoToDeMach;
+	p1DeToCoMach;
 	house2Sign;
 	p2;
 	p2Mach;
@@ -84,6 +85,10 @@ class NPC extends FlxSprite
 				loadGraphic(AssetPaths.p1CoToApMach__png);
 			case p1ApToCoMach:
 				loadGraphic(AssetPaths.p1ApToCoMach__png);
+			case p1CoToDeMach:
+				loadGraphic(AssetPaths.p1CoToDeMach__png);
+			case p1DeToCoMach:
+				loadGraphic(AssetPaths.p1DeToCoMach__png);
 
 			case house2Sign:
 				loadGraphic(AssetPaths.house2Sign__png);

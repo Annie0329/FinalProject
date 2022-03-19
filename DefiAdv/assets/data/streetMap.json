@@ -43,8 +43,8 @@
         {"name": "saveStone", "id": 28, "_eid": "31527380", "x": 3360, "y": 5880, "originX": 0, "originY": 0},
         {"name": "saveStone", "id": 29, "_eid": "31527380", "x": 6120, "y": 5880, "originX": 0, "originY": 0},
         {"name": "p1BaToCoMach", "id": 33, "_eid": "48206217", "x": 8640, "y": 5040, "originX": 0, "originY": 0},
-        {"name": "p1CoToApMach", "id": 34, "_eid": "57503652", "x": 9600, "y": 5040, "originX": 0, "originY": 0},
-        {"name": "p1ApToCoMach", "id": 35, "_eid": "57508009", "x": 9120, "y": 5040, "originX": 0, "originY": 0},
+        {"name": "p1CoToApMach", "id": 34, "_eid": "57503652", "x": 9840, "y": 5040, "originX": 0, "originY": 0},
+        {"name": "p1ApToCoMach", "id": 35, "_eid": "57508009", "x": 9600, "y": 5040, "originX": 0, "originY": 0},
         {"name": "p2Mach", "id": 36, "_eid": "54650494", "x": 3600, "y": 5040, "originX": 0, "originY": 0},
         {"name": "signDefi", "id": 38, "_eid": "23609013", "x": 240, "y": 2640, "originX": 0, "originY": 0},
         {"name": "signApple", "id": 39, "_eid": "71150238", "x": 480, "y": 2640, "originX": 0, "originY": 0},
@@ -69,7 +69,9 @@
         {"name": "mathChart", "id": 58, "_eid": "27238375", "x": 8880, "y": 4920, "originX": 0, "originY": 0},
         {"name": "sea", "id": 59, "_eid": "88252965", "x": 11160, "y": 1320, "originX": 0, "originY": 0},
         {"name": "sea", "id": 60, "_eid": "88252965", "x": 11160, "y": 1080, "originX": 0, "originY": 0},
-        {"name": "airdrop", "id": 61, "_eid": "23233875", "x": 6960, "y": 2160, "originX": 0, "originY": 0}
+        {"name": "airdrop", "id": 61, "_eid": "23233875", "x": 6960, "y": 2160, "originX": 0, "originY": 0},
+        {"name": "p1CoToDeMach", "id": 62, "_eid": "43670871", "x": 9360, "y": 5040, "originX": 0, "originY": 0},
+        {"name": "p1DeToCoMach", "id": 63, "_eid": "43698209", "x": 9120, "y": 5040, "originX": 0, "originY": 0}
       ]
     },
     {

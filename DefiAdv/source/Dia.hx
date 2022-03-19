@@ -41,6 +41,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
+	public var dexCoin:Float;
 
 	var coinText:FlxText;
 
@@ -64,6 +65,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	// 穩定幣
 	var bananaPrize:Int = 10;
+
+	// 青蛙幣
+	var dexPrizeBuy:Int = 4;
+	var dexPrizeSell:Int = 2;
 
 	// 借貸
 	public var interest:Float = 0.01;
@@ -189,12 +194,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	}
 
 	// 拿包包的參數
-	public function getDiamond(diamond, diamondUiText, bananaCoin, appleCoin)
+	public function getDiamond(diamond, diamondUiText, bananaCoin, appleCoin, dexCoin)
 	{
 		this.diamond = diamond;
 		this.diamondUiText = diamondUiText;
 		this.bananaCoin = bananaCoin;
 		this.appleCoin = appleCoin;
+		this.dexCoin = dexCoin;
 	}
 
 	// 對話大滿貫
@@ -349,6 +355,25 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
 				txt = false;
+			case p1DeToCoMach:
+				if (dexCoin >= 10)
+				{
+					name = ':N:確定要把DEX全數換成能量幣？你現在有$dexCoin 青蛙幣，按ENTER繼續；按X退出';
+					coinText.visible = true;
+				}
+				else
+					name = ":N:你沒有足夠的青蛙幣，至少要10APS幣。";
+				txt = false;
+			case p1CoToDeMach:
+				if (diamond >= 10)
+				{
+					name = ':N:你想用多少能量幣買青蛙幣？你目前有 $diamond 能量幣。按X退出。'; // ， 1 能量幣可買 $p1Prize APS幣。';
+					coinText.visible = true;
+				}
+				else
+					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
+				txt = false;
+
 			case house2Sign:
 				name = ":N:穩定幣鑄造所";
 				txt = false;
@@ -430,6 +455,20 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					coinOut += 10;
 				machGain = FlxMath.roundDecimal(caAppleCoinIn - (cak / (caCoinIn + coinOut)), 2);
 				coinText.text = '$coinOut  能量幣換 $machGain APS幣';
+			}
+			else if (npcType == p1CoToDeMach)
+			{
+				if (left && coinOut != 10)
+					coinOut -= 10;
+				if (right && coinOut / 10 != Std.int(diamond / 10))
+					coinOut += 10;
+				machGain = coinOut * dexPrizeBuy;
+				coinText.text = '$coinOut 能量幣換 $machGain 青蛙幣';
+			}
+			else if (npcType == p1DeToCoMach)
+			{
+				machGain = dexCoin * dexPrizeSell;
+				coinText.text = '可換 $machGain 能量幣';
 			}
 			else if (npcType == p2Mach)
 			{
@@ -530,6 +569,25 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					caCoinIn += coinOut;
 					caAppleCoinIn -= machGain;
 				}
+				// 青蛙幣
+				else if (npcType == p1CoToDeMach)
+				{
+					name = ':N:你得到 $machGain 青蛙幣。';
+					txt = false;
+					show(name, txt);
+					diamond -= coinOut;
+					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+					dexCoin += machGain;
+				}
+				else if (npcType == p1DeToCoMach)
+				{
+					name = ':N:你得到 $machGain 能量幣。';
+					txt = false;
+					show(name, txt);
+					diamond += machGain;
+					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
+					dexCoin = 0;
+				}
 				// 穩定幣
 				else if (npcType == p2Mach)
 				{
@@ -538,7 +596,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					show(name, txt);
 					diamond -= coinOut;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
-					bananaCoin += bananaPrize * coinOut;
+					bananaCoin += machGain;
 				}
 				else if (npcType == p3Mach)
 				{

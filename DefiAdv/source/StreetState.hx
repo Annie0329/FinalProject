@@ -21,6 +21,8 @@ class StreetState extends FlxState
 	// 玩家
 	var player:Player;
 	var bag:Bag;
+	var tip:Tip;
+	var title:Tip.TipText;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -30,7 +32,7 @@ class StreetState extends FlxState
 	var talkYes:Bool = false;
 
 	// 敵人
-	var enemies:FlxTypedGroup<Enemy>;
+	var enemy:FlxTypedGroup<Enemy>;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
 	var enemyFlicker:Bool = false;
@@ -70,8 +72,6 @@ class StreetState extends FlxState
 	var ufo:FlxText;
 	var save:FlxSave;
 
-	// 有沒有投資APESTARTER
-	var starterYes:Bool = false;
 	var firstLoan:Bool = false;
 
 	// 加好加滿
@@ -115,7 +115,7 @@ class StreetState extends FlxState
 		add(homeDoor);
 		homeDoor.animation.play("glow");
 
-		// 各種房間
+		// 各種房間，有加door的是房間內的門
 		house1 = new FlxSprite().makeGraphic(240, 240, FlxColor.TRANSPARENT);
 		house1.immovable = true;
 		add(house1);
@@ -154,13 +154,14 @@ class StreetState extends FlxState
 		add(shop);
 
 		// 敵人
-		enemies = new FlxTypedGroup<Enemy>();
-		add(enemies);
+		enemy = new FlxTypedGroup<Enemy>();
+		add(enemy);
 
 		npc = new FlxTypedGroup<NPC>();
 		add(npc);
 
-		airdrop = new FlxSprite().makeGraphic(240, 240, FlxColor.CYAN);
+		// 空投
+		airdrop = new FlxSprite(AssetPaths.airdrop__png);
 		airdrop.visible = false;
 		add(airdrop);
 
@@ -177,6 +178,10 @@ class StreetState extends FlxState
 		// 包包介面
 		bag = new Bag();
 		add(bag);
+
+		// 小紙條
+		tip = new Tip();
+		add(tip);
 
 		// 打人介面
 		combatHud = new CombatHUD();
@@ -273,6 +278,10 @@ class StreetState extends FlxState
 				npc.add(new NPC(x, y, p1CoToApMach));
 			case "p1ApToCoMach":
 				npc.add(new NPC(x, y, p1ApToCoMach));
+			case "p1CoToDeMach":
+				npc.add(new NPC(x, y, p1CoToDeMach));
+			case "p1DeToCoMach":
+				npc.add(new NPC(x, y, p1DeToCoMach));
 			case "house2Sign":
 				npc.add(new NPC(x, y, house2Sign));
 			case "p2":
@@ -288,9 +297,9 @@ class StreetState extends FlxState
 			case "house4Sign":
 				npc.add(new NPC(x, y, house4Sign));
 			case "rod":
-				enemies.add(new Enemy(x, y, rod));
+				enemy.add(new Enemy(x, y, rod));
 			case "starter":
-				enemies.add(new Enemy(x, y, starter));
+				enemy.add(new Enemy(x, y, starter));
 			case "airdrop":
 				airdrop.setPosition(x, y);
 			case "sea":
@@ -329,7 +338,7 @@ class StreetState extends FlxState
 
 		// 不一樣的
 		save.data.place = "street";
-		save.data.touchStarter = combatHud.touchStarter;
+		save.data.buyStarter = combatHud.buyStarter;
 		save.flush();
 	}
 
@@ -376,7 +385,7 @@ class StreetState extends FlxState
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
 		// 不一樣的
-		combatHud.touchStarter = save.data.touchStarter;
+		combatHud.buyStarter = save.data.buyStarter;
 
 		if (save.data.playerPos != null && save.data.place != null)
 		{
@@ -443,13 +452,13 @@ class StreetState extends FlxState
 		FlxG.collide(player, house3Door, houseOut);
 		FlxG.collide(player, house4Door, houseOut);
 
-		FlxG.collide(player, enemies, playerTouchEnemy);
+		FlxG.collide(player, enemy, playerTouchEnemy);
 		FlxG.overlap(player, airdrop, airdropMoney);
 
-		FlxG.collide(enemies, walls);
-		FlxG.collide(enemies, road);
-		FlxG.collide(enemies);
-		FlxG.collide(enemies, npc);
+		FlxG.collide(enemy, walls);
+		FlxG.collide(enemy, road);
+		FlxG.collide(enemy);
+		FlxG.collide(enemy, npc);
 	}
 
 	// NPC對話
@@ -516,6 +525,11 @@ class StreetState extends FlxState
 		{
 			player.setPosition(houseDoor.x + (houseDoor.width - player.width) / 2, houseDoor.y - houseDis + 240);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+			if (houseDoor == house3Door && !firstLoan)
+			{
+				title = loan;
+				tip.tipGetText(title);
+			}
 		});
 	}
 
@@ -526,10 +540,13 @@ class StreetState extends FlxState
 		{
 			if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.diamondCounter >= 5))
 			{
+				// 我們是在迪拜街碰到ApeStarter的
+				if (enemy.type == starter)
+					combatHud.starterInStreet = true;
 				inCombat = true;
 				player.active = false;
-				enemies.active = false;
-				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, enemy);
+				enemy.active = false;
+				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, bag.dexCoin, enemy);
 			}
 			else
 			{
@@ -552,37 +569,14 @@ class StreetState extends FlxState
 	{
 		if (inCombat && !combatHud.visible)
 		{
-			// Doge的反應
-			if (combatHud.enemy.type == rod)
-			{
-				if (combatHud.outcome == WIN)
-					name = ":D:你真幸運，開槓桿成功了。";
-				else if (combatHud.outcome == LOSE)
-					name = ":D:下次開槓桿要小心點喔。";
-				else
-					name = ":D:槓桿可以賺很多，下次試試看吧。";
-			}
-			else if (combatHud.enemy.type == starter)
-			{
-				if (combatHud.outcome == WIN)
-				{
-					name = ":D:你投資了APESTARTER啊！";
-					starterYes = true;
-				}
-				else
-					name = ":D:下次可以試試看投資APESTARTER喔。";
-			}
 			combatHud.enemy.alpha = 0.5;
 			enemyFlicker = true;
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
 			bag.appleCoin = combatHud.appleCoin;
+			bag.dexCoin = combatHud.dexCoin;
 			bag.updateBag();
 			inCombat = false;
-
-			txt = false;
-			playerUpDown();
-			dia.show(name, txt);
 		}
 	}
 
@@ -592,12 +586,12 @@ class StreetState extends FlxState
 		if (airdrop.visible)
 		{
 			airdrop.kill();
-			name = ":N:你得到了5000新幣！";
+			name = ":N:你得到了500青蛙幣！";
 			txt = false;
 			playerUpDown();
 			dia.show(name, txt);
-			bag.airCoin = 5000;
-			bag.airCoinText.text = Std.string(bag.airCoin);
+			bag.dexCoin = 500;
+			bag.dexCoinText.text = Std.string(bag.dexCoin);
 		}
 	}
 
@@ -630,8 +624,9 @@ class StreetState extends FlxState
 				saveFile();
 
 			// 準備小屋交易
-			if (npcType == p1BaToCoMach || npcType == p1CoToApMach || npcType == p1ApToCoMach || npcType == p2Mach || npcType == p3Mach)
-				dia.getDiamond(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin);
+			if (npcType == p1BaToCoMach || npcType == p1CoToApMach || npcType == p1ApToCoMach || npcType == p1CoToDeMach || npcType == p1DeToCoMach
+				|| npcType == p2Mach || npcType == p3Mach)
+				dia.getDiamond(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, bag.dexCoin);
 
 			dia.context(npcType);
 		}
@@ -645,12 +640,12 @@ class StreetState extends FlxState
 		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
 		{
 			player.active = false;
-			enemies.active = false;
+			enemy.active = false;
 		}
 		else
 		{
 			player.active = true;
-			enemies.active = true;
+			enemy.active = true;
 		}
 
 		// 對話結束時要做什麼合集
@@ -664,6 +659,8 @@ class StreetState extends FlxState
 				bag.bananaCoinText.text = Std.string(bag.bananaCoin);
 				bag.appleCoin = FlxMath.roundDecimal(dia.appleCoin, 2);
 				bag.appleCoinText.text = Std.string(bag.appleCoin);
+				bag.dexCoin = FlxMath.roundDecimal(dia.dexCoin, 2);
+				bag.dexCoinText.text = Std.string(bag.dexCoin);
 				bag.updateBag();
 			}
 			if (enemyFlicker)

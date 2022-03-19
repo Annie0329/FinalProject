@@ -19,7 +19,8 @@ class PlayState extends FlxState
 	// 玩家
 	var player:Player;
 	var bag:Bag;
-	var playerPoint:FlxPoint;
+	var tip:Tip;
+	var title:Tip.TipText;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -32,7 +33,8 @@ class PlayState extends FlxState
 	var banana:FlxTypedGroup<FlxSprite> = null;
 
 	// 敵人
-	var enemies:FlxTypedGroup<Enemy>;
+	var enemy:FlxTypedGroup<Enemy>;
+	var enemyType:Enemy.EnemyType;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
 	var enemyFlicker:Bool = false;
@@ -135,8 +137,8 @@ class PlayState extends FlxState
 		add(npc);
 
 		// 敵人
-		enemies = new FlxTypedGroup<Enemy>();
-		add(enemies);
+		enemy = new FlxTypedGroup<Enemy>();
+		add(enemy);
 
 		// 玩家
 		player = new Player();
@@ -179,6 +181,10 @@ class PlayState extends FlxState
 		// 包包介面
 		bag = new Bag();
 		add(bag);
+
+		// 小紙條
+		tip = new Tip();
+		add(tip);
 
 		// 打人介面
 		combatHud = new CombatHUD();
@@ -266,11 +272,11 @@ class PlayState extends FlxState
 				sblackYes.setPosition(x, y);
 			// 敵人
 			case "shibaCoin":
-				enemies.add(new Enemy(x, y, shibaCoin));
+				enemy.add(new Enemy(x, y, shibaCoin));
 			case "cloudMiner":
-				enemies.add(new Enemy(x, y, cloudMiner));
+				enemy.add(new Enemy(x, y, cloudMiner));
 			case "nft":
-				enemies.add(new Enemy(x, y, nft));
+				enemy.add(new Enemy(x, y, nft));
 
 			case "banana":
 				var b = new FlxSprite(x, y).loadGraphic(AssetPaths.banana__png, true, 120, 240);
@@ -403,7 +409,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(bag.nftNotifText.text); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(enemyType); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -455,9 +461,10 @@ class PlayState extends FlxState
 		FlxG.collide(player, shop, shopOpen);
 		FlxG.collide(player, minerDoor, goToMiner);
 
-		FlxG.collide(enemies, walls);
-		FlxG.collide(enemies, road);
-		FlxG.collide(player, enemies, playerTouchEnemy);
+		FlxG.collide(enemy, walls);
+		FlxG.collide(enemy, road);
+		FlxG.collide(player, enemy, playerTouchEnemy);
+		enemy.forEachAlive(checkEnemyVision);
 	}
 
 	// 打架結束囉
@@ -477,51 +484,32 @@ class PlayState extends FlxState
 					combatHud.enemy.enemyFire();
 			}
 
-			// Doge的反應
-			switch (combatHud.enemy.type)
+			// 狗狗幣跟NFT設置
+			if (combatHud.enemy.type == shibaCoin && combatHud.outcome == WIN)
 			{
-				case shibaCoin:
-					if (combatHud.outcome == WIN)
-					{
-						name = ":D:你買了狗狗幣啊！你可以在左邊看到你買的狗狗幣漲或跌了多少。:D:隨時注意出現的新聞快報！它會影響到你狗狗幣的漲跌。";
-						bag.shibaInvest += combatHud.investNum;
-						bag.shibaWave += bag.shibaInvest;
-						if (!bag.shibaUi.visible)
-						{
-							bag.shibaUi.visible = true;
-							shibaYes = true;
-						}
-					}
-					else
-						name = ":D:狗狗幣很好賺呢，下次試試看跟他們交涉吧！";
-
-				case cloudMiner:
-					if (combatHud.outcome == FLEE)
-						name = ":D:你躲過詐騙了呢！";
-					else
-						name = ":D:這是詐騙喔！";
-
-				case nft:
-					if (combatHud.outcome == WIN)
-					{
-						name = ":D:你買了NFT啊！你可以在左邊看到你買的NFT漲或跌了多少。";
-						bag.nftInvest += combatHud.investNum;
-						bag.nftWave += bag.nftInvest;
-						bag.nft.animation.frameIndex = combatHud.nftStyleNum;
-						if (!bag.nftUi.visible)
-						{
-							bag.nftUi.visible = true;
-							nftYes = true;
-						}
-					}
-					else
-						name = ":D:NFT還不錯，下次試試看吧。";
-
-				case rod, spartanMiner, starter:
+				bag.shibaInvest += combatHud.investNum;
+				bag.shibaWave += bag.shibaInvest;
+				if (!bag.shibaUi.visible)
+				{
+					bag.shibaUi.visible = true;
+					bag.countShibaWave();
+					title = shibaNews;
+					tip.tipGetText(title);
+				}
 			}
-			txt = false;
-			playerUpDown();
-			dia.show(name, txt);
+			else if (combatHud.enemy.type == nft && combatHud.outcome == WIN)
+			{
+				bag.nftInvest += combatHud.investNum;
+				bag.nftWave += bag.nftInvest;
+				bag.nft.animation.frameIndex = combatHud.nftStyleNum;
+				if (!bag.nftUi.visible)
+				{
+					bag.nftUi.visible = true;
+					bag.countNftWave(combatHud.nftStyleNum);
+					title = nftNews;
+					tip.tipGetText(title);
+				}
+			}
 		}
 	}
 
@@ -534,8 +522,8 @@ class PlayState extends FlxState
 			{
 				inCombat = true;
 				player.active = false;
-				enemies.active = false;
-				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, enemy);
+				enemy.active = false;
+				combatHud.initCombat(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, bag.dexCoin, enemy);
 			}
 			else
 			{
@@ -546,6 +534,33 @@ class PlayState extends FlxState
 				combatHud.enemy = enemy;
 				combatHud.enemy.alpha = 0.5;
 				enemyFlicker = true;
+			}
+			enemyType = enemy.type;
+		}
+	}
+
+	// 檢查敵人的視野
+	function checkEnemyVision(enemy:Enemy)
+	{
+		if (walls.ray(enemy.getMidpoint(), player.getMidpoint()) && road.ray(enemy.getMidpoint(), player.getMidpoint()))
+		{
+			enemy.playerPosition = player.getMidpoint();
+			ufo.visible = true;
+			enemyType = enemy.type;
+			if (enemyType == shibaCoin)
+			{
+				title = shiba;
+				tip.tipGetText(title);
+			}
+			else if (enemyType == nft)
+			{
+				title = nft;
+				tip.tipGetText(title);
+			}
+			else if (enemyType == cloudMiner)
+			{
+				title = cloud;
+				tip.tipGetText(title);
 			}
 		}
 	}
@@ -652,12 +667,12 @@ class PlayState extends FlxState
 		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
 		{
 			player.active = false;
-			enemies.active = false;
+			enemy.active = false;
 		}
 		else
 		{
 			player.active = true;
-			enemies.active = true;
+			enemy.active = true;
 		}
 
 		// 對話結束時要做什麼合集
@@ -669,18 +684,6 @@ class PlayState extends FlxState
 				player.animation.frameIndex = 0;
 				bag.diamondUi.visible = true;
 				getBag = false;
-			}
-			// 啟動狗狗幣計時器
-			if (shibaYes)
-			{
-				bag.countShibaWave();
-				shibaYes = false;
-			}
-			// 啟動nft計時器
-			if (nftYes)
-			{
-				bag.countNftWave(combatHud.nftStyleNum);
-				nftYes = false;
 			}
 			// 有錢就開礦場門
 			if (minerOpen)
