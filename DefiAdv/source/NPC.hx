@@ -16,6 +16,7 @@ enum NpcType
 	saveStone;
 
 	spartan;
+	minerSign;
 	signDefi;
 	signApple;
 	house1Sign;
@@ -32,6 +33,7 @@ enum NpcType
 	house3Sign;
 	p3;
 	p3Mach;
+	dexNews;
 	house4Sign;
 }
 
@@ -68,6 +70,8 @@ class NPC extends FlxSprite
 				animation.add("shine", [0, 1, 2, 3, 4, 5], 6, true);
 			case spartan:
 				loadGraphic(AssetPaths.spartan__png);
+			case minerSign:
+				loadGraphic(AssetPaths.mineSign__png);
 
 			case signDefi:
 				makeGraphic(120, 240, FlxColor.TRANSPARENT);
@@ -78,7 +82,7 @@ class NPC extends FlxSprite
 			case p1:
 				loadGraphic(AssetPaths.p1__png);
 			case mathChart:
-				makeGraphic(80, 240, FlxColor.TRANSPARENT);
+				makeGraphic(240, 240, FlxColor.TRANSPARENT);
 			case p1BaToCoMach:
 				loadGraphic(AssetPaths.p1BaToCoMach__png);
 			case p1CoToApMach:
@@ -102,6 +106,8 @@ class NPC extends FlxSprite
 				loadGraphic(AssetPaths.p3Mach__png);
 			case p3:
 				loadGraphic(AssetPaths.p3__png);
+			case dexNews:
+				makeGraphic(240, 240, FlxColor.TRANSPARENT);
 			case house4Sign:
 				loadGraphic(AssetPaths.house4Sign__png);
 		}

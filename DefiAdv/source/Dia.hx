@@ -15,6 +15,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 {
 	var background:FlxSprite;
 	var text:FlxTypeText;
+	var minerPoster:FlxSprite;
 
 	var i:Int = 2;
 
@@ -111,6 +112,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		pointer = new Pointer();
 		add(pointer);
 		pointer.visible = false;
+
+		// 礦場海報
+		minerPoster = new FlxSprite(AssetPaths.minePoster__png);
+		add(minerPoster);
+		minerPoster.visible = false;
 
 		save = new FlxSave();
 		save.bind("DefiAdv");
@@ -312,6 +318,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					txt = true;
 					stoneTextYes = true;
 				}
+			case minerSign:
+				minerPoster.visible = true;
+				name = ":N:礦場規則";
+				txt = false;
 
 			case signDefi:
 				name = AssetPaths.streetSign__txt;
@@ -358,11 +368,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1DeToCoMach:
 				if (dexCoin >= 10)
 				{
-					name = ':N:確定要把DEX全數換成能量幣？你現在有$dexCoin 青蛙幣，按ENTER繼續；按X退出';
+					name = ':N:確定要把青蛙幣全數換成能量幣？你現在有$dexCoin 青蛙幣，按ENTER繼續；按X退出';
 					coinText.visible = true;
 				}
 				else
-					name = ":N:你沒有足夠的青蛙幣，至少要10APS幣。";
+					name = ":N:你沒有足夠的青蛙幣，至少要10青蛙幣。";
 				txt = false;
 			case p1CoToDeMach:
 				if (diamond >= 10)
@@ -395,6 +405,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p3:
 				name = AssetPaths.house3Talk__txt;
 				txt = true;
+			case dexNews:
+				name = AssetPaths.house3Talk__txt;
+				txt = true;
 			case p3Mach:
 				if (diamond >= 10)
 				{
@@ -404,6 +417,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
 				txt = false;
+
 			case house4Sign:
 				name = ":N:ApeStarter";
 				txt = false;
@@ -498,6 +512,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		updateSkip();
 		updateLr();
 		var x = FlxG.keys.anyJustReleased([X]);
+
+		// 退出機器
 		if (coinText.visible && x)
 		{
 			coinOut = 10;
@@ -506,6 +522,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			visible = false;
 			active = false;
 		}
+
 		super.update(elapsed);
 	}
 
@@ -515,6 +532,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (enter && textRunDone)
 		{
+			// 礦場海報消失
+			if (minerPoster.visible)
+				new FlxTimer().start(0.5, function(timer:FlxTimer)
+				{
+					minerPoster.visible = false;
+				});
 			// 箭頭選擇
 			if (pointer.visible)
 			{

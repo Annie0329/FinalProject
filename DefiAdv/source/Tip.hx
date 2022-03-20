@@ -25,8 +25,6 @@ enum TipText
 
 class Tip extends FlxTypedGroup<FlxSprite>
 {
-	public var tipText(default, null):TipText;
-
 	var background:FlxSprite;
 	var text:FlxText;
 	var i:Int;
@@ -53,7 +51,8 @@ class Tip extends FlxTypedGroup<FlxSprite>
 		active = false;
 	}
 
-	public function tipGetText(title)
+	// 透過陣列告訴你該顯示哪個提醒的聰明小程式
+	public function tipGetText(title:TipText)
 	{
 		if (visible)
 			tipTimer.cancel();

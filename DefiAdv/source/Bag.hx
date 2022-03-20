@@ -37,7 +37,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 	// 能量幣和香蕉葉
 	public var bananaCounter:Int = 0;
-	public var diamondCounter:Float = 200;
+	public var diamondCounter:Float = 0;
 	public var diamondText:FlxText;
 
 	var diamondIcon:FlxSprite;

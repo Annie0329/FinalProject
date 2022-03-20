@@ -4,10 +4,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
-import flixel.addons.text.FlxTextField;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
@@ -22,7 +20,6 @@ class StreetState extends FlxState
 	var player:Player;
 	var bag:Bag;
 	var tip:Tip;
-	var title:Tip.TipText;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -292,6 +289,8 @@ class StreetState extends FlxState
 				npc.add(new NPC(x, y, house3Sign));
 			case "p3":
 				npc.add(new NPC(x, y, p3));
+			case "dexNews":
+				npc.add(new NPC(x, y, dexNews));
 			case "p3Mach":
 				npc.add(new NPC(x, y, p3Mach));
 			case "house4Sign":
@@ -526,10 +525,7 @@ class StreetState extends FlxState
 			player.setPosition(houseDoor.x + (houseDoor.width - player.width) / 2, houseDoor.y - houseDis + 240);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 			if (houseDoor == house3Door && !firstLoan)
-			{
-				title = loan;
-				tip.tipGetText(title);
-			}
+				tip.tipGetText(loan);
 		});
 	}
 

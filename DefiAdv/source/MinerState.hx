@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.tweens.FlxTween;
@@ -20,7 +21,6 @@ class MinerState extends FlxState
 	var player:Player;
 	var bag:Bag;
 	var tip:Tip;
-	var title:Tip.TipText;
 
 	// 各關目標
 	var stoneGoal:Int = 5;
@@ -36,7 +36,6 @@ class MinerState extends FlxState
 	var enemy:FlxTypedGroup<Enemy>;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
-	var enemyFlicker:Bool = false;
 
 	// 其他角色
 	var npc:FlxTypedGroup<NPC>;
@@ -64,6 +63,7 @@ class MinerState extends FlxState
 	var minerTimerIcon:FlxSprite;
 	var timer:FlxTimer;
 	var minerTimeSet:Int = 60;
+	var stoneSound:FlxSound;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -131,6 +131,7 @@ class MinerState extends FlxState
 
 		// 石頭
 		stone = new FlxTypedGroup<FlxSprite>();
+		stoneSound = FlxG.sound.load(AssetPaths.pickUp__mp3);
 		add(stone);
 
 		// 箱子
@@ -249,6 +250,8 @@ class MinerState extends FlxState
 
 			case "spartan":
 				npc.add(new NPC(x, y, spartan));
+			case "minerSign":
+				npc.add(new NPC(x, y, minerSign));
 
 			case "stone":
 				var s = new FlxSprite(x, y, AssetPaths.stone__png);
@@ -456,6 +459,7 @@ class MinerState extends FlxState
 		});
 	}
 
+	// 離開礦場就停止計時
 	function timeToStop(player:Player, minerGate:FlxSprite)
 	{
 		if (minerTimerText.visible)
@@ -480,6 +484,7 @@ class MinerState extends FlxState
 	function playerGotStone(player:Player, stone:FlxSprite)
 	{
 		stoneCounter++;
+		stoneSound.play(true);
 		stoneCounterText.text = Std.string(stoneCounter);
 		stone.kill();
 		if (stoneCounter >= stoneGoal)
@@ -518,7 +523,8 @@ class MinerState extends FlxState
 						stoneCounterText.color = FlxColor.BLACK;
 				});
 		}
-		else if ((enemy.type == rod && bag.bananaCoin >= 5) || (enemy.type == starter && bag.diamondCounter >= 5))
+		// 遇到ApeStarter而且有錢(礦工跟starter是礦廠唯二的敵人)
+		else if (bag.diamondCounter >= 5)
 		{
 			inCombat = true;
 			player.active = false;
@@ -527,15 +533,11 @@ class MinerState extends FlxState
 		}
 		else
 		{
-			if (enemy.type == rod)
-				name = ":N:你沒有足夠的香蕉幣！你需要至少 5 香蕉幣！";
-			else if (enemy.type == starter)
-				name = ":N:你沒有足夠的能量幣！你需要至少 5 能量幣！";
+			name = ":N:你沒有足夠的能量幣！你需要至少 5 能量幣！";
 			txt = false;
 			playerUpDown();
 			dia.show(name, txt);
 			combatHud.enemy = enemy;
-			enemyFlicker = true;
 		}
 	}
 
@@ -552,7 +554,6 @@ class MinerState extends FlxState
 				else
 					name = ":D:下次可以試試看投資APESTARTER喔。";
 			}
-			enemyFlicker = true;
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
 			bag.appleCoin = combatHud.appleCoin;
@@ -611,6 +612,7 @@ class MinerState extends FlxState
 		// 用else if是為了避免重複計時(看不見計時器才開始計時)
 		else if (player.y < minerGate.y - 120 && player.x < minerGate.x + minerGate.width)
 		{
+			tip.tipGetText(miner);
 			minerGate.x -= minerGate.width;
 			timer = new FlxTimer().start(minerTimeSet, function(timer:FlxTimer)
 			{
@@ -693,13 +695,9 @@ class MinerState extends FlxState
 			// 礦場大門打開
 			if (stoneYes)
 			{
+				tip.tipGetText(minerSign);
 				FlxTween.tween(minerGate, {x: minerGate.x + minerGate.width}, 0.5);
 				stoneYes = false;
-			}
-			if (enemyFlicker)
-			{
-				combatHud.enemy.flicker(5);
-				enemyFlicker = false;
 			}
 		}
 	}

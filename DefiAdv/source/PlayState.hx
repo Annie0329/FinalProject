@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
@@ -20,7 +21,6 @@ class PlayState extends FlxState
 	var player:Player;
 	var bag:Bag;
 	var tip:Tip;
-	var title:Tip.TipText;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -31,6 +31,7 @@ class PlayState extends FlxState
 
 	// 香蕉
 	var banana:FlxTypedGroup<FlxSprite> = null;
+	var bananaSound:FlxSound;
 
 	// 敵人
 	var enemy:FlxTypedGroup<Enemy>;
@@ -116,6 +117,7 @@ class PlayState extends FlxState
 
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
+		bananaSound = FlxG.sound.load(AssetPaths.pickUp__mp3);
 		add(banana);
 
 		// 礦場門
@@ -493,8 +495,7 @@ class PlayState extends FlxState
 				{
 					bag.shibaUi.visible = true;
 					bag.countShibaWave();
-					title = shibaNews;
-					tip.tipGetText(title);
+					tip.tipGetText(shibaNews);
 				}
 			}
 			else if (combatHud.enemy.type == nft && combatHud.outcome == WIN)
@@ -506,10 +507,11 @@ class PlayState extends FlxState
 				{
 					bag.nftUi.visible = true;
 					bag.countNftWave(combatHud.nftStyleNum);
-					title = nftNews;
-					tip.tipGetText(title);
+					tip.tipGetText(nftNews);
 				}
 			}
+			else if (combatHud.enemy.type == cloudMiner && combatHud.outcome == LOSE)
+				tip.tipGetText(fraud);
 		}
 	}
 
@@ -548,20 +550,11 @@ class PlayState extends FlxState
 			ufo.visible = true;
 			enemyType = enemy.type;
 			if (enemyType == shibaCoin)
-			{
-				title = shiba;
-				tip.tipGetText(title);
-			}
+				tip.tipGetText(shiba);
 			else if (enemyType == nft)
-			{
-				title = nft;
-				tip.tipGetText(title);
-			}
+				tip.tipGetText(nft);
 			else if (enemyType == cloudMiner)
-			{
-				title = cloud;
-				tip.tipGetText(title);
-			}
+				tip.tipGetText(cloud);
 		}
 	}
 
@@ -578,6 +571,7 @@ class PlayState extends FlxState
 		banana.kill();
 		bag.bananaCounter++;
 		bag.updateBag();
+		bananaSound.play(true);
 	}
 
 	// 去礦場
@@ -678,7 +672,7 @@ class PlayState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
-			// 拿到背包
+			// 第一次對話完拿到背包
 			if (getBag)
 			{
 				player.animation.frameIndex = 0;
