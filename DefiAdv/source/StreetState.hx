@@ -582,8 +582,8 @@ class StreetState extends FlxState
 		if (airdrop.visible)
 		{
 			airdrop.kill();
-			name = ":N:你得到了500青蛙幣！";
-			txt = false;
+			name = AssetPaths.airdropTalk__txt;
+			txt = true;
 			playerUpDown();
 			dia.show(name, txt);
 			bag.dexCoin = 500;

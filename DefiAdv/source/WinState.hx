@@ -19,7 +19,7 @@ class WinState extends FlxState
 		dia = new Dia();
 		add(dia);
 
-		winText = new FlxText(0, 0, 600, "程式設計/謝易安\n美術-人物設計/陳玟慈\n美術-場景製作/劉品君\n區塊鏈知識顧問/許謹育", 60);
+		winText = new FlxText(0, 0, 600, "程式設計/Annie\n美術-人物設計/味噌丸\n美術-場景製作/Penguin\n區塊鏈知識顧問/Chin", 60);
 		winText.screenCenter();
 		winText.font = AssetPaths.silver__ttf;
 		winText.alignment = CENTER;

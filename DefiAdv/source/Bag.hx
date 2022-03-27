@@ -167,7 +167,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		diamondIcon = new FlxSprite(21, 21).loadGraphic(AssetPaths.diamondIcon__png);
 		diamondUi.add(diamondIcon);
 
-		diamondText = new FlxText(diamondIcon.x + 100, diamondIcon.y + diamondIcon.height / 2 - 39, 0, "200", 60);
+		diamondText = new FlxText(diamondIcon.x + 100, diamondIcon.y + diamondIcon.height / 2 - 30, 0, "0", 54);
 		diamondText.color = 0xff2D5925;
 		diamondUi.add(diamondText);
 

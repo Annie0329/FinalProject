@@ -115,6 +115,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 		// 礦場海報
 		minerPoster = new FlxSprite(AssetPaths.minePoster__png);
+		minerPoster.screenCenter();
 		add(minerPoster);
 		minerPoster.visible = false;
 
@@ -322,6 +323,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				minerPoster.visible = true;
 				name = ":N:礦場規則";
 				txt = false;
+				background.visible = false;
+				text.visible = false;
 
 			case signDefi:
 				name = AssetPaths.streetSign__txt;
@@ -406,7 +409,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				name = AssetPaths.house3Talk__txt;
 				txt = true;
 			case dexNews:
-				name = AssetPaths.house3Talk__txt;
+				name = AssetPaths.dexNews__txt;
 				txt = true;
 			case p3Mach:
 				if (diamond >= 10)
@@ -534,10 +537,15 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		{
 			// 礦場海報消失
 			if (minerPoster.visible)
+			{
 				new FlxTimer().start(0.5, function(timer:FlxTimer)
 				{
 					minerPoster.visible = false;
+					background.visible = true;
+					text.visible = true;
 				});
+			}
+
 			// 箭頭選擇
 			if (pointer.visible)
 			{

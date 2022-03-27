@@ -332,6 +332,7 @@ class PlayState extends FlxState
 
 		save.data.bananaCoin = bag.bananaCoin;
 		save.data.appleCoin = bag.appleCoin;
+		save.data.dexCoin = bag.dexCoin;
 
 		// 跟誰講過話
 		save.data.saveStoneIntro = dia.saveStoneIntro;
@@ -365,6 +366,7 @@ class PlayState extends FlxState
 
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
+		bag.dexCoin = save.data.dexCoin;
 		bag.updateBag();
 
 		// 狗狗幣
@@ -416,6 +418,9 @@ class PlayState extends FlxState
 		if (e)
 		{
 			ufo.visible = true;
+			dia.talkDone = true;
+			bag.diamondCounter += 5;
+			bag.updateBag();
 			FlxG.mouse.visible = true;
 		}
 
@@ -547,7 +552,6 @@ class PlayState extends FlxState
 		if (walls.ray(enemy.getMidpoint(), player.getMidpoint()) && road.ray(enemy.getMidpoint(), player.getMidpoint()))
 		{
 			enemy.playerPosition = player.getMidpoint();
-			ufo.visible = true;
 			enemyType = enemy.type;
 			if (enemyType == shibaCoin)
 				tip.tipGetText(shiba);
