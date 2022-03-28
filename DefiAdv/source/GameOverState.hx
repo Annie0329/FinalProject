@@ -96,11 +96,11 @@ class GameOverState extends FlxState
 		}
 	}
 
-	// 如果按esc鍵就回選單
+	// 如果按F4就回選單
 	function updateEsc()
 	{
-		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
-		if (esc)
+		var f4 = FlxG.keys.anyJustReleased([F4]);
+		if (f4)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{

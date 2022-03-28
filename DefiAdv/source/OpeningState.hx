@@ -63,8 +63,8 @@ class OpeningState extends FlxState
 	{
 		super.update(elapsed);
 
+		var x = FlxG.keys.anyJustReleased([X, ESCAPE]);
 		var any = FlxG.keys.anyJustReleased([ANY]);
-		var x = FlxG.keys.anyJustReleased([X]);
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 
 		// 跳過動畫

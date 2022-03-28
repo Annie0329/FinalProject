@@ -405,11 +405,11 @@ class StreetState extends FlxState
 		updateWhenDiaInvisible();
 		updateInCombat();
 		updateTalking();
-		updateEsc();
 		updateC();
+		updateF4();
 
 		// 除錯大隊
-		ufo.text = Std.string(bag.appleCoin);
+		// ufo.text = Std.string(bag.appleCoin);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -573,6 +573,18 @@ class StreetState extends FlxState
 			bag.dexCoin = combatHud.dexCoin;
 			bag.updateBag();
 			inCombat = false;
+			// 槓桿設置
+			if (combatHud.enemy.type == rod && combatHud.outcome == WIN)
+			{
+				bag.rodInvest += combatHud.investNum;
+				bag.rodWave += bag.rodInvest;
+				bag.rodNum = combatHud.rodNum;
+				if (!bag.rodUi.visible)
+				{
+					bag.rodUi.visible = true;
+					bag.countRodWave();
+				}
+			}
 		}
 	}
 
@@ -618,6 +630,10 @@ class StreetState extends FlxState
 			// 存檔點
 			if (npcType == saveStone)
 				saveFile();
+			else if (npcType == p1ApToCoMach)
+			{
+				bag.rodTimer.active = false;
+			}
 
 			// 準備小屋交易
 			if (npcType == p1BaToCoMach || npcType == p1CoToApMach || npcType == p1ApToCoMach || npcType == p1CoToDeMach || npcType == p1DeToCoMach
@@ -667,6 +683,8 @@ class StreetState extends FlxState
 				});
 				enemyFlicker = false;
 			}
+			if (bag.rodUi.visible && !bag.rodTimer.active)
+				bag.rodTimer.active = true;
 		}
 	}
 
@@ -681,11 +699,11 @@ class StreetState extends FlxState
 			dia.diaUpDown = "down";
 	}
 
-	// 如果按esc鍵就回選單
-	function updateEsc()
+	// 如果按F4鍵就回選單
+	function updateF4()
 	{
-		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
-		if (esc && !dia.visible)
+		var f4 = FlxG.keys.anyJustReleased([F4]);
+		if (f4 && !dia.visible)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{

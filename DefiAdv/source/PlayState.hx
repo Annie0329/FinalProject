@@ -451,7 +451,7 @@ class PlayState extends FlxState
 		updateInCombat();
 		updateWhenDiaInvisible();
 		updateTalking();
-		updateEsc();
+		updateF4();
 		updateC();
 
 		// 碰撞爆
@@ -593,7 +593,7 @@ class PlayState extends FlxState
 		{
 			if (bag.diamondCounter >= 1)
 			{
-				name = ":N:跟你收100能量幣過路費。:N:你給了傳送門100能量幣。";
+				name = ":N:你有100能量幣了，歡迎進入下一關！";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -601,7 +601,7 @@ class PlayState extends FlxState
 			}
 			else
 			{
-				name = ":N:你沒有100能量幣過路費。";
+				name = ":N:你需要100能量幣才能通過此地。";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -691,8 +691,6 @@ class PlayState extends FlxState
 
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
-					bag.diamondCounter--;
-					bag.updateBag();
 					saveFile();
 					FlxG.switchState(new MinerState());
 				});
@@ -719,11 +717,11 @@ class PlayState extends FlxState
 			dia.diaUpDown = "down";
 	}
 
-	// 如果按esc鍵就回選單
-	function updateEsc()
+	// 如果按F4鍵就回選單
+	function updateF4()
 	{
-		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
-		if (esc && !dia.visible)
+		var f4 = FlxG.keys.anyJustReleased([F4]);
+		if (f4 && !dia.visible)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{

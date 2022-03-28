@@ -62,10 +62,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	// 槓桿
 	var rodTalk:Bool = false;
-	var rodNum:Int = 2;
+
+	public var rodNum:Int = 2; // 槓桿多少倍
+
 	var rodNumText:FlxText;
 
-	public var appleRod:Float; // 槓桿賺了多少蘋果幣
 	public var bananaCoin:Float;
 	public var appleCoin:Float;
 	public var dexCoin:Float;
@@ -204,6 +205,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 		pointerLeft.visible = false;
 		pointerRight.visible = false;
+
 		switch (enemy.type)
 		{
 			case shibaCoin:
@@ -273,7 +275,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	function updateKeyboardInput()
 	{
-		// diamondText.text = Std.string(combatText.over);
+		// diamondText.text = Std.string(appleRod);
 		// 看看哪個按鍵被按下的變數
 		var left:Bool = false;
 		var right:Bool = false;
@@ -386,7 +388,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 								case "YES":
 									diamond -= 20;
 									name = ":真是隻傻猩猩啊，這些錢我就收下了，嘿嘿嘿！";
-
 									outcome = LOSE;
 
 								case "NO":
@@ -494,18 +495,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					rodNumText.visible = false;
 					pointerLeft.visible = false;
 					pointerRight.visible = false;
-					if (FlxG.random.bool(40))
-					{
-						appleRod += investNum * rodNum;
-						appleCoin += appleRod;
-						name = ':你得到 $appleRod APS幣！';
-						outcome = WIN;
-					}
-					else
-					{
-						name = ":你什麼都沒得到。";
-						outcome = LOSE;
-					}
+					diamond -= investNum;
+					investNum *= rodNum;
+					appleCoin += investNum;
+					name = ':謝謝你，你得到 $investNum APS幣！如果想賣掉APS幣的話可以去交易所喔。';
+					outcome = WIN;
 
 					bananaCoin -= investNum;
 					combatText.show(name, false);

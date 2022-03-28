@@ -45,7 +45,6 @@ class MinerState extends FlxState
 	var monumentDoor:FlxSprite;
 	var streetDoor:FlxSprite;
 	var minerGate:FlxSprite;
-	var minerGaveMoney:Bool = false;
 
 	// 箱子
 	var box:FlxSprite;
@@ -198,9 +197,6 @@ class MinerState extends FlxState
 		add(minerTimerText);
 		minerTimerText.visible = false;
 
-		// 角色擺位置
-		// map.loadEntities(placeEntities, "entities");
-
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 600, "ufo", 60);
 		// ufo.color = FlxColor.BLACK;
@@ -208,7 +204,7 @@ class MinerState extends FlxState
 		add(ufo);
 		ufo.visible = false;
 
-		// 儲存資料的能量幣件
+		// 儲存資料的元件
 		save = new FlxSave();
 		save.bind("DefiAdv");
 
@@ -303,7 +299,6 @@ class MinerState extends FlxState
 
 		// 不一樣的
 		save.data.stoneTextYes = dia.stoneTextYes;
-		save.data.minerGaveMoney = minerGaveMoney;
 		save.data.place = "miner";
 		save.data.buyStarter = combatHud.buyStarter;
 		save.flush();
@@ -352,7 +347,6 @@ class MinerState extends FlxState
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 		// 不一樣的
 		dia.stoneTextYes = save.data.stoneTextYes;
-		minerGaveMoney = save.data.minerGaveMoney;
 		combatHud.buyStarter = save.data.buyStarter;
 		if (save.data.playerPos != null && save.data.place != null)
 		{
@@ -360,19 +354,8 @@ class MinerState extends FlxState
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
 			else if (save.data.place == "monument")
 			{
-				// minerDoor.x + 189,minerDoor.y - 60
+				// 公式：minerDoor.x + 189,minerDoor.y - 60
 				player.setPosition(429, 6060);
-				if (!minerGaveMoney)
-				{
-					minerGaveMoney = true;
-					name = ":N:送你100能量幣。";
-					txt = false;
-					playerUpDown();
-					dia.show(name, txt);
-					// bag.diamondCounter += 100;
-					bag.diamondCounter++;
-					bag.updateBag();
-				}
 				saveFile();
 			}
 			else if (save.data.place == "street")
@@ -390,7 +373,7 @@ class MinerState extends FlxState
 		updateWhenDiaInvisible();
 		updateInCombat();
 		updateTalking();
-		updateEsc();
+		updateF4();
 		updateC();
 		updateTimer();
 
@@ -547,13 +530,8 @@ class MinerState extends FlxState
 		if (inCombat && !combatHud.visible)
 		{
 			if (combatHud.enemy.type == starter)
-			{
 				combatHud.enemy.x += 9000;
-				if (combatHud.outcome == WIN)
-					name = ":D:你投資了APESTARTER啊！";
-				else
-					name = ":D:下次可以試試看投資APESTARTER喔。";
-			}
+
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
 			bag.appleCoin = combatHud.appleCoin;
@@ -713,11 +691,11 @@ class MinerState extends FlxState
 			dia.diaUpDown = "down";
 	}
 
-	// 如果按esc鍵就回選單
-	function updateEsc()
+	// 如果按F4鍵就回選單
+	function updateF4()
 	{
-		var esc = FlxG.keys.anyJustReleased([ESCAPE]);
-		if (esc && !dia.visible)
+		var f4 = FlxG.keys.anyJustReleased([F4]);
+		if (f4 && !dia.visible)
 		{
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{

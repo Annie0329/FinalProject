@@ -100,7 +100,7 @@ class MenuState extends FlxState
 		var up = FlxG.keys.anyJustReleased([UP, W]);
 		var down = FlxG.keys.anyJustReleased([DOWN, S]);
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
-		var x = FlxG.keys.anyJustReleased([X]);
+		var x = FlxG.keys.anyJustReleased([X,ESCAPE]);
 
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)

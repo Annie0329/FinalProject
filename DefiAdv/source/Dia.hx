@@ -47,19 +47,19 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var coinText:FlxText;
 
 	// 香蕉換能量
-	var bck = 1000;
-	var bcBananaCoinIn:Int = 100; // 機器裡有多少香蕉
-	var bcCoinIn:Float = 10;
+	var bck = 100000;
+	var bcBananaCoinIn:Int = 10000; // 機器裡有多少香蕉
+	var bcCoinIn:Float = 1000;
 
 	// 蘋果換能量
-	var ack = 1000;
-	var acAppleCoinIn:Int = 50; // 機器裡有多少APS，蘋果就是APS
-	var acCoinIn:Float = 20;
+	var ack = 100000;
+	var acAppleCoinIn:Int = 5000; // 機器裡有多少APS，蘋果就是APS
+	var acCoinIn:Float = 2000;
 
 	// 能量換蘋果
-	var cak = 800;
-	var caCoinIn:Int = 40;
-	var caAppleCoinIn:Float = 20;
+	var cak = 80000;
+	var caCoinIn:Int = 4000;
+	var caAppleCoinIn:Float = 2000;
 
 	var coinOut:Int = 10; // 玩家決定要塞多少幣進去
 	var machGain:Float = 0; // 玩家到底從機器得到多少錢
@@ -514,7 +514,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		updateEnter();
 		updateSkip();
 		updateLr();
-		var x = FlxG.keys.anyJustReleased([X]);
+		var x = FlxG.keys.anyJustReleased([X, ESCAPE]);
 
 		// 退出機器
 		if (coinText.visible && x)
