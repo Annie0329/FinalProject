@@ -344,7 +344,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		bananaCoinText.text = Std.string(bananaCoin);
 
 		appleCoin = FlxMath.roundDecimal(appleCoin, 2);
-		appleCoinText.text = Std.string(appleCoin);
+		appleCoinText.text = Std.string(appleCoin + rodWave);
 
 		dexCoin = FlxMath.roundDecimal(dexCoin, 2);
 		dexCoinText.text = Std.string(dexCoin);
@@ -428,7 +428,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				rodWaveText.flicker(function(FlxFlicker)
 				{
 					rodUi.visible = false;
-					appleCoin -= rodInvest;
 					rodWave = 0;
 					rodInvest = 0;
 					appleCoinText.text = Std.string(appleCoin);
@@ -437,7 +436,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			}
 			ufo.visible = true;
 			ufo.text = Std.string(rodInvest);
-			appleCoinText.text = Std.string(FlxMath.roundDecimal(appleCoin + rodWave - rodInvest, 2));
+			appleCoinText.text = Std.string(FlxMath.roundDecimal(appleCoin + rodWave, 2));
 
 			redOrGreen(rodWave, rodInvest, rodWaveText);
 		}, 0);

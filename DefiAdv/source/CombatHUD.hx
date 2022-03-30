@@ -497,7 +497,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					pointerRight.visible = false;
 					diamond -= investNum;
 					investNum *= rodNum;
-					appleCoin += investNum;
 					name = ':謝謝你，你得到 $investNum APS幣！如果想賣掉APS幣的話可以去交易所喔。';
 					outcome = WIN;
 

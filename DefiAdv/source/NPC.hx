@@ -82,7 +82,7 @@ class NPC extends FlxSprite
 			case p1:
 				loadGraphic(AssetPaths.p1__png);
 			case mathChart:
-				makeGraphic(240, 240, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.mathChart__png);
 			case p1BaToCoMach:
 				loadGraphic(AssetPaths.p1BaToCoMach__png);
 			case p1CoToApMach:
@@ -107,7 +107,7 @@ class NPC extends FlxSprite
 			case p3:
 				loadGraphic(AssetPaths.p3__png);
 			case dexNews:
-				makeGraphic(240, 240, FlxColor.TRANSPARENT);
+				loadGraphic(AssetPaths.dexNews__png);
 			case house4Sign:
 				loadGraphic(AssetPaths.house4Sign__png);
 		}

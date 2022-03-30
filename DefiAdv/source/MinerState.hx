@@ -530,7 +530,7 @@ class MinerState extends FlxState
 		if (inCombat && !combatHud.visible)
 		{
 			if (combatHud.enemy.type == starter)
-				combatHud.enemy.x += 9000;
+				combatHud.enemy.kill();
 
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
@@ -538,10 +538,6 @@ class MinerState extends FlxState
 			bag.dexCoin = combatHud.dexCoin;
 			bag.updateBag();
 			inCombat = false;
-
-			txt = false;
-			playerUpDown();
-			dia.show(name, txt);
 		}
 	}
 

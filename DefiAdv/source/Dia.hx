@@ -15,6 +15,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 {
 	var background:FlxSprite;
 	var text:FlxTypeText;
+
 	var minerPoster:FlxSprite;
 
 	var i:Int = 2;
@@ -43,21 +44,22 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
 	public var dexCoin:Float;
+	public var rodWave:Float;
 
 	var coinText:FlxText;
 
 	// 香蕉換能量
-	var bck = 100000;
+	var bck = 10000000;
 	var bcBananaCoinIn:Int = 10000; // 機器裡有多少香蕉
 	var bcCoinIn:Float = 1000;
 
 	// 蘋果換能量
-	var ack = 100000;
+	var ack = 10000000;
 	var acAppleCoinIn:Int = 5000; // 機器裡有多少APS，蘋果就是APS
 	var acCoinIn:Float = 2000;
 
 	// 能量換蘋果
-	var cak = 80000;
+	var cak = 8000000;
 	var caCoinIn:Int = 4000;
 	var caAppleCoinIn:Float = 2000;
 
@@ -201,13 +203,14 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	}
 
 	// 拿包包的參數
-	public function getDiamond(diamond, diamondUiText, bananaCoin, appleCoin, dexCoin)
+	public function getDiamond(diamond, diamondUiText, bananaCoin, appleCoin, rodWave, dexCoin)
 	{
 		this.diamond = diamond;
 		this.diamondUiText = diamondUiText;
 		this.bananaCoin = bananaCoin;
 		this.appleCoin = appleCoin;
 		this.dexCoin = dexCoin;
+		this.rodWave = rodWave;
 	}
 
 	// 對話大滿貫
@@ -344,7 +347,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1BaToCoMach:
 				if (bananaCoin >= 10)
 				{
-					name = ':N:你想用多少香蕉幣買能量幣？你目前有 $bananaCoin 香蕉幣。按X退出。'; // ， 1 香蕉幣可買 $p1Prize 能量幣。';
+					name = ':N:你想用多少香蕉幣買能量幣？你目前有 $bananaCoin 香蕉幣。按X退出，按R全數兌換。';
 					coinText.visible = true;
 				}
 				else
@@ -353,7 +356,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1ApToCoMach:
 				if (appleCoin >= 10)
 				{
-					name = ':N:你想用多少APS幣買能量幣？你目前有 $appleCoin APS幣。按X退出。'; // ， 1 APS幣可買 $p1Prize 能量幣。';
+					name = ":N:你想用多少APS幣買能量幣？你目前有" + Std.string(appleCoin + rodWave) + "APS幣。按X退出，按R全數兌換。";
 					coinText.visible = true;
 				}
 				else
@@ -362,7 +365,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1CoToApMach:
 				if (diamond >= 10)
 				{
-					name = ':N:你想用多少能量幣買APS幣？你目前有 $diamond 能量幣。按X退出。'; // ， 1 能量幣可買 $p1Prize APS幣。';
+					name = ':N:你想用多少能量幣買APS幣？你目前有 $diamond 能量幣。按X退出。';
 					coinText.visible = true;
 				}
 				else
@@ -458,10 +461,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			{
 				if (left && coinOut != 10)
 					coinOut -= 10;
-				if (right && coinOut / 10 != Std.int(appleCoin / 10))
+				if (right && coinOut / 10 != Std.int((appleCoin + rodWave) / 10))
 					coinOut += 10;
-				machGain = FlxMath.roundDecimal(coinOut * (acCoinIn / acAppleCoinIn),
-					2); // FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 2);
+				machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 2);
+				// FlxMath.roundDecimal(coinOut * (acCoinIn / acAppleCoinIn),2);
 				coinText.text = '$coinOut  APS幣換 $machGain 能量幣';
 			}
 			else if (npcType == p1CoToApMach)
@@ -515,15 +518,43 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		updateSkip();
 		updateLr();
 		var x = FlxG.keys.anyJustReleased([X, ESCAPE]);
+		var r = FlxG.keys.anyJustReleased([R]);
 
 		// 退出機器
-		if (coinText.visible && x)
+		if (coinText.visible)
 		{
-			coinOut = 10;
-			coinText.text = Std.string(coinOut);
-			coinText.visible = false;
-			visible = false;
-			active = false;
+			if (x)
+			{
+				coinOut = 10;
+				coinText.text = Std.string(coinOut);
+				coinText.visible = false;
+				visible = false;
+				active = false;
+			}
+			// 全數賣掉的功能
+			if (r)
+			{
+				if (npcType == p1ApToCoMach)
+				{
+					machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + appleCoin + rodWave)), 2);
+					appleCoin = 0;
+					rodWave = 0;
+				}
+				else if (npcType == p1BaToCoMach)
+				{
+					machGain = FlxMath.roundDecimal(bcCoinIn - (bck / (bcBananaCoinIn + bananaCoin)), 2);
+					bananaCoin = 0;
+				}
+				diamond += machGain;
+				name = ':N:你得到了 $machGain 能量幣。';
+				txt = false;
+				show(name, txt);
+
+				coinOut = 10;
+				coinText.text = Std.string(coinOut);
+				coinText.visible = false;
+				updateDiamond = true;
+			}
 		}
 
 		super.update(elapsed);
@@ -581,8 +612,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					// 算玩家的錢
 					diamond += machGain;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
-					appleCoin -= coinOut;
-
+					// 先扣槓桿的錢再扣蘋果幣的錢
+					rodWave -= coinOut;
+					if (rodWave < 0)
+					{
+						appleCoin += rodWave;
+						rodWave = 0;
+					}
 					// 算機器的錢
 					acAppleCoinIn += coinOut;
 					acCoinIn -= machGain;
