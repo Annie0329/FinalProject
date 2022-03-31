@@ -45,6 +45,7 @@ class MinerState extends FlxState
 	var monumentDoor:FlxSprite;
 	var streetDoor:FlxSprite;
 	var minerGate:FlxSprite;
+	var minerGateX:Float = 0;
 
 	// 箱子
 	var box:FlxSprite;
@@ -63,6 +64,7 @@ class MinerState extends FlxState
 	var timer:FlxTimer;
 	var minerTimeSet:Int = 60;
 	var stoneSound:FlxSound;
+	var finalScore:Int = 0;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -243,6 +245,7 @@ class MinerState extends FlxState
 				streetDoor.setPosition(x + 84, y);
 			case "minerGate":
 				minerGate.setPosition(x, y);
+				minerGateX = minerGate.x;
 
 			case "spartan":
 				npc.add(new NPC(x, y, spartan));
@@ -445,22 +448,13 @@ class MinerState extends FlxState
 	// 離開礦場就停止計時
 	function timeToStop(player:Player, minerGate:FlxSprite)
 	{
-		if (minerTimerText.visible)
+		if (player.y < minerGate.y)
 		{
 			minerTimerText.visible = false;
-			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
-			{
-				player.setPosition(minerGate.x, minerGate.y + 600);
-				// minerGate.x -= minerGate.width;
-				minerTimerIcon.visible = false;
-				stoneCounterIcon.visible = false;
-				stoneCounterText.visible = false;
-				stoneCounter = 0;
-				stoneCounterText.text = Std.string(stoneCounter);
-				timer.cancel();
-				FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
-			});
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, minerGameOver);
 		}
+		else if (minerGate.x == minerGateX)
+			FlxTween.tween(minerGate, {x: minerGate.x + minerGate.width}, 0.5);
 	}
 
 	// 玩家收集到石頭了
@@ -548,6 +542,7 @@ class MinerState extends FlxState
 		{
 			var car = Std.int(stoneCounter / stoneGoal);
 			bag.diamondCounter += Std.int(car * 50);
+			finalScore += car;
 			stoneCounter = stoneCounter % stoneGoal;
 			stoneCounterText.text = Std.string(stoneCounter);
 			stoneCounterText.color = FlxColor.BLACK;
@@ -582,32 +577,38 @@ class MinerState extends FlxState
 			if (timer.finished)
 				player.active = false;
 		}
-			// 如果玩家經過門就啟動計時
+			// 玩家經過門就啟動計時
 		// 用else if是為了避免重複計時(看不見計時器才開始計時)
 		else if (player.y < minerGate.y - 120 && player.x < minerGate.x + minerGate.width)
 		{
 			tip.tipGetText(miner);
-			minerGate.x -= minerGate.width;
+			minerGate.x = minerGateX;
 			timer = new FlxTimer().start(minerTimeSet, function(timer:FlxTimer)
 			{
 				minerTimerText.visible = false;
-				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
-				{
-					player.setPosition(minerGate.x, minerGate.y + 600);
-					// minerGate.x -= minerGate.width;
-					minerTimerIcon.visible = false;
-					stoneCounterIcon.visible = false;
-					stoneCounterText.visible = false;
-					stoneCounter = 0;
-					stoneCounterText.text = Std.string(stoneCounter);
-					FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function() {});
-				});
+				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, minerGameOver);
 			});
 			minerTimerText.visible = true;
 			minerTimerIcon.visible = true;
 			stoneCounterIcon.visible = true;
 			stoneCounterText.visible = true;
 		}
+	}
+
+	// 礦場遊戲結束了
+	function minerGameOver()
+	{
+		player.setPosition(minerGate.x, minerGate.y + 600);
+		minerTimerIcon.visible = false;
+		stoneCounterIcon.visible = false;
+		stoneCounterText.visible = false;
+		name = ":N:恭喜你總共打包了" + Std.string(finalScore * 5) + " 顆小石頭，賺了" + Std.string(finalScore * 50) + "能量幣！";
+		playerUpDown();
+		dia.show(name, false);
+		stoneCounter = 0;
+		stoneCounterText.text = Std.string(stoneCounter);
+		timer.cancel();
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 	}
 
 	// 商店開門
@@ -670,7 +671,6 @@ class MinerState extends FlxState
 			if (stoneYes)
 			{
 				tip.tipGetText(minerSign);
-				FlxTween.tween(minerGate, {x: minerGate.x + minerGate.width}, 0.5);
 				stoneYes = false;
 			}
 		}

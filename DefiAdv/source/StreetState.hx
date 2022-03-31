@@ -677,12 +677,15 @@ class StreetState extends FlxState
 				bag.dexCoinText.text = Std.string(bag.dexCoin);
 				bag.rodWave = dia.rodWave;
 				// 如果槓桿沒被賣掉那計時繼續
-				if (bag.rodWave > 0)
-					bag.rodTimer.active = true;
-				else
+				if (bag.rodUi.visible)
 				{
-					bag.rodUi.visible = false;
-					bag.rodTimer.cancel();
+					if (bag.rodWave > 0)
+						bag.rodTimer.active = true;
+					else
+					{
+						bag.rodUi.visible = false;
+						bag.rodTimer.cancel();
+					}
 				}
 
 				bag.updateBag();

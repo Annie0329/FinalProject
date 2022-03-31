@@ -44,7 +44,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
 	public var dexCoin:Float;
-	public var rodWave:Float;
+	public var rodWave:Float = 0;
 
 	var coinText:FlxText;
 

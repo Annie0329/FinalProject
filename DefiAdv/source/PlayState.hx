@@ -41,6 +41,8 @@ class PlayState extends FlxState
 	var enemyFlicker:Bool = false;
 	var shibaYes:Bool = false;
 	var nftYes:Bool = false;
+	var seePlayerThen:Bool = false;
+	var seePlayerNow:Bool = false;
 
 	// NPC
 	var npc:FlxTypedGroup<NPC>;
@@ -413,7 +415,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(enemyType); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(seePlayerThen) + Std.string(seePlayerNow); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -551,7 +553,6 @@ class PlayState extends FlxState
 	{
 		if (walls.ray(enemy.getMidpoint(), player.getMidpoint()) && road.ray(enemy.getMidpoint(), player.getMidpoint()))
 		{
-			enemy.playerPosition = player.getMidpoint();
 			enemyType = enemy.type;
 			if (enemyType == shibaCoin)
 				tip.tipGetText(shiba);
