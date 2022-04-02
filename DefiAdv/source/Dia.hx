@@ -354,9 +354,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					name = ":N:你沒有足夠的香蕉幣，至少要10香蕉幣。";
 				txt = false;
 			case p1ApToCoMach:
-				if (appleCoin >= 10)
+				if (appleCoin + rodWave >= 10)
 				{
-					name = ":N:你想用多少APS幣買能量幣？你目前有" + Std.string(appleCoin + rodWave) + "APS幣。按X退出，按R全數兌換。";
+					name = ":N:你想用多少APS幣買能量幣？你目前有" + Std.string(FlxMath.roundDecimal(appleCoin + rodWave, 2)) + "APS幣。按X退出，按R全數兌換。";
 					coinText.visible = true;
 				}
 				else

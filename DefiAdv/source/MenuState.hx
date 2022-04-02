@@ -47,7 +47,8 @@ class MenuState extends FlxState
 		about.visible = false;
 
 		// 關於的字
-		aboutText = new FlxText(0, about.y + 150, 480, "操作說明：\nENTER、SPACE、Z：調查、對話換行、確定\nX、SHIFT：取消\nC：查看持有物品\nMusic: https://www.bensound.com", 60);
+		aboutText = new FlxText(0, about.y + 150, 480,
+			"操作說明：\n方向鍵：移動\n方向鍵+按住Shift：跑步\nENTER、SPACE、Z：調查、對話換行、確定\nX、esc：取消\nC：查看持有物品\nMusic: https://www.bensound.com", 60);
 		aboutText.borderColor = FlxColor.BLACK;
 		aboutText.font = AssetPaths.silver__ttf;
 		aboutText.color = FlxColor.BLACK;
@@ -100,7 +101,7 @@ class MenuState extends FlxState
 		var up = FlxG.keys.anyJustReleased([UP, W]);
 		var down = FlxG.keys.anyJustReleased([DOWN, S]);
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
-		var x = FlxG.keys.anyJustReleased([X,ESCAPE]);
+		var x = FlxG.keys.anyJustReleased([X, ESCAPE]);
 
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)

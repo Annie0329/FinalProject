@@ -330,7 +330,7 @@ class StreetState extends FlxState
 		save.data.appleCoin = bag.appleCoin;
 
 		// 跟誰講過話
-		save.data.saveStoneIntro = dia.saveStoneIntro;
+		save.data.saveStoneIntro = true;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
@@ -622,7 +622,7 @@ class StreetState extends FlxState
 			talkYes = false;
 
 		// 如果按enter就對話
-		if (talkYes && enter && !bag.bagUi.visible && !bag.shopUi.visible)
+		if (talkYes && enter && !bag.itemUi.visible && !bag.dealUi.visible && !bag.shopUi.visible)
 		{
 			talkYes = false;
 			playerUpDown();
@@ -650,7 +650,7 @@ class StreetState extends FlxState
 	{
 		// 對話框顯示時玩家就不能動
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
+		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible|| bag.itemUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemy.active = false;
@@ -730,7 +730,7 @@ class StreetState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && (!bag.bagUi.visible && !bag.shopUi.visible))
+		if (c && !dia.visible && !bag.dealUi.visible &&!bag.itemUi.visible && !bag.shopUi.visible)
 		{
 			bag.bagUiShow();
 		}

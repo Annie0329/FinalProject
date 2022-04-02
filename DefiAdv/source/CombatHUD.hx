@@ -5,7 +5,6 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import flixel.system.debug.completion.CompletionListScrollBar;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -74,6 +73,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	// ApeStarter
 	var starterPrize:Int = 5;
 	var dexStarterPirze:Int = 4;
+	var starterTalk:Bool = false;
 
 	public var buyStarter:Bool = false; // 有沒有投資ApeStarter
 	public var starterInStreet:Bool = false; // ApeStarter是不是在迪拜街
@@ -245,14 +245,33 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				{
 					if (buyStarter) // 第二次遇見，有投資
 					{
-						name = AssetPaths.starterStreetYes__txt;
-						txt = true;
+						if (starterTalk)
+						{
+							name = ":現在可以用1能量幣買進10青蛙幣，請問你要投資青蛙幣嗎？";
+							txt = false;
+						}
+						else
+						{
+							name = AssetPaths.starterStreetYes__txt;
+							txt = true;
+							starterTalk = true;
+						}
+
 						dexStarterPirze = 10;
 					}
 					else // 第二次遇見，沒投資
 					{
-						name = AssetPaths.starterStreetNo__txt;
-						txt = true;
+						if (starterTalk)
+						{
+							name = ":現在可以用1能量幣買進4青蛙幣，請問你要投資青蛙幣嗎？";
+							txt = false;
+							starterTalk = true;
+						}
+						else
+						{
+							name = AssetPaths.starterStreetNo__txt;
+							txt = true;
+						}
 					}
 				}
 			case spartanMiner:
@@ -495,12 +514,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					rodNumText.visible = false;
 					pointerLeft.visible = false;
 					pointerRight.visible = false;
-					diamond -= investNum;
+					bananaCoin -= investNum;
 					investNum *= rodNum;
 					name = ':謝謝你，你得到 $investNum APS幣！如果想賣掉APS幣的話可以去交易所喔。';
 					outcome = WIN;
 
-					bananaCoin -= investNum;
 					combatText.show(name, false);
 				}
 				else if (state == 4)
@@ -546,18 +564,19 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					}
 					else if (state == 2)
 					{
+						state++;
+						investNumText.visible = false;
+						pointerLeft.visible = false;
+						pointerRight.visible = false;
 						switch (pointer.selected)
 						{
 							case "YES":
-								state++;
 								diamond -= investNum;
 
 								name = ':謝謝惠顧！你買了' + investNum * starterPrize + 'APS幣。:之後我將會在DeFi街上開一間店，歡迎您來光顧。';
 								outcome = WIN;
 								combatText.show(name, false);
-								investNumText.visible = false;
-								pointerLeft.visible = false;
-								pointerRight.visible = false;
+
 							case "NO":
 								doneResultsIn();
 						}
@@ -602,9 +621,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 						state++;
 						diamond -= investNum;
 						dexCoin += investNum * dexStarterPirze;
-						pointer.visible = false;
-						choices[YES].visible = false;
-						choices[NO].visible = false;
+						investNumText.visible = false;
+						pointerLeft.visible = false;
+						pointerRight.visible = false;
 						outcome = WIN;
 						name = ':謝謝惠顧！你買了' + investNum * dexStarterPirze + '青蛙幣。';
 						combatText.show(name, false);

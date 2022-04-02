@@ -114,10 +114,6 @@ class Enemy extends FlxSprite
 	// 閒閒狀態
 	function idle(elapsed:Float)
 	{
-		// 如果看見玩家就變成追趕狀態
-		// if (seesPlayer && alive)
-		// 	brain.activeState = chase;
-		// else
 		if (idleTimer <= 0)
 		{
 			switch (type)

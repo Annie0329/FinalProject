@@ -36,6 +36,7 @@ class MinerState extends FlxState
 	var enemy:FlxTypedGroup<Enemy>;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
+	var minerPunch:FlxSound;
 
 	// 其他角色
 	var npc:FlxTypedGroup<NPC>;
@@ -46,6 +47,8 @@ class MinerState extends FlxState
 	var streetDoor:FlxSprite;
 	var minerGate:FlxSprite;
 	var minerGateX:Float = 0;
+	var streetOpen:Bool = false;
+	var streetYes:Bool = false;
 
 	// 箱子
 	var box:FlxSprite;
@@ -142,6 +145,7 @@ class MinerState extends FlxState
 
 		// 敵人
 		enemy = new FlxTypedGroup<Enemy>();
+		minerPunch = FlxG.sound.load(AssetPaths.minerPunch__mp3);
 		add(enemy);
 
 		npc = new FlxTypedGroup<NPC>();
@@ -295,12 +299,13 @@ class MinerState extends FlxState
 		save.data.appleCoin = bag.appleCoin;
 
 		// 跟誰講過話
-		save.data.saveStoneIntro = dia.saveStoneIntro;
+		save.data.saveStoneIntro = true;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
 
 		// 不一樣的
+		save.data.streetYes = streetYes;
 		save.data.stoneTextYes = dia.stoneTextYes;
 		save.data.place = "miner";
 		save.data.buyStarter = combatHud.buyStarter;
@@ -349,6 +354,7 @@ class MinerState extends FlxState
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 		// 不一樣的
+		streetYes = save.data.streetYes;
 		dia.stoneTextYes = save.data.stoneTextYes;
 		combatHud.buyStarter = save.data.buyStarter;
 		if (save.data.playerPos != null && save.data.place != null)
@@ -385,6 +391,8 @@ class MinerState extends FlxState
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
+			bag.diamondCounter += 300;
+			bag.updateBag();
 			ufo.visible = true;
 			// save.erase();
 		}
@@ -438,11 +446,32 @@ class MinerState extends FlxState
 	// 去defi街
 	function goToStreet(player:Player, streetDoor:FlxSprite)
 	{
-		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		if (streetYes)
 		{
-			saveFile();
-			FlxG.switchState(new StreetState());
-		});
+			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			{
+				saveFile();
+				FlxG.switchState(new StreetState());
+			});
+		}
+		else
+		{
+			if (bag.diamondCounter >= 300)
+			{
+				name = ":N:你有300能量幣了，歡迎通過此傳送門，進入下一關！";
+				txt = false;
+				playerUpDown();
+				dia.show(name, txt);
+				streetOpen = true;
+			}
+			else
+			{
+				name = ":N:你需要300能量幣才能通過此傳送門。";
+				txt = false;
+				playerUpDown();
+				dia.show(name, txt);
+			}
+		}
 	}
 
 	// 離開礦場就停止計時
@@ -493,6 +522,7 @@ class MinerState extends FlxState
 				FlxG.camera.shake(0.01, 0.1, function()
 				{
 					stoneCounter--;
+					minerPunch.play(true);
 					stoneCounterText.text = Std.string(stoneCounter);
 					if (stoneCounter >= stoneGoal)
 						stoneCounterText.color = FlxColor.RED;
@@ -577,8 +607,8 @@ class MinerState extends FlxState
 			if (timer.finished)
 				player.active = false;
 		}
-			// 玩家經過門就啟動計時
-		// 用else if是為了避免重複計時(看不見計時器才開始計時)
+
+		// 玩家經過門就啟動計時，用else if是為了避免重複計時(看不見計時器才開始計時)
 		else if (player.y < minerGate.y - 120 && player.x < minerGate.x + minerGate.width)
 		{
 			tip.tipGetText(miner);
@@ -606,6 +636,7 @@ class MinerState extends FlxState
 		playerUpDown();
 		dia.show(name, false);
 		stoneCounter = 0;
+		finalScore = 0;
 		stoneCounterText.text = Std.string(stoneCounter);
 		timer.cancel();
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
@@ -630,7 +661,7 @@ class MinerState extends FlxState
 			talkYes = false;
 
 		// 如果按enter就對話
-		if (talkYes && enter && !bag.bagUi.visible && !bag.shopUi.visible)
+		if (talkYes && enter && !bag.dealUi.visible && !bag.itemUi.visible && !bag.shopUi.visible)
 		{
 			talkYes = false;
 			playerUpDown();
@@ -653,7 +684,7 @@ class MinerState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
+		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible ||bag.itemUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemy.active = false;
@@ -672,6 +703,18 @@ class MinerState extends FlxState
 			{
 				tip.tipGetText(minerSign);
 				stoneYes = false;
+			}
+			// 有錢就開迪拜街門
+			if (streetOpen)
+			{
+				streetOpen = false;
+				streetYes = true;
+
+				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+				{
+					saveFile();
+					FlxG.switchState(new StreetState());
+				});
 			}
 		}
 	}
@@ -704,7 +747,7 @@ class MinerState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && (!bag.bagUi.visible && !bag.shopUi.visible))
+		if (c && !dia.visible && !bag.dealUi.visible &&!bag.itemUi.visible&& !bag.shopUi.visible)
 		{
 			bag.bagUiShow();
 		}

@@ -5,7 +5,6 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
@@ -337,7 +336,7 @@ class PlayState extends FlxState
 		save.data.dexCoin = bag.dexCoin;
 
 		// 跟誰講過話
-		save.data.saveStoneIntro = dia.saveStoneIntro;
+		save.data.saveStoneIntro = true;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
@@ -415,13 +414,13 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(seePlayerThen) + Std.string(seePlayerNow); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(tip.j); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
 			ufo.visible = true;
 			dia.talkDone = true;
-			bag.diamondCounter += 5;
+			bag.diamondCounter += 100;
 			bag.updateBag();
 			FlxG.mouse.visible = true;
 		}
@@ -484,6 +483,7 @@ class PlayState extends FlxState
 			bag.diamondCounter = combatHud.diamond;
 			bag.updateBag();
 			inCombat = false;
+			combatHud.enemy.active = true;
 			// 敵人的下場
 			switch (combatHud.outcome)
 			{
@@ -518,7 +518,9 @@ class PlayState extends FlxState
 				}
 			}
 			else if (combatHud.enemy.type == cloudMiner && combatHud.outcome == LOSE)
+			{
 				tip.tipGetText(fraud);
+			}
 		}
 	}
 
@@ -554,12 +556,22 @@ class PlayState extends FlxState
 		if (walls.ray(enemy.getMidpoint(), player.getMidpoint()) && road.ray(enemy.getMidpoint(), player.getMidpoint()))
 		{
 			enemyType = enemy.type;
-			if (enemyType == shibaCoin)
+			if (enemyType == shibaCoin && tip.j != "shiba")
+			{
 				tip.tipGetText(shiba);
-			else if (enemyType == nft)
+				bag.diamondCounter++;
+			}
+			else if (enemyType == nft && tip.j != "nft")
+			{
 				tip.tipGetText(nft);
-			else if (enemyType == cloudMiner)
+				bag.diamondCounter++;
+			}
+			else if (enemyType == cloudMiner && tip.j != "cloud")
+			{
 				tip.tipGetText(cloud);
+				bag.diamondCounter++;
+			}
+			bag.updateBag();
 		}
 	}
 
@@ -592,9 +604,9 @@ class PlayState extends FlxState
 		}
 		else
 		{
-			if (bag.diamondCounter >= 1)
+			if (bag.diamondCounter >= 100)
 			{
-				name = ":N:你有100能量幣了，歡迎進入下一關！";
+				name = ":N:你有100能量幣了，歡迎通過此傳送門，進入下一關！";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -602,7 +614,7 @@ class PlayState extends FlxState
 			}
 			else
 			{
-				name = ":N:你需要100能量幣才能通過此地。";
+				name = ":N:你需要100能量幣才能通過此傳送門。";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -629,7 +641,7 @@ class PlayState extends FlxState
 			talkYes = false;
 
 		// 如果按enter就對話
-		if (talkYes && enter && !bag.bagUi.visible && !bag.shopUi.visible)
+		if (talkYes && enter && !bag.itemUi.visible && !bag.dealUi.visible && !bag.shopUi.visible)
 		{
 			talkYes = false;
 			playerUpDown();
@@ -663,7 +675,7 @@ class PlayState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.bagUi.visible || combatHud.visible)
+		if (dia.visible || bag.shopUi.visible || bag.itemUi.visible || bag.dealUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemy.active = false;
@@ -735,7 +747,7 @@ class PlayState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && (!bag.bagUi.visible && !bag.shopUi.visible))
+		if (c && !dia.visible && !bag.itemUi.visible && !bag.dealUi.visible && !bag.shopUi.visible)
 		{
 			bag.bagUiShow();
 		}

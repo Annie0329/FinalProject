@@ -4,7 +4,6 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
-import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 
 enum TipText
@@ -27,10 +26,12 @@ enum TipText
 class Tip extends FlxTypedGroup<FlxSprite>
 {
 	var background:FlxSprite;
-	// var text:FlxTypeText;
-	var text:FlxText;
+	var text:FlxTypeText;
+	// var text:FlxText;
 	var i:Int;
-	var j:String = "oui";
+
+	public var j:String = "oui";
+
 	var dilog_boxes:Array<String>;
 	var tipTimer:FlxTimer;
 
@@ -41,7 +42,7 @@ class Tip extends FlxTypedGroup<FlxSprite>
 		background = new FlxSprite(990, 795, AssetPaths.tip__png);
 		add(background);
 
-		text = new FlxText(background.x + 33, background.y + 126, Std.int(background.width - 30), "text", 60, true);
+		text = new FlxTypeText(background.x + 33, background.y + 126, Std.int(background.width - 30), "text", 60, true);
 		text.font = AssetPaths.silver__ttf;
 		add(text);
 
@@ -68,9 +69,9 @@ class Tip extends FlxTypedGroup<FlxSprite>
 		{
 			if (j == dilog_boxes[i])
 			{
-				text.text = dilog_boxes[i + 1];
-				// text.resetText(dilog_boxes[i + 1]);
-				// text.start(true);
+				// text.text = dilog_boxes[i + 1];
+				text.resetText(dilog_boxes[i + 1]);
+				text.start(true);
 			}
 		}
 
