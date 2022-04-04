@@ -373,7 +373,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// 漲跌計時器
 		shibaTimer = new FlxTimer().start(2, function(timer:FlxTimer)
 		{
-			countWave(shibaNotifText, shibaWave, shibaWaveText, shibaInvest, shibaNewsDown, shibaNewsUp);
+			countWave("shiba", shibaNotifText, shibaWave, shibaWaveText, shibaInvest, shibaNewsDown, shibaNewsUp);
 		}, 0);
 
 		// 第一次買狗狗幣才會跳通知
@@ -394,7 +394,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// nft漲跌計時器
 		nftTimer = new FlxTimer().start(2, function(timer:FlxTimer)
 		{
-			countWave(nftNotifText, nftWave, nftWaveText, nftInvest, nftNewsDown, nftNewsUp);
+			countWave("nft", nftNotifText, nftWave, nftWaveText, nftInvest, nftNewsDown, nftNewsUp);
 		}, 0);
 
 		// 第一次買nft才會跳通知
@@ -449,8 +449,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	}
 
 	// 幣漲跌
-
-	function countWave(notifText, wave:Float, waveText, invest:Int, newsDown, newsUp)
+	function countWave(enemy, notifText, wave:Float, waveText, invest:Int, newsDown, newsUp)
 	{
 		// 在第一則新聞的影響範圍內就跌
 		if (notifText.text == newsDown)
@@ -483,7 +482,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 					wave = invest / 4;
 			}
 		}
-		wave = FlxMath.roundDecimal(wave, 2);
+		if (enemy == "shiba")
+			shibaWave = FlxMath.roundDecimal(wave, 2);
+		else if (enemy == "nft")
+			nftWave = FlxMath.roundDecimal(wave, 2);
 
 		redOrGreen(wave, invest, waveText);
 	}

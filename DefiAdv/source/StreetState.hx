@@ -20,6 +20,7 @@ class StreetState extends FlxState
 	var player:Player;
 	var bag:Bag;
 	var tip:Tip;
+	var getDaMis:Bool = false;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -360,6 +361,8 @@ class StreetState extends FlxState
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
+		tip.visible = true;
+		tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -389,10 +392,15 @@ class StreetState extends FlxState
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "street")
+			{
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+				tip.missionGetText(exploreStreet);
+			}
 			else if (save.data.place == "miner")
 			{
 				player.setPosition(minerDoor.x + (minerDoor.width - player.width) / 2, minerDoor.y - 60);
+				tip.missionGetText(exploreStreet);
+				tip.tipGetText(streetSign);
 				saveFile();
 			}
 		}
@@ -409,11 +417,17 @@ class StreetState extends FlxState
 		updateF4();
 
 		// 除錯大隊
-		// ufo.text = Std.string(bag.appleCoin);
+		ufo.text = Std.string(dia.readDaSign);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
 			ufo.visible = true;
+		}
+
+		if (dia.readDaSign && !dia.visible && !getDaMis)
+		{
+			getDaMis = true;
+			tip.missionGetText(streetFin);
 		}
 		// 開始借貸算利息
 		if (dia.loan && !firstLoan && !dia.visible)
@@ -650,7 +664,7 @@ class StreetState extends FlxState
 	{
 		// 對話框顯示時玩家就不能動
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible|| bag.itemUi.visible || combatHud.visible)
+		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible || bag.itemUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemy.active = false;
@@ -730,7 +744,7 @@ class StreetState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && !bag.dealUi.visible &&!bag.itemUi.visible && !bag.shopUi.visible)
+		if (c && !dia.visible && !bag.dealUi.visible && !bag.itemUi.visible && !bag.shopUi.visible)
 		{
 			bag.bagUiShow();
 		}

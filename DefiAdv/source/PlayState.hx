@@ -31,6 +31,7 @@ class PlayState extends FlxState
 	// 香蕉
 	var banana:FlxTypedGroup<FlxSprite> = null;
 	var bananaSound:FlxSound;
+	var twentyBanana:Bool = false;
 
 	// 敵人
 	var enemy:FlxTypedGroup<Enemy>;
@@ -344,7 +345,10 @@ class PlayState extends FlxState
 		// 不一樣的
 		save.data.minerYes = minerYes;
 		save.data.place = "monument";
+		save.data.leafYes = dia.leafYes;
+		save.data.talkMiss = dia.talkMiss;
 		save.data.talkDone = dia.talkDone;
+		save.data.twentyBanana = twentyBanana;
 
 		save.flush();
 	}
@@ -369,6 +373,8 @@ class PlayState extends FlxState
 		bag.appleCoin = save.data.appleCoin;
 		bag.dexCoin = save.data.dexCoin;
 		bag.updateBag();
+		tip.visible = true;
+		tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -396,11 +402,40 @@ class PlayState extends FlxState
 
 		// 不一樣的
 		minerYes = save.data.minerYes;
+		dia.leafYes = save.data.leafYes;
+		dia.talkMiss = save.data.talkMiss;
 		dia.talkDone = save.data.talkDone;
+		twentyBanana = save.data.twentyBanana;
+
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "monument")
+			{
+				if (!dia.talkMiss)
+				{
+					// 蒐集到10片葉子還沒跟Doge講
+					if (bag.bananaCounter >= 10)
+					{
+						dogeYes.visible = true;
+						tip.missionGetText(leavesFin);
+					}
+
+					// 還沒蒐集到10片葉子
+					else
+						tip.missionGetText(getLeaves);
+				}
+				// 還沒跟島民聊完天
+				else if (!dia.talkDone)
+				{
+					tip.missionGetText(talk);
+					srYes.visible = true;
+					sgYes.visible = true;
+					sbYes.visible = true;
+					mingYes.visible = true;
+				}
+
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+			}
 			else if (save.data.place == "miner")
 			{
 				player.setPosition(minerDoor.x + (minerDoor.width - player.width) / 2, minerDoor.y - 60);
@@ -414,7 +449,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(tip.j); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(bag.shibaWave); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -430,24 +465,38 @@ class PlayState extends FlxState
 		{
 			dia.leafYes = true;
 			dogeYes.visible = true;
+			tip.missionGetText(leavesFin);
 		}
 		// 跟Doge回報完葉子就可以跟島民說話
-		if (dia.leafYes && !dia.talkMiss && !dogeYes.visible)
+		if (dia.leafYes && !dia.talkMiss && !dogeYes.visible && !dia.visible)
 		{
 			dia.talkMiss = true;
+
 			srYes.visible = true;
 			sgYes.visible = true;
 			sbYes.visible = true;
 			mingYes.visible = true;
+
+			tip.missionGetText(talk);
 		}
+		if (bag.bananaCounter >= 20 && !twentyBanana)
+		{
+			twentyBanana = true;
+			tip.tipGetText(sellLeaves);
+		}
+
 		// 跟島民講完話了
-		if (dia.talkMiss && !srYes.visible && !sgYes.visible && !sbYes.visible && !mingYes.visible && !dia.talkDone)
+		if (dia.talkMiss && !srYes.visible && !sgYes.visible && !sbYes.visible && !mingYes.visible && !dia.talkDone && !dia.visible)
 		{
 			dia.talkDone = true;
 			sblackYes.visible = true;
+			tip.missionGetText(talkFin);
 		}
-		if (dia.talkDone && !sblackYes.visible)
+		if (dia.talkDone && !sblackYes.visible && !dia.visible)
+		{
 			treeBar.kill();
+			tip.missionGetText(monuFin);
+		}
 
 		updateInCombat();
 		updateWhenDiaInvisible();
@@ -557,20 +606,12 @@ class PlayState extends FlxState
 		{
 			enemyType = enemy.type;
 			if (enemyType == shibaCoin && tip.j != "shiba")
-			{
 				tip.tipGetText(shiba);
-				bag.diamondCounter++;
-			}
 			else if (enemyType == nft && tip.j != "nft")
-			{
 				tip.tipGetText(nft);
-				bag.diamondCounter++;
-			}
-			else if (enemyType == cloudMiner && tip.j != "cloud")
-			{
-				tip.tipGetText(cloud);
-				bag.diamondCounter++;
-			}
+			else if (enemyType == cloudMiner && tip.j != "cloudMiner")
+				tip.tipGetText(cloudMiner);
+
 			bag.updateBag();
 		}
 	}
@@ -695,6 +736,9 @@ class PlayState extends FlxState
 				player.animation.frameIndex = 0;
 				bag.diamondUi.visible = true;
 				getBag = false;
+				tip.visible = true;
+				tip.active = true;
+				tip.missionGetText(getLeaves);
 			}
 			// 有錢就開礦場門
 			if (minerOpen)

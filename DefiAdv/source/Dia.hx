@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
@@ -40,6 +41,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var leafYes:Bool = false;
 	public var talkMiss:Bool = false;
 	public var talkDone:Bool = false;
+	public var readDaSign:Bool = false;
 
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
@@ -100,6 +102,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.color = FlxColor.BLACK;
 		text.font = AssetPaths.silver__ttf;
 		text.delay = 0.05;
+		// text.sounds = [FlxG.sound.load(AssetPaths.typing__mp3)];
+		// text.finishSounds = true;
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
 
@@ -332,6 +336,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case signDefi:
 				name = AssetPaths.streetSign__txt;
 				txt = true;
+				if (!readDaSign)
+					readDaSign = true;
 			case signApple:
 				name = AssetPaths.appleAd__txt;
 				txt = true;

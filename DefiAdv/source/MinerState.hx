@@ -331,6 +331,8 @@ class MinerState extends FlxState
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
+		tip.visible = true;
+		tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -360,16 +362,21 @@ class MinerState extends FlxState
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "miner")
+			{
 				player.setPosition(save.data.playerPos.x, save.data.playerPos.y);
+				tip.missionGetText(exploreMiner);
+			}
 			else if (save.data.place == "monument")
 			{
 				// 公式：minerDoor.x + 189,minerDoor.y - 60
 				player.setPosition(429, 6060);
+				tip.missionGetText(exploreMiner);
 				saveFile();
 			}
 			else if (save.data.place == "street")
 			{
 				player.setPosition(4629, 6060);
+				tip.missionGetText(minerFin);
 				saveFile();
 			}
 		}
@@ -684,7 +691,7 @@ class MinerState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible ||bag.itemUi.visible || combatHud.visible)
+		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible || bag.itemUi.visible || combatHud.visible)
 		{
 			player.active = false;
 			enemy.active = false;
@@ -698,10 +705,11 @@ class MinerState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
-			// 礦場大門打開
+			// 跟布布講完話了
 			if (stoneYes)
 			{
 				tip.tipGetText(minerSign);
+				tip.missionGetText(minerFin);
 				stoneYes = false;
 			}
 			// 有錢就開迪拜街門
@@ -747,7 +755,7 @@ class MinerState extends FlxState
 	function updateC()
 	{
 		var c = FlxG.keys.anyJustReleased([C]);
-		if (c && !dia.visible && !bag.dealUi.visible &&!bag.itemUi.visible&& !bag.shopUi.visible)
+		if (c && !dia.visible && !bag.dealUi.visible && !bag.itemUi.visible && !bag.shopUi.visible)
 		{
 			bag.bagUiShow();
 		}
