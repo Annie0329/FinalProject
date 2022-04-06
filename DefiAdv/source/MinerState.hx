@@ -19,8 +19,9 @@ class MinerState extends FlxState
 {
 	// 玩家
 	var player:Player;
-	var bag:Bag;
 	var tip:Tip;
+	var bag:Bag;
+	var cancel:FlxSound;
 
 	// 各關目標
 	var stoneGoal:Int = 5;
@@ -41,6 +42,7 @@ class MinerState extends FlxState
 	// 其他角色
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
+	var meetStarter:Bool = false;
 
 	var shop:FlxSprite;
 	var monumentDoor:FlxSprite;
@@ -85,6 +87,7 @@ class MinerState extends FlxState
 	override public function create()
 	{
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.minerMap__json);
+		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -268,7 +271,7 @@ class MinerState extends FlxState
 				enemy.add(new Enemy(x, y, spartanMiner));
 
 			case "starter":
-				if (!combatHud.buyStarter)
+				if (!meetStarter)
 					enemy.add(new Enemy(x, y, starter));
 
 			case "torch":
@@ -305,6 +308,7 @@ class MinerState extends FlxState
 		save.data.playerPos = player.getPosition();
 
 		// 不一樣的
+		save.data.meetStarter = meetStarter;
 		save.data.streetYes = streetYes;
 		save.data.stoneTextYes = dia.stoneTextYes;
 		save.data.place = "miner";
@@ -355,7 +359,9 @@ class MinerState extends FlxState
 			bag.nftUi.visible = false;
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
+
 		// 不一樣的
+		meetStarter = save.data.meetStarter;
 		streetYes = save.data.streetYes;
 		dia.stoneTextYes = save.data.stoneTextYes;
 		combatHud.buyStarter = save.data.buyStarter;
@@ -394,7 +400,7 @@ class MinerState extends FlxState
 		updateTimer();
 
 		// 除錯大隊
-		ufo.text = Std.string(bag.nftNotifText.text);
+		ufo.text = "ouiouitext"; // Std.string(bag.nftNotifText.text);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -561,7 +567,10 @@ class MinerState extends FlxState
 		if (inCombat && !combatHud.visible)
 		{
 			if (combatHud.enemy.type == starter)
+			{
+				meetStarter = true;
 				combatHud.enemy.kill();
+			}
 
 			bag.diamondCounter = combatHud.diamond;
 			bag.bananaCoin = combatHud.bananaCoin;
@@ -744,6 +753,7 @@ class MinerState extends FlxState
 		var f4 = FlxG.keys.anyJustReleased([F4]);
 		if (f4 && !dia.visible)
 		{
+			cancel.play(true);
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
 				FlxG.switchState(new MenuState());

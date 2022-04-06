@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -35,6 +36,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	// 這些是hud的素材
 	var background:FlxSprite; // 背景
 	var enemySprite:Enemy; // 敵人
+	var check:FlxSound;
 
 	var pointer:Pointer; // 那個選擇打或逃的箭頭
 	var choices:Map<Choice, FlxText>; // 這個地圖把打或逃的選項變成文字(應該吧)
@@ -152,6 +154,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		pointer.setPointer(choices[YES].x - 48, choices[YES].y + (choices[YES].height / 2) - 48, Std.int(choices[YES].height + 48), ynCho, "ud");
 		pointer.visible = false;
 		add(pointer);
+
+		check = FlxG.sound.load(AssetPaths.check__mp3);
 
 		// 左右箭頭
 		pointerLeft = new FlxSprite(0, 0, AssetPaths.pointer__png);
@@ -310,6 +314,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		// 根據按鍵做不同反應
 		if (fire)
 		{
+			check.play(true);
 			// 狗狗幣
 			if (enemy.type == shibaCoin)
 			{

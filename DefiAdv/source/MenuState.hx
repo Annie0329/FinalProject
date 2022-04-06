@@ -3,6 +3,7 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
@@ -13,6 +14,8 @@ class MenuState extends FlxState
 	var menuBackground:FlxSprite;
 	var about:FlxSprite;
 	var aboutText:FlxText;
+	var check:FlxSound;
+	var cancel:FlxSound;
 
 	var pointerX:Int = 780;
 	var pointerY:Int = 630;
@@ -40,6 +43,9 @@ class MenuState extends FlxState
 		add(pointer);
 		pointer.setPointer(pointerX, pointerY, pointerBar, pointerCho, pointerDir);
 
+		check = FlxG.sound.load(AssetPaths.check__mp3);
+		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+
 		// 關於背景
 		about = new FlxSprite(0, 0, AssetPaths.menuAbout__png);
 		about.screenCenter();
@@ -48,7 +54,7 @@ class MenuState extends FlxState
 
 		// 關於的字
 		aboutText = new FlxText(0, about.y + 150, 480,
-			"操作說明：\n方向鍵：移動\n方向鍵+按住Shift：跑步\nENTER、SPACE、Z：調查、對話換行、確定\nX、esc：取消\nC：查看持有物品\nMusic: https://www.bensound.com", 60);
+			"操作說明：\n方向鍵：移動\n方向鍵+按住Shift：跑步\nENTER、SPACE、Z：調查、對話換行、確定\nX、esc：取消\nC：查看持有物品\n音樂: https://www.bensound.com\n音效：くらげ工匠", 60);
 		aboutText.borderColor = FlxColor.BLACK;
 		aboutText.font = AssetPaths.silver__ttf;
 		aboutText.color = FlxColor.BLACK;
@@ -113,6 +119,7 @@ class MenuState extends FlxState
 		// 主選單功能
 		if (enter && !about.visible)
 		{
+			check.play(true);
 			switch (pointer.selected)
 			{
 				// 繼續遊戲
@@ -147,6 +154,7 @@ class MenuState extends FlxState
 		// 回主選單
 		if (x && about.visible)
 		{
+			cancel.play(true);
 			about.visible = false;
 			aboutText.visible = false;
 		}

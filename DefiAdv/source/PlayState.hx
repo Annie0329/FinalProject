@@ -18,8 +18,13 @@ class PlayState extends FlxState
 {
 	// 玩家
 	var player:Player;
-	var bag:Bag;
 	var tip:Tip;
+	var bag:Bag;
+
+	// 聲音組
+	var cancel:FlxSound;
+	var bananaSound:FlxSound;
+	var touchEnemy:FlxSound;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -30,7 +35,7 @@ class PlayState extends FlxState
 
 	// 香蕉
 	var banana:FlxTypedGroup<FlxSprite> = null;
-	var bananaSound:FlxSound;
+
 	var twentyBanana:Bool = false;
 
 	// 敵人
@@ -93,6 +98,11 @@ class PlayState extends FlxState
 	{
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.monumentMap__json);
 
+		// 聲音組
+		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+		bananaSound = FlxG.sound.load(AssetPaths.pickUp__mp3);
+		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
+
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
 		ground.follow();
@@ -119,7 +129,6 @@ class PlayState extends FlxState
 
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
-		bananaSound = FlxG.sound.load(AssetPaths.pickUp__mp3);
 		add(banana);
 
 		// 礦場門
@@ -580,6 +589,7 @@ class PlayState extends FlxState
 		{
 			if (bag.diamondCounter >= 20)
 			{
+				touchEnemy.play();
 				inCombat = true;
 				player.active = false;
 				enemy.active = false;
@@ -780,6 +790,7 @@ class PlayState extends FlxState
 		var f4 = FlxG.keys.anyJustReleased([F4]);
 		if (f4 && !dia.visible)
 		{
+			cancel.play(true);
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
 				FlxG.switchState(new MenuState());

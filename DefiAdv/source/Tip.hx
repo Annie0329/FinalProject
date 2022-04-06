@@ -27,6 +27,7 @@ enum TipText
 	nft;
 	shiba;
 	fraud;
+	noFraud;
 	shibaNews;
 	nftNews;
 	miner;

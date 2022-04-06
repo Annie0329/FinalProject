@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxColor;
@@ -18,9 +19,10 @@ class StreetState extends FlxState
 {
 	// 玩家
 	var player:Player;
-	var bag:Bag;
 	var tip:Tip;
+	var bag:Bag;
 	var getDaMis:Bool = false;
+	var cancel:FlxSound;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -76,6 +78,7 @@ class StreetState extends FlxState
 	override public function create()
 	{
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.streetMap__json);
+		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -388,7 +391,6 @@ class StreetState extends FlxState
 
 		// 不一樣的
 		combatHud.buyStarter = save.data.buyStarter;
-
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "street")
@@ -417,11 +419,14 @@ class StreetState extends FlxState
 		updateF4();
 
 		// 除錯大隊
-		ufo.text = Std.string(dia.readDaSign);
+		ufo.text = Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
+			FlxG.mouse.visible = true;
 			ufo.visible = true;
+			bag.diamondCounter += 1000;
+			bag.updateBag();
 		}
 
 		if (dia.readDaSign && !dia.visible && !getDaMis)
@@ -494,10 +499,21 @@ class StreetState extends FlxState
 	// 遊戲結束
 	function goHome(player:Player, homeDoor:FlxSprite)
 	{
-		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+		if (bag.diamondCounter >= 888)
 		{
-			FlxG.switchState(new WinState());
-		});
+			name = ":N:你有888能量幣了，確定要離開DeFi島嗎？\n  是\n  否";
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+			dia.getPointer("winGame");
+		}
+		else
+		{
+			name = ":N:你需要888能量幣才能通過此傳送門。";
+			txt = false;
+			playerUpDown();
+			dia.show(name, txt);
+		}
 	}
 
 	// 進房子
@@ -678,6 +694,13 @@ class StreetState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
+			if (dia.win)
+			{
+				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+				{
+					FlxG.switchState(new WinState());
+				});
+			}
 			// 更新包包
 			if (dia.updateDiamond)
 			{
@@ -733,8 +756,10 @@ class StreetState extends FlxState
 		var f4 = FlxG.keys.anyJustReleased([F4]);
 		if (f4 && !dia.visible)
 		{
+			cancel.play(true);
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
+				
 				FlxG.switchState(new MenuState());
 			});
 		}

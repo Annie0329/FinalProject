@@ -2,9 +2,12 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.system.FlxSound;
 
 class Pointer extends FlxSprite
 {
+	var move:FlxSound;
+
 	public var start:Float = 0;
 	public var anoPos:Float = 0;
 	public var bar:Int = 0;
@@ -18,6 +21,7 @@ class Pointer extends FlxSprite
 	{
 		super(x, y);
 		loadGraphic(AssetPaths.pointer__png);
+		move = FlxG.sound.load(AssetPaths.movePointer__mp3);
 	}
 
 	override public function update(elapsed:Float)
@@ -75,6 +79,7 @@ class Pointer extends FlxSprite
 						y = start + bar * choNum;
 					else
 						y -= bar;
+					move.play(true);
 				}
 				if (down)
 				{
@@ -82,6 +87,7 @@ class Pointer extends FlxSprite
 						y = start;
 					else
 						y += bar;
+					move.play(true);
 				}
 			}
 
@@ -94,6 +100,7 @@ class Pointer extends FlxSprite
 						x = start;
 					else
 						x += bar;
+					move.play(true);
 				}
 				if (left)
 				{
@@ -101,6 +108,7 @@ class Pointer extends FlxSprite
 						x = start + bar * choNum;
 					else
 						x -= bar;
+					move.play(true);
 				}
 			}
 		}

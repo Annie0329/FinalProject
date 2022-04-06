@@ -14,8 +14,12 @@ import flixel.util.FlxTimer;
 
 class Dia extends FlxTypedGroup<FlxSprite>
 {
+	public var win:Bool = false;
+
 	var background:FlxSprite;
 	var text:FlxTypeText;
+	var next:FlxSound;
+	var cancel:FlxSound;
 
 	var minerPoster:FlxSprite;
 
@@ -73,7 +77,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	// 青蛙幣
 	var dexPrizeBuy:Int = 4;
-	var dexPrizeSell:Int = 2;
+	var dexPrizeSell:Float = 0.5;
 
 	// 借貸
 	public var interest:Float = 0.01;
@@ -102,10 +106,14 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.color = FlxColor.BLACK;
 		text.font = AssetPaths.silver__ttf;
 		text.delay = 0.05;
-		// text.sounds = [FlxG.sound.load(AssetPaths.typing__mp3)];
-		// text.finishSounds = true;
+		text.sounds = [FlxG.sound.load(AssetPaths.typing__mp3)];
+		text.finishSounds = true;
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
+
+		// 聲音組
+		next = FlxG.sound.load(AssetPaths.check__mp3);
+		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
 
 		coinText = new FlxText(background.x, background.y + 60, background.width, "1", 84);
 		coinText.color = FlxColor.BLACK;
@@ -116,6 +124,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 		// 箭頭
 		pointer = new Pointer();
+		pointer.color = 0xffCC9709;
 		add(pointer);
 		pointer.visible = false;
 
@@ -380,7 +389,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1DeToCoMach:
 				if (dexCoin >= 10)
 				{
-					name = ':N:確定要把青蛙幣全數換成能量幣？你現在有$dexCoin 青蛙幣，按ENTER繼續；按X退出';
+					name = ':N:你想用多少青蛙幣換成能量幣？你現在有$dexCoin 青蛙幣。按X退出，按R全數兌換。';
 					coinText.visible = true;
 				}
 				else
@@ -444,7 +453,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public function getPointer(quest:String)
 	{
 		pointerQ = quest;
-		switch (pointerQ) {}
+		switch (pointerQ)
+		{
+			case "winGame":
+				pointer.setPointer(text.x, text.y + 90, 90, ["yes", "no"], "ud");
+		}
 	}
 
 	// 左右選擇
@@ -493,8 +506,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			}
 			else if (npcType == p1DeToCoMach)
 			{
-				machGain = dexCoin * dexPrizeSell;
-				coinText.text = '可換 $machGain 能量幣';
+				if (left && coinOut != 10)
+					coinOut -= 10;
+				if (right && coinOut / 10 != Std.int(diamond / 10))
+					coinOut += 10;
+				machGain = coinOut * dexPrizeSell;
+				coinText.text = '$coinOut 青蛙幣換 $machGain 能量幣';
 			}
 			else if (npcType == p2Mach)
 			{
@@ -531,6 +548,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		{
 			if (x)
 			{
+				cancel.play();
 				coinOut = 10;
 				coinText.text = Std.string(coinOut);
 				coinText.visible = false;
@@ -550,6 +568,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				{
 					machGain = FlxMath.roundDecimal(bcCoinIn - (bck / (bcBananaCoinIn + bananaCoin)), 2);
 					bananaCoin = 0;
+				}
+				else if (npcType == p1DeToCoMach)
+				{
+					machGain = FlxMath.roundDecimal(dexCoin * dexPrizeSell, 2);
+					dexCoin = 0;
 				}
 				diamond += machGain;
 				name = ':N:你得到了 $machGain 能量幣。';
@@ -572,6 +595,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (enter && textRunDone)
 		{
+			next.play(true);
 			// 礦場海報消失
 			if (minerPoster.visible)
 			{
@@ -586,8 +610,20 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			// 箭頭選擇
 			if (pointer.visible)
 			{
-				switch (pointerQ) {}
-				show(name, txt);
+				switch (pointerQ)
+				{
+					case "winGame":
+						switch (pointer.selected)
+						{
+							case "yes":
+								win = true;
+								visible = false;
+							case "no":
+								name = ":N:等到你想離開再來這邊吧。";
+								txt = false;
+								show(name, txt);
+						}
+				}
 				pointer.visible = false;
 				pointerQ = "none";
 			}
@@ -659,7 +695,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					show(name, txt);
 					diamond += machGain;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
-					dexCoin = 0;
+					dexCoin -= coinOut;
 				}
 				// 穩定幣
 				else if (npcType == p2Mach)

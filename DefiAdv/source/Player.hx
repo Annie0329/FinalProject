@@ -4,15 +4,18 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
+import flixel.system.FlxSound;
 
 class Player extends FlxSprite
 {
 	// 跑多快
 	var SPEED:Float = 600;
+	var step:FlxSound;
 
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
+		step = FlxG.sound.load(AssetPaths.step__mp3);
 		loadGraphic(AssetPaths.ape__png, true, 150, 192);
 		// 面向右邊時使用鏡像的左邊圖片
 		setFacingFlip(FlxObject.LEFT, false, false);
@@ -93,6 +96,7 @@ class Player extends FlxSprite
 
 			if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE)
 			{
+				//step.play(0,300);
 				// 什麼時候臉該面向哪邊
 				if (shift)
 				{

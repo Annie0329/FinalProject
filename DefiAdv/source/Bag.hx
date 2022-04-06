@@ -1,5 +1,6 @@
 package;
 
+import flixel.system.FlxSound;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -36,6 +37,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var nftNotifUi = new FlxTypedGroup<FlxSprite>();
 
 	var background:FlxSprite;
+	var check:FlxSound;
 
 	// 能量幣和香蕉葉
 	public var bananaCounter:Int = 0;
@@ -165,6 +167,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		pointer = new Pointer();
 		pointer.color = 0xffF0433D;
 		shopUi.add(pointer);
+
+		check = FlxG.sound.load(AssetPaths.check__mp3);
 
 		// 商店選項
 		shopCho = new FlxText(background.x + 270 + pointer.width + 30, FlxG.height / 2 + 30, 0, "買\n賣\n聊天\n離開\n", 78, true);
@@ -596,6 +600,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// 按enter了
 		if (enter && shopUi.visible)
 		{
+			check.play(true);
 			// 有箭頭
 			if (pointer.visible && textRunDone)
 			{
