@@ -22,7 +22,12 @@ class StreetState extends FlxState
 	var tip:Tip;
 	var bag:Bag;
 	var getDaMis:Bool = false;
+
+	// 聲音組
 	var cancel:FlxSound;
+	var touchEnemy:FlxSound;
+	var openBag:FlxSound;
+	var doorTele:FlxSound;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -78,7 +83,12 @@ class StreetState extends FlxState
 	override public function create()
 	{
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.streetMap__json);
+
+		// 聲音組
 		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
+		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
+		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -176,13 +186,13 @@ class StreetState extends FlxState
 		through.follow();
 		add(through);
 
-		// 包包介面
-		bag = new Bag();
-		add(bag);
-
 		// 小紙條
 		tip = new Tip();
 		add(tip);
+
+		// 包包介面
+		bag = new Bag();
+		add(bag);
 
 		// 打人介面
 		combatHud = new CombatHUD();
@@ -489,6 +499,7 @@ class StreetState extends FlxState
 	// 去礦場
 	function goToMiner(player:Player, minerDoor:FlxSprite)
 	{
+		doorTele.play();
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
 			saveFile();
@@ -569,6 +580,7 @@ class StreetState extends FlxState
 				// 我們是在迪拜街碰到ApeStarter的
 				if (enemy.type == starter)
 					combatHud.starterInStreet = true;
+				touchEnemy.play();
 				inCombat = true;
 				player.active = false;
 				enemy.active = false;
@@ -694,10 +706,12 @@ class StreetState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
+			// 贏了！
 			if (dia.win)
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
+					doorTele.play();
 					FlxG.switchState(new WinState());
 				});
 			}
@@ -759,7 +773,6 @@ class StreetState extends FlxState
 			cancel.play(true);
 			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
-				
 				FlxG.switchState(new MenuState());
 			});
 		}
@@ -771,6 +784,7 @@ class StreetState extends FlxState
 		var c = FlxG.keys.anyJustReleased([C]);
 		if (c && !dia.visible && !bag.dealUi.visible && !bag.itemUi.visible && !bag.shopUi.visible)
 		{
+			openBag.play();
 			bag.bagUiShow();
 		}
 	}

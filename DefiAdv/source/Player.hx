@@ -11,6 +11,7 @@ class Player extends FlxSprite
 	// 跑多快
 	var SPEED:Float = 600;
 	var step:FlxSound;
+	var stepPlay:Bool = false;
 
 	public function new(x:Float = 0, y:Float = 0)
 	{
@@ -94,9 +95,11 @@ class Player extends FlxSprite
 			velocity.set(SPEED, 0);
 			velocity.rotate(FlxPoint.weak(0, 0), newAngle);
 
+			if (animation.frameIndex != 0 || animation.frameIndex != 5 || animation.frameIndex != 8)
+				stepPlay = false;
+
 			if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE)
 			{
-				//step.play(0,300);
 				// 什麼時候臉該面向哪邊
 				if (shift)
 				{
@@ -105,10 +108,13 @@ class Player extends FlxSprite
 					{
 						case LEFT, RIGHT:
 							animation.play("flr");
+
 						case UP:
 							animation.play("fu");
+
 						case DOWN:
 							animation.play("fd");
+
 						case _:
 					}
 				}
@@ -119,10 +125,13 @@ class Player extends FlxSprite
 					{
 						case LEFT, RIGHT:
 							animation.play("lr");
+
 						case UP:
 							animation.play("u");
+
 						case DOWN:
 							animation.play("d");
+
 						case _:
 					}
 				}

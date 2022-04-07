@@ -36,7 +36,10 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	// 這些是hud的素材
 	var background:FlxSprite; // 背景
 	var enemySprite:Enemy; // 敵人
+
+	// 聲音組
 	var check:FlxSound;
+	var next:FlxSound;
 
 	var pointer:Pointer; // 那個選擇打或逃的箭頭
 	var choices:Map<Choice, FlxText>; // 這個地圖把打或逃的選項變成文字(應該吧)
@@ -55,6 +58,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	var name:String;
 	var txt:Bool = true;
 	var textIn:Bool = false;
+	var enterCur:FlxSprite;
 
 	// NFT
 	var nftStyle:FlxSprite;
@@ -121,6 +125,11 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(choices[YES]);
 		add(choices[NO]);
 
+		// 指示你可以跳行的箭頭
+		enterCur = new FlxSprite(combatText.x + 750, combatText.y + 230, AssetPaths.pointer__png);
+		add(enterCur);
+		enterCur.visible = false;
+
 		// 投資多少錢
 		investNumText = new FlxText(choices[YES].x, choices[YES].y, 510, "5", 132);
 		add(investNumText);
@@ -155,7 +164,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		pointer.visible = false;
 		add(pointer);
 
+		// 聲音組
 		check = FlxG.sound.load(AssetPaths.check__mp3);
+		next = FlxG.sound.load(AssetPaths.next__mp3);
 
 		// 左右箭頭
 		pointerLeft = new FlxSprite(0, 0, AssetPaths.pointer__png);
@@ -298,7 +309,18 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 	function updateKeyboardInput()
 	{
-		// diamondText.text = Std.string(appleRod);
+		if (pointer.visible || pointerLeft.visible || !combatText.textRunDone)
+		{
+			// enterCur.stopFlickering();
+			enterCur.visible = false;
+		}
+		else
+		{
+			enterCur.visible = true;
+			// enterCur.flicker(0, 0.5);
+		}
+
+		// diamondText.text = Std.string(combatText.textRunDone);
 		// 看看哪個按鍵被按下的變數
 		var left:Bool = false;
 		var right:Bool = false;
@@ -312,9 +334,15 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			right = true;
 
 		// 根據按鍵做不同反應
-		if (fire)
+		if (fire && combatText.textRunDone)
 		{
-			check.play(true);
+			// 如果箭頭出現按enter代表選擇，就撥確認的聲音，不然就撥換下一句的聲音
+			if (pointer.visible || pointerLeft.visible)
+				check.play();
+			else
+			{
+				next.play();
+			}
 			// 狗狗幣
 			if (enemy.type == shibaCoin)
 			{

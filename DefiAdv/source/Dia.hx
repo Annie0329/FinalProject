@@ -12,13 +12,19 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 import flixel.util.FlxTimer;
 
+using flixel.util.FlxSpriteUtil;
+
 class Dia extends FlxTypedGroup<FlxSprite>
 {
 	public var win:Bool = false;
 
 	var background:FlxSprite;
 	var text:FlxTypeText;
+	var enterCur:FlxSprite;
+
+	// 聲音組
 	var next:FlxSound;
+	var check:FlxSound;
 	var cancel:FlxSound;
 
 	var minerPoster:FlxSprite;
@@ -111,9 +117,16 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
 
+		// 指示你可以跳行的箭頭
+		enterCur = new FlxSprite(background.x + background.width - 100, background.y + 240, AssetPaths.pointer__png);
+		enterCur.color = FlxColor.BLACK;
+		add(enterCur);
+		enterCur.visible = false;
+
 		// 聲音組
-		next = FlxG.sound.load(AssetPaths.check__mp3);
+		next = FlxG.sound.load(AssetPaths.next__mp3);
 		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+		check = FlxG.sound.load(AssetPaths.check__mp3);
 
 		coinText = new FlxText(background.x, background.y + 60, background.width, "1", 84);
 		coinText.color = FlxColor.BLACK;
@@ -158,10 +171,14 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		active = true;
 		visible = true;
 
+		enterCur.stopFlickering();
+		enterCur.visible = false;
 		textRunDone = false;
 		text.resetText(dilog_boxes[i]);
 		text.start(false, false, function()
 		{
+			enterCur.visible = true;
+			enterCur.flicker(0, 0.5);
 			textRunDone = true;
 			if (pointerQ != "none")
 				pointer.visible = true;
@@ -213,6 +230,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		pointer.y = background.y + 225;
 		text.y = background.y + 45;
 		coinText.y = background.y + 240;
+		enterCur.y = background.y + 240;
 	}
 
 	// 拿包包的參數
@@ -326,7 +344,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case spartan:
 				if (stoneTextYes)
 				{
-					name = ":S:加油！";
+					name = ":S:如果還不清楚規則，那個看板上有說明可以再去確認！:S:等你準備好，就可以直接從礦場大門進入礦場了。";
 					txt = false;
 				}
 				else
@@ -558,6 +576,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			// 全數賣掉的功能
 			if (r)
 			{
+				check.play();
 				if (npcType == p1ApToCoMach)
 				{
 					machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + appleCoin + rodWave)), 2);
@@ -595,7 +614,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE]);
 		if (enter && textRunDone)
 		{
-			next.play(true);
+			enterCur.stopFlickering();
+			enterCur.visible = false;
+			next.play();
 			// 礦場海報消失
 			if (minerPoster.visible)
 			{
@@ -610,6 +631,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			// 箭頭選擇
 			if (pointer.visible)
 			{
+				check.play();
 				switch (pointerQ)
 				{
 					case "winGame":
@@ -630,6 +652,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			// 機器
 			else if (coinText.visible)
 			{
+				next.play();
 				if (npcType == p1BaToCoMach)
 				{
 					name = ':N:你得到了 $machGain 能量幣。';
@@ -728,6 +751,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			// 對話換行
 			else
 			{
+				next.play();
 				profile += 2;
 				changeProfile();
 				i += 2;
@@ -750,6 +774,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					text.start(false, false, function()
 					{
 						textRunDone = true;
+						enterCur.visible = true;
+						enterCur.flicker(0, 0.5);
 					});
 				}
 			}

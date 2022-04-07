@@ -1,11 +1,11 @@
 package;
 
-import flixel.system.FlxSound;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
@@ -37,7 +37,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var nftNotifUi = new FlxTypedGroup<FlxSprite>();
 
 	var background:FlxSprite;
+
+	// 聲音組
 	var check:FlxSound;
+	var move:FlxSound;
+	var cancel:FlxSound;
 
 	// 能量幣和香蕉葉
 	public var bananaCounter:Int = 0;
@@ -73,6 +77,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var txt:Bool = true;
 	var i:Int = 1;
 	var textRunDone:Bool = false;
+	var enterCur:FlxSprite;
 
 	var sellAmoText:FlxText;
 
@@ -160,6 +165,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// 背景
 		background = new FlxSprite();
 
+		// 聲音組
+		check = FlxG.sound.load(AssetPaths.check__mp3);
+		move = FlxG.sound.load(AssetPaths.movePointer__mp3);
+		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+
 		// 商店組
 		shopUi.add(background);
 
@@ -167,8 +177,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		pointer = new Pointer();
 		pointer.color = 0xffF0433D;
 		shopUi.add(pointer);
-
-		check = FlxG.sound.load(AssetPaths.check__mp3);
 
 		// 商店選項
 		shopCho = new FlxText(background.x + 270 + pointer.width + 30, FlxG.height / 2 + 30, 0, "買\n賣\n聊天\n離開\n", 78, true);
@@ -186,6 +194,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		sellAmoText.color = 0xff2D5925;
 		sellAmoText.font = AssetPaths.silver__ttf;
 		shopUi.add(sellAmoText);
+
+		// 指示你可以跳行的箭頭
+		enterCur = new FlxSprite(shopText.x + shopText.width - 60, shopText.y + 360, AssetPaths.pointer__png);
+		enterCur.color = 0xff2D5925;
+		shopUi.add(enterCur);
+		enterCur.visible = false;
 
 		add(shopUi);
 		shopUi.forEach(function(sprite) sprite.scrollFactor.set(0, 0));
@@ -421,12 +435,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			rodWave = FlxMath.roundDecimal(rodWave, 2);
 			// 70%機率漲
 			if (FlxG.random.bool(70))
-				rodWave *= (1 + 0.01 * (FlxG.random.int(1, 50)));
+				rodWave *= (1 + 0.01 * (FlxG.random.int(20, 100)));
 			// 30%機率跌
 			else
 			{
 				if (rodWave - rodInvest >= 0.01)
-					rodWave *= 0.01 * (FlxG.random.int(20, 100));
+					rodWave *= 0.01 * (FlxG.random.int(20, 50));
 				// 防止跌到底
 				else
 					rodWave = rodInvest / 4;
@@ -552,6 +566,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			// 退出
 			if (x)
 			{
+				cancel.play();
 				itemUi.visible = false;
 				dealUi.visible = false;
 				active = false;
@@ -559,6 +574,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			// 所有物品
 			if (l)
 			{
+				move.play();
 				background.loadGraphic(AssetPaths.bagItem__png);
 				itemUi.visible = true;
 				dealUi.visible = false;
@@ -566,6 +582,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			// 交易紀錄
 			if (r)
 			{
+				move.play();
 				background.loadGraphic(AssetPaths.bagDeal__png);
 				itemUi.visible = false;
 				dealUi.visible = true;
@@ -598,8 +615,16 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 		// 按enter了
+		if (!pointer.visible && shopText.textRunDone)
+		{
+			enterCur.visible = true;
+			if (!enterCur.isFlickering())
+				enterCur.flicker(0, 0.5);
+		}
 		if (enter && shopUi.visible)
 		{
+			enterCur.stopFlickering();
+			enterCur.visible = false;
 			check.play(true);
 			// 有箭頭
 			if (pointer.visible && textRunDone)
@@ -659,7 +684,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								bananaCounter++;
 								bananaSell++;
 								diamondCounter--;
-								mainChat = '猩猩給老闆 $bananaSell 個能量石！\n老闆給猩猩 $bananaSell 片香蕉葉！';
+								mainChat = '猩猩給老闆 $bananaSell 個能量幣！\n老闆給猩猩 $bananaSell 片香蕉葉！';
 								dealText.text = mainChat + "\n";
 								updateBag();
 							}
@@ -682,7 +707,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								bananaCounter = 0;
 								sellAmoText.text = "0\n" + Std.string(shibaPrizeNow) + "\n" + Std.string(nftPrizeNow);
 								updateBag();
-								mainChat = '猩猩給老闆 $bananaSell 片香蕉葉！\n老闆給猩猩 $bananaSell 個能量石！';
+								mainChat = '猩猩給老闆 $bananaSell 片香蕉葉！\n老闆給猩猩 $bananaSell 個能量幣！';
 								dealText.text = mainChat + "\n";
 							}
 						case "shibaCoin":
@@ -785,11 +810,15 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	function setMainShop()
 	{
 		textRunDone = false;
+		enterCur.stopFlickering();
+		enterCur.visible = false;
 		background.loadGraphic(AssetPaths.shopkeeperTalk__png);
 		shopText.resetText(mainChat);
 		shopText.start(false, false, function()
 		{
 			textRunDone = true;
+			enterCur.visible = true;
+			enterCur.flicker(0, 0.5);
 		});
 		pointer.setPointer(background.x + 285, shopCho.y, 90, mainChoices, "ud");
 		shopChoice = main;

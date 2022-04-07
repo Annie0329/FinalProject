@@ -21,7 +21,14 @@ class MinerState extends FlxState
 	var player:Player;
 	var tip:Tip;
 	var bag:Bag;
+
+	// 聲音組
 	var cancel:FlxSound;
+	var minerPunch:FlxSound;
+	var gateSlide:FlxSound;
+	var touchEnemy:FlxSound;
+	var openBag:FlxSound;
+	var doorTele:FlxSound;
 
 	// 各關目標
 	var stoneGoal:Int = 5;
@@ -37,7 +44,6 @@ class MinerState extends FlxState
 	var enemy:FlxTypedGroup<Enemy>;
 	var inCombat:Bool = false;
 	var combatHud:CombatHUD;
-	var minerPunch:FlxSound;
 
 	// 其他角色
 	var npc:FlxTypedGroup<NPC>;
@@ -87,7 +93,14 @@ class MinerState extends FlxState
 	override public function create()
 	{
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.minerMap__json);
+
+		// 聲音組
 		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+		minerPunch = FlxG.sound.load(AssetPaths.minerPunch__mp3);
+		gateSlide = FlxG.sound.load(AssetPaths.gateSlide__mp3);
+		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
+		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
+		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -99,16 +112,14 @@ class MinerState extends FlxState
 		road.follow();
 		add(road);
 
-		// 礦場大門
-		minerGate = new FlxSprite(AssetPaths.minerGate__png);
-		minerGate.immovable = true;
-		add(minerGate);
-
 		// 牆
 		walls = map.loadTilemap(AssetPaths.mtSmall__png, "wall");
 		walls.follow();
 		add(walls);
-
+		// 礦場大門
+		minerGate = new FlxSprite(AssetPaths.minerGate__png);
+		minerGate.immovable = true;
+		add(minerGate);
 		// 火把
 		torch = new FlxTypedGroup<FlxSprite>();
 		add(torch);
@@ -148,7 +159,6 @@ class MinerState extends FlxState
 
 		// 敵人
 		enemy = new FlxTypedGroup<Enemy>();
-		minerPunch = FlxG.sound.load(AssetPaths.minerPunch__mp3);
 		add(enemy);
 
 		npc = new FlxTypedGroup<NPC>();
@@ -164,13 +174,13 @@ class MinerState extends FlxState
 		through.follow();
 		add(through);
 
-		// 包包介面
-		bag = new Bag();
-		add(bag);
-
 		// 小紙條
 		tip = new Tip();
 		add(tip);
+
+		// 包包介面
+		bag = new Bag();
+		add(bag);
 
 		// 打人介面
 		combatHud = new CombatHUD();
@@ -187,7 +197,7 @@ class MinerState extends FlxState
 		stoneCounterIcon.visible = false;
 
 		// 石頭數目
-		stoneCounterText = new FlxText(stoneCounterIcon.x + 135, stoneCounterIcon.y + stoneCounterIcon.height / 2 - 39, 0, "0", 60);
+		stoneCounterText = new FlxText(stoneCounterIcon.x + 135, stoneCounterIcon.y + stoneCounterIcon.height / 2 - 39, 0, "0/5", 60);
 		stoneCounterText.scrollFactor.set(0, 0);
 		stoneCounterText.color = FlxColor.BLACK;
 		add(stoneCounterText);
@@ -425,7 +435,7 @@ class MinerState extends FlxState
 
 		FlxG.overlap(player, stone, playerGotStone);
 		FlxG.collide(player, box, stoneInsideBox);
-		FlxG.collide(player, enemy, touchEnemy);
+		FlxG.collide(player, enemy, touchMiner);
 
 		FlxG.collide(enemy, walls);
 		FlxG.collide(enemy, road);
@@ -449,6 +459,7 @@ class MinerState extends FlxState
 	// 去紀念碑
 	function goToMonument(player:Player, monumentDoor:FlxSprite)
 	{
+		doorTele.play();
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
 			saveFile();
@@ -461,6 +472,7 @@ class MinerState extends FlxState
 	{
 		if (streetYes)
 		{
+			doorTele.play();
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 			{
 				saveFile();
@@ -490,13 +502,16 @@ class MinerState extends FlxState
 	// 離開礦場就停止計時
 	function timeToStop(player:Player, minerGate:FlxSprite)
 	{
-		if (player.y < minerGate.y)
+		if (player.y <= minerGate.y)
 		{
 			minerTimerText.visible = false;
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, minerGameOver);
 		}
 		else if (minerGate.x == minerGateX)
-			FlxTween.tween(minerGate, {x: minerGate.x + minerGate.width}, 0.5);
+		{
+			gateSlide.play();
+			FlxTween.tween(minerGate, {x: minerGate.x + minerGate.width}, 2);
+		}
 	}
 
 	// 玩家收集到石頭了
@@ -504,7 +519,7 @@ class MinerState extends FlxState
 	{
 		stoneCounter++;
 		stoneSound.play(true);
-		stoneCounterText.text = Std.string(stoneCounter);
+		stoneCounterText.text = Std.string(stoneCounter) + "/5";
 		stone.kill();
 		if (stoneCounter >= stoneGoal)
 			stoneCounterText.color = FlxColor.RED;
@@ -527,7 +542,7 @@ class MinerState extends FlxState
 	}
 
 	// 如果你碰了敵人代表敵人碰了你
-	function touchEnemy(player:Player, enemy:Enemy)
+	function touchMiner(player:Player, enemy:Enemy)
 	{
 		if (enemy.type == spartanMiner)
 		{
@@ -536,7 +551,7 @@ class MinerState extends FlxState
 				{
 					stoneCounter--;
 					minerPunch.play(true);
-					stoneCounterText.text = Std.string(stoneCounter);
+					stoneCounterText.text = Std.string(stoneCounter) + "/5";
 					if (stoneCounter >= stoneGoal)
 						stoneCounterText.color = FlxColor.RED;
 					else
@@ -546,6 +561,7 @@ class MinerState extends FlxState
 		// 遇到ApeStarter而且有錢(礦工跟starter是礦廠唯二的敵人)
 		else if (bag.diamondCounter >= 5)
 		{
+			touchEnemy.play();
 			inCombat = true;
 			player.active = false;
 			enemy.active = false;
@@ -590,7 +606,7 @@ class MinerState extends FlxState
 			bag.diamondCounter += Std.int(car * 50);
 			finalScore += car;
 			stoneCounter = stoneCounter % stoneGoal;
-			stoneCounterText.text = Std.string(stoneCounter);
+			stoneCounterText.text = Std.string(stoneCounter) + "/5";
 			stoneCounterText.color = FlxColor.BLACK;
 			box.loadGraphic(AssetPaths.boxFull__png);
 
@@ -625,7 +641,7 @@ class MinerState extends FlxState
 		}
 
 		// 玩家經過門就啟動計時，用else if是為了避免重複計時(看不見計時器才開始計時)
-		else if (player.y < minerGate.y - 120 && player.x < minerGate.x + minerGate.width)
+		else if (player.y <= minerGate.y - 150 && player.x < minerGate.x + minerGate.width && minerGate.x == minerGateX + minerGate.width)
 		{
 			tip.tipGetText(miner);
 			minerGate.x = minerGateX;
@@ -653,7 +669,7 @@ class MinerState extends FlxState
 		dia.show(name, false);
 		stoneCounter = 0;
 		finalScore = 0;
-		stoneCounterText.text = Std.string(stoneCounter);
+		stoneCounterText.text = Std.string(stoneCounter) + "/5";
 		timer.cancel();
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 	}
@@ -727,6 +743,7 @@ class MinerState extends FlxState
 				streetOpen = false;
 				streetYes = true;
 
+				doorTele.play();
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 				{
 					saveFile();
@@ -767,6 +784,7 @@ class MinerState extends FlxState
 		var c = FlxG.keys.anyJustReleased([C]);
 		if (c && !dia.visible && !bag.dealUi.visible && !bag.itemUi.visible && !bag.shopUi.visible)
 		{
+			openBag.play();
 			bag.bagUiShow();
 		}
 	}

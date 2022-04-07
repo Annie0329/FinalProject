@@ -25,6 +25,8 @@ class PlayState extends FlxState
 	var cancel:FlxSound;
 	var bananaSound:FlxSound;
 	var touchEnemy:FlxSound;
+	var openBag:FlxSound;
+	var doorTele:FlxSound;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -102,6 +104,8 @@ class PlayState extends FlxState
 		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
 		bananaSound = FlxG.sound.load(AssetPaths.pickUp__mp3);
 		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
+		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
+		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -191,13 +195,13 @@ class PlayState extends FlxState
 		through.follow();
 		add(through);
 
-		// 包包介面
-		bag = new Bag();
-		add(bag);
-
 		// 小紙條
 		tip = new Tip();
 		add(tip);
+		
+		// 包包介面
+		bag = new Bag();
+		add(bag);
 
 		// 打人介面
 		combatHud = new CombatHUD();
@@ -647,7 +651,8 @@ class PlayState extends FlxState
 	{
 		if (minerYes)
 		{
-			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+			doorTele.play();
+			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, function()
 			{
 				saveFile();
 				FlxG.switchState(new MinerState());
@@ -756,7 +761,8 @@ class PlayState extends FlxState
 				minerOpen = false;
 				minerYes = true;
 
-				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
+				doorTele.play();
+				FlxG.camera.fade(FlxColor.BLACK, 0.5, false, function()
 				{
 					saveFile();
 					FlxG.switchState(new MinerState());
@@ -804,6 +810,7 @@ class PlayState extends FlxState
 		var c = FlxG.keys.anyJustReleased([C]);
 		if (c && !dia.visible && !bag.itemUi.visible && !bag.dealUi.visible && !bag.shopUi.visible)
 		{
+			openBag.play();
 			bag.bagUiShow();
 		}
 	}

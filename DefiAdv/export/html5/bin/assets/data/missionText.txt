@@ -6,4 +6,4 @@
 :exploreMiner:在礦場四處看看吧。
 :minerFin:賺到300能量幣，就可以前往DeFi街了。
 :exploreStreet:探索一下DeFi街吧。
-:streetFin:賺到888能量幣，就可以啟動回家的傳送門囉！
+:streetFin:賺到888能量幣，就可以啟動回家的傳送點囉！
