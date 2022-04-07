@@ -617,9 +617,13 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		// 按enter了
 		if (!pointer.visible && shopText.textRunDone)
 		{
-			enterCur.visible = true;
 			if (!enterCur.isFlickering())
+			{
+				enterCur.visible = true;
 				enterCur.flicker(0, 0.5);
+				diamondCounter++;
+				updateBag();
+			}
 		}
 		if (enter && shopUi.visible)
 		{

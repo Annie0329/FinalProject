@@ -311,13 +311,13 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	{
 		if (pointer.visible || pointerLeft.visible || !combatText.textRunDone)
 		{
-			// enterCur.stopFlickering();
+			enterCur.stopFlickering();
 			enterCur.visible = false;
 		}
-		else
+		else if (!enterCur.isFlickering())
 		{
 			enterCur.visible = true;
-			// enterCur.flicker(0, 0.5);
+			enterCur.flicker(0, 0.5);
 		}
 
 		// diamondText.text = Std.string(combatText.textRunDone);
