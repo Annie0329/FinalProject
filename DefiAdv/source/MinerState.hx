@@ -234,8 +234,7 @@ class MinerState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+		FlxG.sound.playMusic(AssetPaths.minerTheme__mp3, 0.3, true);
 
 		FlxG.mouse.visible = false;
 
@@ -410,7 +409,7 @@ class MinerState extends FlxState
 		updateTimer();
 
 		// 除錯大隊
-		ufo.text = "ouiouitext"; // Std.string(bag.nftNotifText.text);
+		ufo.text = Std.string(save.data.place);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -483,7 +482,7 @@ class MinerState extends FlxState
 		{
 			if (bag.diamondCounter >= 300)
 			{
-				name = ":N:你有300能量幣了，歡迎通過此傳送門，進入下一關！";
+				name = ":N:你有300能量幣了，歡迎通過此傳送點，進入下一關！";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -491,7 +490,7 @@ class MinerState extends FlxState
 			}
 			else
 			{
-				name = ":N:你需要300能量幣才能通過此傳送門。";
+				name = ":N:你需要300能量幣才能通過此傳送點。";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -680,6 +679,7 @@ class MinerState extends FlxState
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
 			bag.buyAndSell();
+			FlxG.sound.playMusic(AssetPaths.shopTheme__mp3, 0.3, true);
 		});
 	}
 
@@ -700,13 +700,9 @@ class MinerState extends FlxState
 
 			// 存檔點
 			if (npcType == saveStone)
-			{
 				saveFile();
-			}
 			else if (npcType == spartan)
-			{
 				stoneYes = true;
-			}
 
 			dia.context(npcType);
 		}

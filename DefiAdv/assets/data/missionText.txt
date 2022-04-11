@@ -1,6 +1,6 @@
-:getLeaves:蒐集10片葉子後去找Doge
+:getLeaves:蒐集10片葉子後去找Doge，目前進度0/10
 :leavesFin:去找Doge吧！
-:talk:跟四位島民聊天後去找位於商店附近的黑柴金剛
+:talk:快去跟四位島民聊天吧，目前進度0/4
 :talkFin:去找位於商店附近的黑柴金剛吧！
 :monuFin:賺到100能量幣，就可以前往礦場了。
 :exploreMiner:在礦場四處看看吧。

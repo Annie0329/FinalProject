@@ -126,7 +126,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(choices[NO]);
 
 		// 指示你可以跳行的箭頭
-		enterCur = new FlxSprite(combatText.x + 750, combatText.y + 230, AssetPaths.pointer__png);
+		enterCur = new FlxSprite(combatText.x + combatText.width / 2 - 30, combatText.y + 230, AssetPaths.pointer__png);
+		enterCur.angle = 90;
 		add(enterCur);
 		enterCur.visible = false;
 
@@ -292,7 +293,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			case spartanMiner:
 		}
 		combatText.show(name, txt);
-
 		state = 1;
 		visible = true; // 讓打架介面出現
 

@@ -66,6 +66,8 @@ class PlayState extends FlxState
 	var minerDoor:FlxSprite;
 	var minerOpen:Bool = false;
 	var minerYes:Bool = false;
+	var lakeMoney:Bool = false;
+	var talkCounter:Int = 0;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -198,7 +200,7 @@ class PlayState extends FlxState
 		// 小紙條
 		tip = new Tip();
 		add(tip);
-		
+
 		// 包包介面
 		bag = new Bag();
 		add(bag);
@@ -245,8 +247,7 @@ class PlayState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		if (FlxG.sound.music == null)
-			FlxG.sound.playMusic(AssetPaths.gameTheme__mp3, 1, true);
+		FlxG.sound.playMusic(AssetPaths.monumentTheme__mp3, 0.3, true);
 
 		// 滑鼠退散
 		FlxG.mouse.visible = false;
@@ -362,6 +363,7 @@ class PlayState extends FlxState
 		save.data.talkMiss = dia.talkMiss;
 		save.data.talkDone = dia.talkDone;
 		save.data.twentyBanana = twentyBanana;
+		save.data.lakeTalking = dia.lakeTalking;
 
 		save.flush();
 	}
@@ -419,6 +421,7 @@ class PlayState extends FlxState
 		dia.talkMiss = save.data.talkMiss;
 		dia.talkDone = save.data.talkDone;
 		twentyBanana = save.data.twentyBanana;
+		dia.lakeTalking = save.data.lakeTalking;
 
 		if (save.data.playerPos != null && save.data.place != null)
 		{
@@ -462,7 +465,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		// 除錯大隊
-		ufo.text = Std.string(bag.shibaWave); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
+		ufo.text = Std.string(save.data.place); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
@@ -473,6 +476,36 @@ class PlayState extends FlxState
 			FlxG.mouse.visible = true;
 		}
 
+		updateInCombat();
+		updateWhenDiaInvisible();
+		updateTalking();
+		updateF4();
+		updateC();
+		updateMission();
+
+		// 碰撞爆
+		FlxG.overlap(player, ground);
+		FlxG.overlap(player, road);
+		FlxG.collide(player, walls);
+		FlxG.overlap(player, through);
+		FlxG.collide(player, treeBar);
+
+		FlxG.collide(player, npc, npcTalk);
+
+		FlxG.overlap(player, banana, getBanana);
+
+		FlxG.collide(player, shop, shopOpen);
+		FlxG.collide(player, minerDoor, goToMiner);
+
+		FlxG.collide(enemy, walls);
+		FlxG.collide(enemy, road);
+		FlxG.collide(player, enemy, playerTouchEnemy);
+		enemy.forEachAlive(checkEnemyVision);
+	}
+
+	// 任務更新
+	function updateMission()
+	{
 		// 達成葉子目標
 		if (bag.bananaCounter >= 10 && !dia.leafYes && !dia.talkDone)
 		{
@@ -510,31 +543,6 @@ class PlayState extends FlxState
 			treeBar.kill();
 			tip.missionGetText(monuFin);
 		}
-
-		updateInCombat();
-		updateWhenDiaInvisible();
-		updateTalking();
-		updateF4();
-		updateC();
-
-		// 碰撞爆
-		FlxG.overlap(player, ground);
-		FlxG.overlap(player, road);
-		FlxG.collide(player, walls);
-		FlxG.overlap(player, through);
-		FlxG.collide(player, treeBar);
-
-		FlxG.collide(player, npc, npcTalk);
-
-		FlxG.overlap(player, banana, getBanana);
-
-		FlxG.collide(player, shop, shopOpen);
-		FlxG.collide(player, minerDoor, goToMiner);
-
-		FlxG.collide(enemy, walls);
-		FlxG.collide(enemy, road);
-		FlxG.collide(player, enemy, playerTouchEnemy);
-		enemy.forEachAlive(checkEnemyVision);
 	}
 
 	// 打架結束囉
@@ -644,6 +652,10 @@ class PlayState extends FlxState
 		bag.bananaCounter++;
 		bag.updateBag();
 		bananaSound.play(true);
+		if (bag.bananaCounter < 10 && !dia.leafYes)
+		{
+			tip.missionText.text = "蒐集10片葉子後去找Doge，目前進度" + bag.bananaCounter + "/10";
+		}
 	}
 
 	// 去礦場
@@ -662,7 +674,7 @@ class PlayState extends FlxState
 		{
 			if (bag.diamondCounter >= 100)
 			{
-				name = ":N:你有100能量幣了，歡迎通過此傳送門，進入下一關！";
+				name = ":N:你有100能量幣了，歡迎通過此傳送點，進入下一關！";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -670,7 +682,7 @@ class PlayState extends FlxState
 			}
 			else
 			{
-				name = ":N:你需要100能量幣才能通過此傳送門。";
+				name = ":N:你需要100能量幣才能通過此傳送點。";
 				txt = false;
 				playerUpDown();
 				dia.show(name, txt);
@@ -684,6 +696,7 @@ class PlayState extends FlxState
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
 			bag.buyAndSell();
+			FlxG.sound.playMusic(AssetPaths.shopTheme__mp3, 0.3, true);
 		});
 	}
 
@@ -706,13 +719,29 @@ class PlayState extends FlxState
 			if (npcType == doge && dogeYes.visible)
 				dogeYes.visible = false;
 			if (npcType == sbRed && srYes.visible)
+			{
+				talkCounter++;
+				tip.missionText.text = "快去跟四位島民聊天吧，目前進度" + talkCounter + "/4";
 				srYes.visible = false;
+			}
 			if (npcType == sbGreen && sgYes.visible)
+			{
+				talkCounter++;
+				tip.missionText.text = "快去跟四位島民聊天吧，目前進度" + talkCounter + "/4";
 				sgYes.visible = false;
+			}
 			if (npcType == sbBlue && sbYes.visible)
+			{
+				talkCounter++;
+				tip.missionText.text = "快去跟四位島民聊天吧，目前進度" + talkCounter + "/4";
 				sbYes.visible = false;
+			}
 			if (npcType == ming && mingYes.visible)
+			{
+				talkCounter++;
+				tip.missionText.text = "快去跟四位島民聊天吧，目前進度" + talkCounter + "/4";
 				mingYes.visible = false;
+			}
 			if (npcType == sbBlack && sblackYes.visible)
 				sblackYes.visible = false;
 			// 存檔點
@@ -722,6 +751,8 @@ class PlayState extends FlxState
 				if (stoneYes.visible && !dia.saveStoneIntro)
 					stoneYes.visible = false;
 			}
+			else if (npcType == lake && !dia.lakeTalking)
+				lakeMoney = true;
 
 			dia.context(npcType);
 		}
@@ -767,6 +798,13 @@ class PlayState extends FlxState
 					saveFile();
 					FlxG.switchState(new MinerState());
 				});
+			}
+			// 湖給你錢
+			if (lakeMoney)
+			{
+				lakeMoney = false;
+				bag.diamondCounter += 20;
+				bag.updateBag();
 			}
 			if (enemyFlicker)
 			{

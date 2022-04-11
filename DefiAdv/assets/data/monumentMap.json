@@ -112,7 +112,8 @@
         {"name": "treeBar", "id": 133, "_eid": "46688566", "x": 7440, "y": 3240, "originX": 0, "originY": 0},
         {"name": "stoneYes", "id": 134, "_eid": "23027330", "x": 720, "y": 3360, "originX": 0, "originY": 0},
         {"name": "nft", "id": 135, "_eid": "04469671", "x": 10920, "y": 2160, "originX": 0, "originY": 0},
-        {"name": "shibaCoin", "id": 137, "_eid": "86208261", "x": 10320, "y": 1440, "originX": 0, "originY": 0}
+        {"name": "shibaCoin", "id": 137, "_eid": "86208261", "x": 10320, "y": 1440, "originX": 0, "originY": 0},
+        {"name": "sea", "id": 148, "_eid": "88252965", "x": -120, "y": 2160, "originX": 0, "originY": 0}
       ]
     },
     {

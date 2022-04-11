@@ -39,7 +39,7 @@ enum TipText
 class Tip extends FlxTypedGroup<FlxSprite>
 {
 	var background:FlxSprite;
-	var missionText:FlxText;
+	public var missionText:FlxText;
 	var tipText:FlxTypeText;
 	// var text:FlxText;
 	var i:Int;

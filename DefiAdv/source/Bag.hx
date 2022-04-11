@@ -8,6 +8,7 @@ import flixel.math.FlxMath;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 import flixel.util.FlxTimer;
 
 using flixel.util.FlxSpriteUtil;
@@ -158,6 +159,8 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 	var ufo:FlxText;
 
+	var save:FlxSave;
+
 	public function new()
 	{
 		super();
@@ -196,8 +199,9 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		shopUi.add(sellAmoText);
 
 		// 指示你可以跳行的箭頭
-		enterCur = new FlxSprite(shopText.x + shopText.width - 60, shopText.y + 360, AssetPaths.pointer__png);
+		enterCur = new FlxSprite(shopText.x + shopText.width / 2 - 30, shopText.y + 400, AssetPaths.pointer__png);
 		enterCur.color = 0xff2D5925;
+		enterCur.angle = 90;
 		shopUi.add(enterCur);
 		enterCur.visible = false;
 
@@ -339,6 +343,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		ufo.scrollFactor.set(0, 0);
 		add(ufo);
 		ufo.visible = false;
+
+		// 儲存資料的元件
+		save = new FlxSave();
+		save.bind("DefiAdv");
 
 		active = false;
 	}
@@ -615,6 +623,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
 		// 按enter了
+		// 如果字都跑完了就派出閃爍箭頭
 		if (!pointer.visible && shopText.textRunDone)
 		{
 			if (!enterCur.isFlickering())
@@ -670,6 +679,15 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								if (nftInvest != 0)
 									nftUi.visible = true;
 								FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+								if (save.data.place != null)
+								{
+									if (save.data.place == "monument")
+										FlxG.sound.playMusic(AssetPaths.monumentTheme__mp3, 0.3, true);
+									if (save.data.place == "miner")
+										FlxG.sound.playMusic(AssetPaths.minerTheme__mp3, 0.3, true);
+									if (save.data.place == "street")
+										FlxG.sound.playMusic(AssetPaths.streetTheme__mp3, 0.3, true);
+								}
 							});
 					}
 					shopText.start(false, false);
@@ -786,26 +804,22 @@ class Bag extends FlxTypedGroup<FlxBasic>
 							setMainShop();
 					}
 				}
-			}
-			else
+			} // 對話結束就離開
+			else if (shopText.over)
 			{
-				// 對話結束就離開
-				if (shopText.over)
+				pointer.visible = true;
+				if (shopChoice == chat)
 				{
-					pointer.visible = true;
-					if (shopChoice == chat)
-					{
-						shopText.resetText(chatCho);
-					}
-					else if (shopChoice == sell)
-					{
-						shopText.resetText(sellCho);
-						sellAmoText.visible = true;
-					}
-					shopText.start(false, false);
-					shopText.skip();
-					textRunDone = true;
+					shopText.resetText(chatCho);
 				}
+				else if (shopChoice == sell)
+				{
+					shopText.resetText(sellCho);
+					sellAmoText.visible = true;
+				}
+				shopText.start(false, false);
+				shopText.skip();
+				textRunDone = true;
 			}
 		}
 	}

@@ -52,6 +52,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var talkMiss:Bool = false;
 	public var talkDone:Bool = false;
 	public var readDaSign:Bool = false;
+	public var lakeTalking:Bool = false;
 
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
@@ -118,8 +119,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		add(text);
 
 		// 指示你可以跳行的箭頭
-		enterCur = new FlxSprite(background.x + background.width - 100, background.y + 240, AssetPaths.pointer__png);
+		enterCur = new FlxSprite(background.x + background.width / 2 - 30, background.y + 310, AssetPaths.pointer__png);
 		enterCur.color = FlxColor.BLACK;
+		enterCur.angle = 90;
 		add(enterCur);
 		enterCur.visible = false;
 
@@ -230,7 +232,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		pointer.y = background.y + 225;
 		text.y = background.y + 45;
 		coinText.y = background.y + 240;
-		enterCur.y = background.y + 240;
+		enterCur.y = background.y + 310;
 	}
 
 	// 拿包包的參數
@@ -322,12 +324,21 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					txt = false;
 				}
 			case monument:
-				name = ":N:裡面似乎有毀壞的記帳本。";
+				name = ":N:裡面似乎有毀壞的記帳本，現已無法進入。";
 				txt = false;
 
 			case lake:
-				name = AssetPaths.lakeTalking__txt;
-				txt = true;
+				if (lakeTalking)
+				{
+					name = ":L:快去冒險吧！";
+					txt = false;
+				}
+				else
+				{
+					name = AssetPaths.lakeTalking__txt;
+					txt = true;
+					lakeTalking = true;
+				}
 
 			case saveStone:
 				if (saveStoneIntro)
