@@ -40,6 +40,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var dilog_boxes:Array<String>;
 	var txt:Bool = true;
 	var textRunDone:Bool = false;
+	var saveShow:String = ":N:oui";
 
 	public var diaUpDown:String;
 
@@ -53,6 +54,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var talkDone:Bool = false;
 	public var readDaSign:Bool = false;
 	public var lakeTalking:Bool = false;
+	public var saveStoneYes:Bool = false;
 
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
@@ -177,6 +179,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		enterCur.visible = false;
 		textRunDone = false;
 		text.resetText(dilog_boxes[i]);
+
 		text.start(false, false, function()
 		{
 			enterCur.visible = true;
@@ -185,6 +188,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			if (pointerQ != "none")
 				pointer.visible = true;
 		});
+		// if (npcType == saveStone && saveStoneIntro && !txt)
+		// text.skip();
 	}
 
 	// 換對話框頭像
@@ -244,6 +249,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		this.appleCoin = appleCoin;
 		this.dexCoin = dexCoin;
 		this.rodWave = rodWave;
+	}
+
+	// 存檔炫一下
+	public function saveShowTime(money:Float, place)
+	{
+		saveShow = ':N:猩猩  ' + place + '  $money 能量幣\n存檔成功！';
 	}
 
 	// 對話大滿貫
@@ -343,7 +354,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case saveStone:
 				if (saveStoneIntro)
 				{
-					name = ":N:存檔成功！";
+					name = saveShow;
 					txt = false;
 				}
 				else
@@ -351,6 +362,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					name = AssetPaths.saveStoneIntro__txt;
 					txt = true;
 					saveStoneIntro = true;
+					saveStoneYes = true;
 				}
 			case spartan:
 				if (stoneTextYes)

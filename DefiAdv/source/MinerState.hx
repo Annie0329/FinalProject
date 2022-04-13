@@ -29,6 +29,7 @@ class MinerState extends FlxState
 	var touchEnemy:FlxSound;
 	var openBag:FlxSound;
 	var doorTele:FlxSound;
+	var saveNoise:FlxSound;
 
 	// 各關目標
 	var stoneGoal:Int = 5;
@@ -101,6 +102,7 @@ class MinerState extends FlxState
 		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
 		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
 		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
+		saveNoise = FlxG.sound.load(AssetPaths.save__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -311,7 +313,7 @@ class MinerState extends FlxState
 		save.data.appleCoin = bag.appleCoin;
 
 		// 跟誰講過話
-		save.data.saveStoneIntro = true;
+		save.data.saveStoneIntro = dia.saveStoneIntro;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
@@ -700,7 +702,12 @@ class MinerState extends FlxState
 
 			// 存檔點
 			if (npcType == saveStone)
+			{
 				saveFile();
+				dia.saveShowTime(bag.diamondCounter, "礦場");
+				if (dia.saveStoneIntro)
+					saveNoise.play();
+			}
 			else if (npcType == spartan)
 				stoneYes = true;
 
@@ -745,6 +752,14 @@ class MinerState extends FlxState
 					saveFile();
 					FlxG.switchState(new StreetState());
 				});
+			}
+			// 第一次對話完後呼叫存檔聲音
+			if (dia.saveStoneYes)
+			{
+				dia.saveStoneYes = false;
+				name = ":N:存檔成功！";
+				saveNoise.play();
+				dia.show(name, false);
 			}
 		}
 	}

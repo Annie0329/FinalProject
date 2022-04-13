@@ -27,6 +27,7 @@ class PlayState extends FlxState
 	var touchEnemy:FlxSound;
 	var openBag:FlxSound;
 	var doorTele:FlxSound;
+	var saveNoise:FlxSound;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -108,6 +109,7 @@ class PlayState extends FlxState
 		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
 		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
 		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
+		saveNoise = FlxG.sound.load(AssetPaths.save__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -351,7 +353,7 @@ class PlayState extends FlxState
 		save.data.dexCoin = bag.dexCoin;
 
 		// 跟誰講過話
-		save.data.saveStoneIntro = true;
+		save.data.saveStoneIntro = dia.saveStoneIntro;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
@@ -744,10 +746,14 @@ class PlayState extends FlxState
 			}
 			if (npcType == sbBlack && sblackYes.visible)
 				sblackYes.visible = false;
+
 			// 存檔點
 			if (npcType == saveStone)
 			{
 				saveFile();
+				dia.saveShowTime(bag.diamondCounter, "新手村");
+				if (dia.saveStoneIntro)
+					saveNoise.play();
 				if (stoneYes.visible && !dia.saveStoneIntro)
 					stoneYes.visible = false;
 			}
@@ -806,6 +812,7 @@ class PlayState extends FlxState
 				bag.diamondCounter += 20;
 				bag.updateBag();
 			}
+			// 敵人閃爍
 			if (enemyFlicker)
 			{
 				new FlxTimer().start(1, function(timer:FlxTimer)
@@ -813,6 +820,14 @@ class PlayState extends FlxState
 					combatHud.enemy.alpha = 1;
 					enemyFlicker = false;
 				});
+			}
+			// 第一次對話完後呼叫存檔聲音
+			if (dia.saveStoneYes)
+			{
+				dia.saveStoneYes = false;
+				name = ":N:存檔成功！";
+				saveNoise.play();
+				dia.show(name, false);
 			}
 		}
 	}

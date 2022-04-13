@@ -326,7 +326,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		var right:Bool = false;
 		var fire:Bool = false;
 
-		if (FlxG.keys.anyJustReleased([SPACE, X, ENTER]))
+		if (FlxG.keys.anyJustReleased([SPACE, Z, ENTER]))
 			fire = true;
 		else if (FlxG.keys.anyJustReleased([A, LEFT]))
 			left = true;

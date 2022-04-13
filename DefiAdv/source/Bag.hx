@@ -43,6 +43,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 	var check:FlxSound;
 	var move:FlxSound;
 	var cancel:FlxSound;
+	var noNoise:FlxSound;
 
 	// 能量幣和香蕉葉
 	public var bananaCounter:Int = 0;
@@ -172,6 +173,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		check = FlxG.sound.load(AssetPaths.check__mp3);
 		move = FlxG.sound.load(AssetPaths.movePointer__mp3);
 		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+		noNoise = FlxG.sound.load(AssetPaths.no__mp3);
 
 		// 商店組
 		shopUi.add(background);
@@ -630,7 +632,6 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			{
 				enterCur.visible = true;
 				enterCur.flicker(0, 0.5);
-				diamondCounter++;
 				updateBag();
 			}
 		}
@@ -638,13 +639,13 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		{
 			enterCur.stopFlickering();
 			enterCur.visible = false;
-			check.play(true);
 			// 有箭頭
 			if (pointer.visible && textRunDone)
 			{
 				// 主選單
 				if (shopChoice == main)
 				{
+					check.play(true);
 					background.loadGraphic(AssetPaths.shopkeeper__png);
 					switch (pointer.selected)
 					{
@@ -703,6 +704,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 						case "leaf":
 							if (diamondCounter >= 1)
 							{
+								check.play(true);
 								bananaCounter++;
 								bananaSell++;
 								diamondCounter--;
@@ -710,7 +712,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								dealText.text = mainChat + "\n";
 								updateBag();
 							}
+							else
+								noNoise.play(true);
 						case "exit":
+							check.play(true);
 							bananaCounterIcon.visible = false;
 							setMainShop();
 					}
@@ -724,6 +729,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 						case "leaf":
 							if (bananaCounter > 0)
 							{
+								check.play(true);
 								diamondCounter += bananaCounter;
 								bananaSell = bananaCounter;
 								bananaCounter = 0;
@@ -732,9 +738,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								mainChat = '猩猩給老闆 $bananaSell 片香蕉葉！\n老闆給猩猩 $bananaSell 個能量幣！';
 								dealText.text = mainChat + "\n";
 							}
+							else
+								noNoise.play(true);
 						case "shibaCoin":
 							if (shibaPrizeNow > 0)
 							{
+								check.play(true);
 								diamondCounter += shibaPrizeNow;
 								sellAmoText.text = Std.string(bananaCounter) + "\n0\n" + Std.string(nftPrizeNow);
 								updateBag();
@@ -750,9 +759,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								shibaNotifText.text = "oui";
 								shibaWaveText.color = FlxColor.GREEN;
 							}
+							else
+								noNoise.play(true);
 						case "nft":
 							if (nftPrizeNow > 0)
 							{
+								check.play(true);
 								diamondCounter += nftPrizeNow;
 								sellAmoText.text = Std.string(bananaCounter) + "\n" + Std.string(shibaPrizeNow) + "\n0";
 								updateBag();
@@ -768,11 +780,15 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								nftNotifText.text = "oui";
 								nftWaveText.color = FlxColor.GREEN;
 							}
+							else
+								noNoise.play(true);
 						case "money":
+							check.play(true);
 							name = ":嗯？抱歉，我們不幫忙丟回收紙類喔。";
 							txt = false;
 							shopChatStart(name, txt);
 						case "exit":
+							check.play(true);
 							sellAmoText.visible = false;
 							bananaSell = 0;
 							setMainShop();
@@ -782,6 +798,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 				// 開始聊天
 				else if (shopChoice == chat)
 				{
+					check.play(true);
 					switch (pointer.selected)
 					{
 						case "yelling":

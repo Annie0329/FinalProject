@@ -29,6 +29,7 @@ class StreetState extends FlxState
 	var touchEnemy:FlxSound;
 	var openBag:FlxSound;
 	var doorTele:FlxSound;
+	var saveNoise:FlxSound;
 
 	// 對話框和他的變數
 	var dia:Dia;
@@ -90,6 +91,7 @@ class StreetState extends FlxState
 		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
 		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
 		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
+		saveNoise = FlxG.sound.load(AssetPaths.save__mp3);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -173,7 +175,8 @@ class StreetState extends FlxState
 		add(npc);
 
 		// 空投
-		airdrop = new FlxSprite(AssetPaths.airdrop__png);
+		airdrop = new FlxSprite().loadGraphic(AssetPaths.airdrop__png, true, 192, 192);
+		airdrop.animation.add("drop", [1, 2, 3, 4, 5], 6, false);
 		airdrop.visible = false;
 		add(airdrop);
 
@@ -344,7 +347,7 @@ class StreetState extends FlxState
 		save.data.appleCoin = bag.appleCoin;
 
 		// 跟誰講過話
-		save.data.saveStoneIntro = true;
+		save.data.saveStoneIntro = dia.saveStoneIntro;
 
 		// 玩家位置
 		save.data.playerPos = player.getPosition();
@@ -564,12 +567,20 @@ class StreetState extends FlxState
 		{
 			player.setPosition(houseDoor.x + (houseDoor.width - player.width) / 2, houseDoor.y - houseDis + 240);
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
-			if (houseDoor == house3Door && !firstLoan)
-				tip.tipGetText(loan);
-			else
+			if (houseDoor == house3Door)
 			{
-				airdrop.visible = true;
-				FlxTween.tween(airdrop, {x: 6840, y: 2160}, 1);
+				if (!firstLoan)
+					tip.tipGetText(loan);
+				else
+				{
+					airdrop.visible = true;
+					FlxTween.tween(airdrop, {x: 6840, y: 2160}, 2, {
+						onComplete: function(_)
+						{
+							airdrop.animation.play("drop");
+						}
+					});
+				}
 			}
 		});
 	}
@@ -676,7 +687,12 @@ class StreetState extends FlxState
 
 			// 存檔點
 			if (npcType == saveStone)
+			{
 				saveFile();
+				dia.saveShowTime(bag.diamondCounter, "DeFi街");
+				if (dia.saveStoneIntro)
+					saveNoise.play();
+			}
 			else if (npcType == p1ApToCoMach)
 			{
 				if (bag.rodUi.visible)
@@ -754,6 +770,14 @@ class StreetState extends FlxState
 					combatHud.enemy.alpha = 1;
 				});
 				enemyFlicker = false;
+			}
+			// 第一次對話完後呼叫存檔聲音
+			if (dia.saveStoneYes)
+			{
+				dia.saveStoneYes = false;
+				name = ":N:存檔成功！";
+				saveNoise.play();
+				dia.show(name, false);
 			}
 		}
 	}

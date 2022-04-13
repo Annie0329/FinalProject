@@ -14,9 +14,13 @@ class MenuState extends FlxState
 	var menuBackground:FlxSprite;
 	var about:FlxSprite;
 	var aboutText:FlxText;
+
+	// 聲音組
 	var check:FlxSound;
 	var cancel:FlxSound;
+	var noNoise:FlxSound;
 
+	// 箭頭和它的變數
 	var pointerX:Int = 780;
 	var pointerY:Int = 630;
 	var pointerBar:Int = 150;
@@ -43,8 +47,10 @@ class MenuState extends FlxState
 		add(pointer);
 		pointer.setPointer(pointerX, pointerY, pointerBar, pointerCho, pointerDir);
 
+		// 聲音組
 		check = FlxG.sound.load(AssetPaths.check__mp3);
 		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
+		noNoise = FlxG.sound.load(AssetPaths.no__mp3);
 
 		// 關於背景
 		about = new FlxSprite(0, 0, AssetPaths.menuAbout__png);
@@ -122,12 +128,13 @@ class MenuState extends FlxState
 		// 主選單功能
 		if (enter && !about.visible)
 		{
-			check.play(true);
 			switch (pointer.selected)
 			{
 				// 繼續遊戲
 				case "continue":
 					if (save.data.bananaValue != null)
+					{
+						check.play();
 						FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 						{
 							loadsave = true;
@@ -138,9 +145,13 @@ class MenuState extends FlxState
 							else if (save.data.place == "street")
 								FlxG.switchState(new StreetState());
 						});
+					}
+					else
+						noNoise.play(true);
 
 				// 重新開始
 				case "restart":
+					check.play();
 					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 					{
 						save.erase();
@@ -149,6 +160,7 @@ class MenuState extends FlxState
 
 				// 關於
 				case "about":
+					check.play();
 					about.visible = true;
 					aboutText.visible = true;
 			}

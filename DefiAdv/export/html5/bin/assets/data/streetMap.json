@@ -63,7 +63,7 @@
         {"name": "house4Sign", "id": 57, "_eid": "71478503", "x": 840, "y": 1800, "originX": 0, "originY": 0},
         {"name": "mathChart", "id": 58, "_eid": "27238375", "x": 8880, "y": 4920, "originX": 0, "originY": 0},
         {"name": "sea", "id": 59, "_eid": "88252965", "x": 11160, "y": 1440, "originX": 0, "originY": 0},
-        {"name": "airdrop", "id": 61, "_eid": "23233875", "x": 6840, "y": 2160, "originX": 0, "originY": 0},
+        {"name": "airdrop", "id": 61, "_eid": "23233875", "x": 7200, "y": 1320, "originX": 0, "originY": 0},
         {"name": "p1CoToDeMach", "id": 62, "_eid": "43670871", "x": 9960, "y": 5520, "originX": 0, "originY": 0},
         {"name": "p1DeToCoMach", "id": 63, "_eid": "43698209", "x": 9960, "y": 5040, "originX": 0, "originY": 0},
         {"name": "dexNews", "id": 64, "_eid": "78197589", "x": 6600, "y": 4920, "originX": 0, "originY": 0}
