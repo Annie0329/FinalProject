@@ -74,11 +74,11 @@ class Enemy extends FlxSprite
 		switch (type)
 		{
 			case shibaCoin:
-				loadGraphic(AssetPaths.shibaCoin__png, true, 192, 192);
+				loadGraphic(AssetPaths.shibaCoin__png, true, 168, 192);
 				// 走路動畫
 				animation.add("lr", [3, 4, 5, 4], 6, false);
-				animation.add("u", [7, 6, 8, 6], 6, false);
-				animation.add("d", [1, 0, 2, 0], 6, false);
+				animation.add("u", [6, 7, 8, 7], 6, false);
+				animation.add("d", [0, 1, 2, 1], 6, false);
 			case cloudMiner:
 				loadGraphic(AssetPaths.cloudMiner__png);
 			case nft:

@@ -23,7 +23,8 @@ class WinState extends FlxState
 		add(dia);
 
 		// 演職員表
-		creditText = new FlxText(0, FlxG.height + 10, 600, "程式設計/Annie\n美術-人物設計/味噌丸\n美術-場景製作/Penguin\n區塊鏈知識顧問/貢丸", 60);
+		creditText = new FlxText(0, FlxG.height + 10, 600,
+			"程式設計/Annie\n美術-人物設計/味噌丸\n美術-場景製作/Penguin\n區塊鏈知識顧問/貢丸\n音樂/ https://www.bensound.com\nMusic Atelier Amacha\n音效：くらげ工匠", 60);
 		creditText.screenCenter(FlxAxes.X);
 		creditText.font = AssetPaths.silver__ttf;
 		creditText.alignment = CENTER;
