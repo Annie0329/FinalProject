@@ -170,10 +170,10 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		background = new FlxSprite();
 
 		// 聲音組
-		check = FlxG.sound.load(AssetPaths.check__mp3);
-		move = FlxG.sound.load(AssetPaths.movePointer__mp3);
-		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
-		noNoise = FlxG.sound.load(AssetPaths.no__mp3);
+		check = FlxG.sound.load(AssetPaths.check__wav);
+		move = FlxG.sound.load(AssetPaths.movePointer__wav);
+		cancel = FlxG.sound.load(AssetPaths.cancel__wav);
+		noNoise = FlxG.sound.load(AssetPaths.no__wav);
 
 		// 商店組
 		shopUi.add(background);
@@ -683,11 +683,11 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								if (save.data.place != null)
 								{
 									if (save.data.place == "monument")
-										FlxG.sound.playMusic(AssetPaths.monumentTheme__mp3, 0.3, true);
+										FlxG.sound.playMusic(AssetPaths.monumentTheme__wav, 0.3, true);
 									if (save.data.place == "miner")
-										FlxG.sound.playMusic(AssetPaths.minerTheme__mp3, 0.3, true);
+										FlxG.sound.playMusic(AssetPaths.minerTheme__wav, 0.3, true);
 									if (save.data.place == "street")
-										FlxG.sound.playMusic(AssetPaths.streetTheme__mp3, 0.3, true);
+										FlxG.sound.playMusic(AssetPaths.streetTheme__wav, 0.3, true);
 								}
 							});
 					}

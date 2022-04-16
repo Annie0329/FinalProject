@@ -96,13 +96,13 @@ class MinerState extends FlxState
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.minerMap__json);
 
 		// 聲音組
-		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
-		minerPunch = FlxG.sound.load(AssetPaths.minerPunch__mp3);
-		gateSlide = FlxG.sound.load(AssetPaths.gateSlide__mp3);
-		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
-		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
-		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
-		saveNoise = FlxG.sound.load(AssetPaths.save__mp3);
+		cancel = FlxG.sound.load(AssetPaths.cancel__wav);
+		minerPunch = FlxG.sound.load(AssetPaths.minerPunch__wav);
+		gateSlide = FlxG.sound.load(AssetPaths.gateSlide__wav);
+		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__wav);
+		openBag = FlxG.sound.load(AssetPaths.openBag__wav);
+		doorTele = FlxG.sound.load(AssetPaths.doorTele__wav);
+		saveNoise = FlxG.sound.load(AssetPaths.save__wav);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -151,7 +151,7 @@ class MinerState extends FlxState
 
 		// 石頭
 		stone = new FlxTypedGroup<FlxSprite>();
-		stoneSound = FlxG.sound.load(AssetPaths.pickUp__mp3);
+		stoneSound = FlxG.sound.load(AssetPaths.pickUp__wav);
 		add(stone);
 
 		// 箱子
@@ -236,7 +236,7 @@ class MinerState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		FlxG.sound.playMusic(AssetPaths.minerTheme__mp3, 0.3, true);
+		FlxG.sound.playMusic(AssetPaths.minerTheme__wav, 0.3, true);
 
 		FlxG.mouse.visible = false;
 
@@ -417,7 +417,7 @@ class MinerState extends FlxState
 		{
 			bag.diamondCounter += 300;
 			bag.updateBag();
-			ufo.visible = true;
+			//ufo.visible = true;
 			// save.erase();
 		}
 
@@ -681,7 +681,7 @@ class MinerState extends FlxState
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
 			bag.buyAndSell();
-			FlxG.sound.playMusic(AssetPaths.shopTheme__mp3, 0.3, true);
+			FlxG.sound.playMusic(AssetPaths.shopTheme__wav, 0.3, true);
 		});
 	}
 
@@ -757,7 +757,7 @@ class MinerState extends FlxState
 			if (dia.saveStoneYes)
 			{
 				dia.saveStoneYes = false;
-				name = ":N:存檔成功！";
+				name = ':N:猩猩  礦場  ' + bag.diamondCounter + '能量幣\n存檔成功！';
 				saveNoise.play();
 				dia.show(name, false);
 			}

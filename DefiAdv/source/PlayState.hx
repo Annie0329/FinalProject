@@ -4,6 +4,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
+import flixel.addons.effects.chainable.FlxEffectSprite;
+import flixel.addons.effects.chainable.FlxRainbowEffect;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
@@ -77,7 +79,11 @@ class PlayState extends FlxState
 	var road:FlxTilemap;
 	var ground:FlxTilemap;
 	var sea:FlxTypedGroup<FlxSprite> = null;
+
+	// 樹牆
 	var treeBar:FlxSprite;
+	var weirdTreeBar:FlxEffectSprite;
+	var treeBarWave:FlxRainbowEffect;
 
 	var loadsave:Bool;
 
@@ -104,12 +110,12 @@ class PlayState extends FlxState
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.monumentMap__json);
 
 		// 聲音組
-		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
-		bananaSound = FlxG.sound.load(AssetPaths.pickUp__mp3);
-		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
-		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
-		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
-		saveNoise = FlxG.sound.load(AssetPaths.save__mp3);
+		cancel = FlxG.sound.load(AssetPaths.cancel__wav);
+		bananaSound = FlxG.sound.load(AssetPaths.pickUp__wav);
+		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__wav);
+		openBag = FlxG.sound.load(AssetPaths.openBag__wav);
+		doorTele = FlxG.sound.load(AssetPaths.doorTele__wav);
+		saveNoise = FlxG.sound.load(AssetPaths.save__wav);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -134,6 +140,10 @@ class PlayState extends FlxState
 		treeBar = new FlxSprite(AssetPaths.treeBar__png);
 		treeBar.immovable = true;
 		add(treeBar);
+		// add(weirdTreeBar = new FlxEffectSprite(treeBar));
+		// weirdTreeBar.immovable = true;
+		// treeBarWave = new FlxRainbowEffect(0.5);
+		// weirdTreeBar.effects = [treeBarWave];
 
 		// 香蕉
 		banana = new FlxTypedGroup<FlxSprite>();
@@ -249,7 +259,7 @@ class PlayState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		FlxG.sound.playMusic(AssetPaths.monumentTheme__mp3, 0.3, true);
+		FlxG.sound.playMusic(AssetPaths.monumentTheme__wav, 0.3, true);
 
 		// 滑鼠退散
 		FlxG.mouse.visible = false;
@@ -471,11 +481,11 @@ class PlayState extends FlxState
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
-			ufo.visible = true;
+			//ufo.visible = true;
 			dia.talkDone = true;
 			bag.diamondCounter += 100;
 			bag.updateBag();
-			FlxG.mouse.visible = true;
+			//FlxG.mouse.visible = true;
 		}
 
 		updateInCombat();
@@ -698,7 +708,7 @@ class PlayState extends FlxState
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
 			bag.buyAndSell();
-			FlxG.sound.playMusic(AssetPaths.shopTheme__mp3, 0.3, true);
+			FlxG.sound.playMusic(AssetPaths.shopTheme__wav, 0.3, true);
 		});
 	}
 
@@ -825,7 +835,7 @@ class PlayState extends FlxState
 			if (dia.saveStoneYes)
 			{
 				dia.saveStoneYes = false;
-				name = ":N:存檔成功！";
+				name = ':N:猩猩  新手村  ' + bag.diamondCounter + '能量幣\n存檔成功！';
 				saveNoise.play();
 				dia.show(name, false);
 			}

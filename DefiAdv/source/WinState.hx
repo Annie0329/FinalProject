@@ -48,7 +48,7 @@ class WinState extends FlxState
 			end = true;
 		});
 		// 播音樂
-		FlxG.sound.playMusic(AssetPaths.creditTheme__mp3, 0.3, true);
+		FlxG.sound.playMusic(AssetPaths.creditTheme__wav, 0.3, true);
 		super.create();
 	}
 

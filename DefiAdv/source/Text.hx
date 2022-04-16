@@ -19,7 +19,7 @@ class Text extends FlxTypeText
 	{
 		super(X, Y, Width, Text, Size, EmbeddedFont);
 		font = AssetPaths.silver__ttf;
-		sounds = [FlxG.sound.load(AssetPaths.typing__mp3)];
+		sounds = [FlxG.sound.load(AssetPaths.typing__wav)];
 		finishSounds = true;
 		delay = 0.05;
 		skipKeys = ["X", "SHIFT"];

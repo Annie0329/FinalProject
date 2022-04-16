@@ -115,7 +115,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		text.color = FlxColor.BLACK;
 		text.font = AssetPaths.silver__ttf;
 		text.delay = 0.05;
-		text.sounds = [FlxG.sound.load(AssetPaths.typing__mp3)];
+		text.sounds = [FlxG.sound.load(AssetPaths.typing__wav)];
 		text.finishSounds = true;
 		text.skipKeys = ["X", "SHIFT"];
 		add(text);
@@ -128,9 +128,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		enterCur.visible = false;
 
 		// 聲音組
-		next = FlxG.sound.load(AssetPaths.next__mp3);
-		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
-		check = FlxG.sound.load(AssetPaths.check__mp3);
+		next = FlxG.sound.load(AssetPaths.next__wav);
+		cancel = FlxG.sound.load(AssetPaths.cancel__wav);
+		check = FlxG.sound.load(AssetPaths.check__wav);
 
 		coinText = new FlxText(background.x, background.y + 60, background.width, "1", 84);
 		coinText.color = FlxColor.BLACK;
@@ -188,8 +188,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			if (pointerQ != "none")
 				pointer.visible = true;
 		});
-		// if (npcType == saveStone && saveStoneIntro && !txt)
-		// text.skip();
 	}
 
 	// 換對話框頭像

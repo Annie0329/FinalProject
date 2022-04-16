@@ -16,7 +16,7 @@ class Player extends FlxSprite
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
-		step = FlxG.sound.load(AssetPaths.step__mp3);
+		step = FlxG.sound.load(AssetPaths.step__wav);
 		loadGraphic(AssetPaths.ape__png, true, 150, 192);
 		// 面向右邊時使用鏡像的左邊圖片
 		setFacingFlip(FlxObject.LEFT, false, false);

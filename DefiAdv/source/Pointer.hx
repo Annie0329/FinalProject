@@ -21,7 +21,7 @@ class Pointer extends FlxSprite
 	{
 		super(x, y);
 		loadGraphic(AssetPaths.pointer__png);
-		move = FlxG.sound.load(AssetPaths.movePointer__mp3);
+		move = FlxG.sound.load(AssetPaths.movePointer__wav);
 	}
 
 	override public function update(elapsed:Float)

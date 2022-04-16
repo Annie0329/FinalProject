@@ -87,11 +87,11 @@ class StreetState extends FlxState
 		map = new FlxOgmo3Loader(AssetPaths.deFiMap__ogmo, AssetPaths.streetMap__json);
 
 		// 聲音組
-		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
-		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__mp3);
-		openBag = FlxG.sound.load(AssetPaths.openBag__mp3);
-		doorTele = FlxG.sound.load(AssetPaths.doorTele__mp3);
-		saveNoise = FlxG.sound.load(AssetPaths.save__mp3);
+		cancel = FlxG.sound.load(AssetPaths.cancel__wav);
+		touchEnemy = FlxG.sound.load(AssetPaths.touchEnemy__wav);
+		openBag = FlxG.sound.load(AssetPaths.openBag__wav);
+		doorTele = FlxG.sound.load(AssetPaths.doorTele__wav);
+		saveNoise = FlxG.sound.load(AssetPaths.save__wav);
 
 		// 地面
 		ground = map.loadTilemap(AssetPaths.mtSmall__png, "ground");
@@ -224,7 +224,7 @@ class StreetState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		FlxG.sound.playMusic(AssetPaths.streetTheme__mp3, 0.3, true);
+		FlxG.sound.playMusic(AssetPaths.streetTheme__wav, 0.3, true);
 
 		FlxG.mouse.visible = false;
 
@@ -436,8 +436,8 @@ class StreetState extends FlxState
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
-			FlxG.mouse.visible = true;
-			ufo.visible = true;
+			//FlxG.mouse.visible = true;
+			// ufo.visible = true;
 			bag.diamondCounter += 1000;
 			bag.updateBag();
 		}
@@ -666,7 +666,7 @@ class StreetState extends FlxState
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, false, function()
 		{
 			bag.buyAndSell();
-			FlxG.sound.playMusic(AssetPaths.shopTheme__mp3, 0.3, true);
+			FlxG.sound.playMusic(AssetPaths.shopTheme__wav, 0.3, true);
 		});
 	}
 
@@ -775,7 +775,7 @@ class StreetState extends FlxState
 			if (dia.saveStoneYes)
 			{
 				dia.saveStoneYes = false;
-				name = ":N:存檔成功！";
+				name = ':N:猩猩  DeFi街  ' + bag.diamondCounter + '能量幣\n存檔成功！';
 				saveNoise.play();
 				dia.show(name, false);
 			}

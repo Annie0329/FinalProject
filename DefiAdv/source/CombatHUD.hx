@@ -166,8 +166,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		add(pointer);
 
 		// 聲音組
-		check = FlxG.sound.load(AssetPaths.check__mp3);
-		next = FlxG.sound.load(AssetPaths.next__mp3);
+		check = FlxG.sound.load(AssetPaths.check__wav);
+		next = FlxG.sound.load(AssetPaths.next__wav);
 
 		// 左右箭頭
 		pointerLeft = new FlxSprite(0, 0, AssetPaths.pointer__png);

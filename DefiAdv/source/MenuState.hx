@@ -48,9 +48,9 @@ class MenuState extends FlxState
 		pointer.setPointer(pointerX, pointerY, pointerBar, pointerCho, pointerDir);
 
 		// 聲音組
-		check = FlxG.sound.load(AssetPaths.check__mp3);
-		cancel = FlxG.sound.load(AssetPaths.cancel__mp3);
-		noNoise = FlxG.sound.load(AssetPaths.no__mp3);
+		check = FlxG.sound.load(AssetPaths.check__wav);
+		cancel = FlxG.sound.load(AssetPaths.cancel__wav);
+		noNoise = FlxG.sound.load(AssetPaths.no__wav);
 
 		// 關於背景
 		about = new FlxSprite(0, 0, AssetPaths.menuAbout__png);
@@ -98,7 +98,7 @@ class MenuState extends FlxState
 
 		// 播音樂
 		// 最終上傳記得消除註解
-		FlxG.sound.playMusic(AssetPaths.menuTheme__mp3, 0.3, true);
+		FlxG.sound.playMusic(AssetPaths.menuTheme__wav, 0.3, true);
 
 		FlxG.mouse.visible = false;
 
@@ -122,7 +122,7 @@ class MenuState extends FlxState
 		if (e)
 		{
 			ufo.visible = true;
-			save.erase();
+			// save.erase();
 		}
 
 		// 主選單功能
