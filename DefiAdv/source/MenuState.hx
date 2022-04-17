@@ -123,6 +123,10 @@ class MenuState extends FlxState
 		{
 			ufo.visible = true;
 			// save.erase();
+			// FlxG.camera.fade(FlxColor.BLACK, 1, false, function()
+			// {
+			// 	FlxG.switchState(new OpeningState(false));
+			// });
 		}
 
 		// 主選單功能
@@ -155,7 +159,7 @@ class MenuState extends FlxState
 					FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 					{
 						save.erase();
-						FlxG.switchState(new OpeningState());
+						FlxG.switchState(new OpeningState(true));
 					});
 
 				// 關於

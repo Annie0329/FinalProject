@@ -247,7 +247,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				{
 					name = AssetPaths.rodTalk__txt;
 					txt = true;
-					rodTalk = true;
 				}
 			case starter:
 				enemyNameText.text = "APESTARTER";
@@ -505,6 +504,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			{
 				if (state == 1)
 				{
+					rodTalk = true;
 					if (combatText.over && !pointer.visible)
 					{
 						pointer.visible = true;

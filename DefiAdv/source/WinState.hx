@@ -68,6 +68,7 @@ class WinState extends FlxState
 		// 演職員表滾完就上感謝你字幕
 		if (creditText.y < -creditText.height + 10 && !thankYouText.visible)
 		{
+			creditText.visible = false;
 			thankYouText.visible = true;
 			creditText.velocity.y = 0;
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
@@ -78,12 +79,19 @@ class WinState extends FlxState
 	function updateEnter()
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
-		if (enter && thankYouText.visible)
+		if (enter)
 		{
-			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+			if (thankYouText.visible)
+				FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+				{
+					FlxG.switchState(new OpeningState(false));
+				});
+			if (creditText.visible)
 			{
-				FlxG.switchState(new MenuState());
-			});
+				creditText.visible = false;
+				thankYouText.visible = true;
+				FlxG.camera.fade(FlxColor.BLACK, .33, true);
+			}
 		}
 	}
 }

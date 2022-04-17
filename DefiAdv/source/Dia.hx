@@ -39,7 +39,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 	var dilog_boxes:Array<String>;
 	var txt:Bool = true;
-	var textRunDone:Bool = false;
+
+	public var textRunDone:Bool = false;
+
 	var saveShow:String = ":N:oui";
 
 	public var diaUpDown:String;
@@ -195,6 +197,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		switch (dilog_boxes[profile])
 		{
+			case "A":
+				profilePic = AssetPaths.diaApe__png;
 			case "D":
 				profilePic = AssetPaths.diaDoge__png;
 			case "S":
