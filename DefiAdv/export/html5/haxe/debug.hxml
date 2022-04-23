@@ -13,6 +13,7 @@
 -cp C:/HaxeToolkit/haxe/lib/flixel-addons/2,11,0
 -D flixel-addons=2.11.0
 -cp source
+-D HL_PATH=D:/MyProgram/HaxeFlixel/sause/hl-1.11.0
 -D tools=7.9.0
 -D lime-canvas
 -D howlerjs

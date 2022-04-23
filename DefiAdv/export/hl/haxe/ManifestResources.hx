@@ -98,6 +98,7 @@ null
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_airdroptalk_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_applead_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_c1opening_txt extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_closetext_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_data_goes_here_txt extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_defimap_ogmo extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_data_dexnews_txt extends null { }
@@ -145,10 +146,12 @@ null
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_bananaicon_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_boxempty_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_boxfull_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_closinganimation_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_cloudminer_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_combatbackground_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_dexcoinicon_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_dexnews_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_diaape_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_diadoge_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_dialake_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_diaming_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
@@ -223,28 +226,28 @@ null
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_tip_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_torch_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_images_treebar_png extends flash.display.BitmapData { public function new () { super (0, 0, true, 0); } }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_credittheme_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_menutheme_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_minertheme_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_monumenttheme_wav extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_credittheme_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_menutheme_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_minertheme_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_monumenttheme_ogg extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_music_goes_here_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_shoptheme_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_streettheme_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_cancel_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_check_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_doortele_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_gateslide_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_minerpunch_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_movepointer_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_next_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_no_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_openbag_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_pickup_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_save_wav extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_shoptheme_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_music_streettheme_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_cancel_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_check_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_doortele_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_gateslide_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_minerpunch_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_movepointer_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_next_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_no_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_openbag_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_pickup_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_save_ogg extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_sounds_go_here_txt extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_step_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_touchenemy_wav extends null { }
-@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_typing_wav extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_step_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_touchenemy_ogg extends null { }
+@:keep @:bind @:noCompletion #if display private #end class __ASSET__assets_sound_typing_ogg extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__flixel_sounds_beep_ogg extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__flixel_sounds_flixel_ogg extends null { }
 @:keep @:bind @:noCompletion #if display private #end class __ASSET__flixel_fonts_nokiafc22_ttf extends null { }
@@ -264,13 +267,13 @@ null
 @:keep @:image("C:/HaxeToolkit/haxe/lib/flixel/4,10,0/assets/images/logo/default.png") @:noCompletion #if display private #end class __ASSET__flixel_images_logo_default_png extends lime.graphics.Image {}
 
 @:keep @:noCompletion #if display private #end class __ASSET__assets_data_font_ttf extends lime.text.Font { public function new () { __fontPath = ManifestResources.rootPath + "assets/data/font.ttf"; name = "jf open 粉圓 1.1"; super (); }}
-@:keep @:noCompletion #if display private #end class __ASSET__assets_data_silver_ttf extends lime.text.Font { public function new () { __fontPath = ManifestResources.rootPath + "assets/data/silver.ttf"; name = "Silver"; super (); }}
+@:keep @:noCompletion #if display private #end class __ASSET__assets_data_silver_ttf extends lime.text.Font { public function new () { __fontPath = ManifestResources.rootPath + "assets/data/Silver.ttf"; name = "Silver"; super (); }}
 
 
 #else
 
 @:keep @:expose('__ASSET__assets_data_font_ttf') @:noCompletion #if display private #end class __ASSET__assets_data_font_ttf extends lime.text.Font { public function new () { #if !html5 __fontPath = "assets/data/font.ttf"; #else ascender = null; descender = null; height = null; numGlyphs = null; underlinePosition = null; underlineThickness = null; unitsPerEM = null; #end name = "jf open 粉圓 1.1"; super (); }}
-@:keep @:expose('__ASSET__assets_data_silver_ttf') @:noCompletion #if display private #end class __ASSET__assets_data_silver_ttf extends lime.text.Font { public function new () { #if !html5 __fontPath = "assets/data/silver.ttf"; #else ascender = null; descender = null; height = null; numGlyphs = null; underlinePosition = null; underlineThickness = null; unitsPerEM = null; #end name = "Silver"; super (); }}
+@:keep @:expose('__ASSET__assets_data_silver_ttf') @:noCompletion #if display private #end class __ASSET__assets_data_silver_ttf extends lime.text.Font { public function new () { #if !html5 __fontPath = "assets/data/Silver.ttf"; #else ascender = null; descender = null; height = null; numGlyphs = null; underlinePosition = null; underlineThickness = null; unitsPerEM = null; #end name = "Silver"; super (); }}
 @:keep @:expose('__ASSET__flixel_fonts_nokiafc22_ttf') @:noCompletion #if display private #end class __ASSET__flixel_fonts_nokiafc22_ttf extends lime.text.Font { public function new () { #if !html5 __fontPath = "flixel/fonts/nokiafc22.ttf"; #else ascender = null; descender = null; height = null; numGlyphs = null; underlinePosition = null; underlineThickness = null; unitsPerEM = null; #end name = "Nokia Cellphone FC Small"; super (); }}
 @:keep @:expose('__ASSET__flixel_fonts_monsterrat_ttf') @:noCompletion #if display private #end class __ASSET__flixel_fonts_monsterrat_ttf extends lime.text.Font { public function new () { #if !html5 __fontPath = "flixel/fonts/monsterrat.ttf"; #else ascender = null; descender = null; height = null; numGlyphs = null; underlinePosition = null; underlineThickness = null; unitsPerEM = null; #end name = "Monsterrat"; super (); }}
 
@@ -287,7 +290,7 @@ null
 
 #else
 @:keep @:expose('__ASSET__OPENFL__assets_data_font_ttf') @:noCompletion #if display private #end class __ASSET__OPENFL__assets_data_font_ttf extends openfl.text.Font { public function new () { __fontPath = ManifestResources.rootPath + "assets/data/font.ttf"; name = "jf open 粉圓 1.1"; super (); }}
-@:keep @:expose('__ASSET__OPENFL__assets_data_silver_ttf') @:noCompletion #if display private #end class __ASSET__OPENFL__assets_data_silver_ttf extends openfl.text.Font { public function new () { __fontPath = ManifestResources.rootPath + "assets/data/silver.ttf"; name = "Silver"; super (); }}
+@:keep @:expose('__ASSET__OPENFL__assets_data_silver_ttf') @:noCompletion #if display private #end class __ASSET__OPENFL__assets_data_silver_ttf extends openfl.text.Font { public function new () { __fontPath = ManifestResources.rootPath + "assets/data/Silver.ttf"; name = "Silver"; super (); }}
 @:keep @:expose('__ASSET__OPENFL__flixel_fonts_nokiafc22_ttf') @:noCompletion #if display private #end class __ASSET__OPENFL__flixel_fonts_nokiafc22_ttf extends openfl.text.Font { public function new () { __fromLimeFont (new __ASSET__flixel_fonts_nokiafc22_ttf ()); super (); }}
 @:keep @:expose('__ASSET__OPENFL__flixel_fonts_monsterrat_ttf') @:noCompletion #if display private #end class __ASSET__OPENFL__flixel_fonts_monsterrat_ttf extends openfl.text.Font { public function new () { __fromLimeFont (new __ASSET__flixel_fonts_monsterrat_ttf ()); super (); }}
 

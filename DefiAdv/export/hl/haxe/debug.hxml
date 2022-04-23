@@ -17,6 +17,7 @@
 -D native
 -D lime-curl
 -D openfl-native
+-D HL_PATH=D:/MyProgram/HaxeFlixel/sause/hl-1.11.0
 -D lime-harfbuzz
 -D tools=7.9.0
 -D lime-cairo
