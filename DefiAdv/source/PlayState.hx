@@ -400,8 +400,8 @@ class PlayState extends FlxState
 		bag.appleCoin = save.data.appleCoin;
 		bag.dexCoin = save.data.dexCoin;
 		bag.updateBag();
-		tip.visible = true;
-		tip.active = true;
+		// tip.visible = true;
+		// tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -479,15 +479,14 @@ class PlayState extends FlxState
 		// 除錯大隊
 		ufo.text = Std.string(save.data.place); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
-		//if (e)
-		//{
+		if (e)
+		{
 			// ufo.visible = true;
-			// dia.talkDone = true;
-			// bag.diamondCounter += 100;
-			// saveFile();
-			// bag.updateBag();
+			dia.talkDone = true;
+			bag.diamondCounter += 100;
+			bag.updateBag();
 			// FlxG.mouse.visible = true;
-		//}
+		}
 
 		updateInCombat();
 		updateWhenDiaInvisible();
@@ -799,8 +798,8 @@ class PlayState extends FlxState
 				player.animation.frameIndex = 0;
 				bag.diamondUi.visible = true;
 				getBag = false;
-				tip.visible = true;
-				tip.active = true;
+				// tip.visible = true;
+				// tip.active = true;
 				tip.missionGetText(getLeaves);
 			}
 			// 有錢就開礦場門

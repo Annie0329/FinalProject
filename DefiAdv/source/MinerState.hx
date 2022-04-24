@@ -347,8 +347,8 @@ class MinerState extends FlxState
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
-		tip.visible = true;
-		tip.active = true;
+		// tip.visible = true;
+		// tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -414,12 +414,12 @@ class MinerState extends FlxState
 		// 除錯大隊
 		ufo.text = Std.string(save.data.place);
 		var e = FlxG.keys.anyJustReleased([E]);
-		// if (e)
-		// {
-		// 	bag.diamondCounter += 300;
-		// 	bag.updateBag();
-		// ufo.visible = true;
-		// }
+		if (e)
+		{
+			bag.diamondCounter += 300;
+			bag.updateBag();
+			//ufo.visible = true;
+		}
 
 		// 碰撞爆
 		FlxG.overlap(player, ground);

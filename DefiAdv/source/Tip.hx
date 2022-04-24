@@ -39,7 +39,9 @@ enum TipText
 class Tip extends FlxTypedGroup<FlxSprite>
 {
 	var background:FlxSprite;
+
 	public var missionText:FlxText;
+
 	var tipText:FlxTypeText;
 	// var text:FlxText;
 	var i:Int;
@@ -89,7 +91,6 @@ class Tip extends FlxTypedGroup<FlxSprite>
 		{
 			if (j == tip_boxes[i])
 			{
-				// text.text = tip_boxes[i + 1];
 				tipText.resetText(tip_boxes[i + 1]);
 				tipText.start(true);
 			}

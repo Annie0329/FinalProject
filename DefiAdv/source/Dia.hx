@@ -810,12 +810,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	// 按v鍵直接跳過整串對話
 	function updateSkip()
 	{
-		// var vKey:Bool = false;
-		// vKey = FlxG.keys.anyJustReleased([V]);
-		// if (vKey)
-		// {
-		// 	visible = false;
-		// 	active = false;
-		// }
+		var vKey:Bool = false;
+		vKey = FlxG.keys.anyJustReleased([V]);
+		if (vKey)
+		{
+			visible = false;
+			active = false;
+		}
 	}
 }

@@ -378,8 +378,8 @@ class StreetState extends FlxState
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
-		tip.visible = true;
-		tip.active = true;
+		// tip.visible = true;
+		// tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -435,13 +435,13 @@ class StreetState extends FlxState
 		// 除錯大隊
 		ufo.text = Std.string(save.data.place) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
-		// if (e)
-		// {
-		// FlxG.mouse.visible = true;
-		// ufo.visible = true;
-		// bag.diamondCounter += 1000;
-		// bag.updateBag();
-		// }
+		if (e)
+		{
+			// FlxG.mouse.visible = true;
+			// ufo.visible = true;
+			bag.diamondCounter += 1000;
+			bag.updateBag();
+		}
 
 		if (dia.readDaSign && !dia.visible && !getDaMis)
 		{
