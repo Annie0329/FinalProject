@@ -358,6 +358,9 @@ class PlayState extends FlxState
 		save.data.nftWave = bag.nftWave;
 		save.data.nftStyle = combatHud.nftStyleNum;
 
+		save.data.rodInvest = bag.rodInvest;
+		save.data.rodWave = bag.rodWave;
+
 		save.data.bananaCoin = bag.bananaCoin;
 		save.data.appleCoin = bag.appleCoin;
 		save.data.dexCoin = bag.dexCoin;
@@ -396,12 +399,15 @@ class PlayState extends FlxState
 		bag.nftWave = save.data.nftWave;
 		combatHud.nftStyleNum = save.data.nftStyle;
 
+		bag.rodInvest = save.data.rodInvest;
+		bag.rodWave = save.data.rodWave;
+
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.dexCoin = save.data.dexCoin;
 		bag.updateBag();
-		// tip.visible = true;
-		// tip.active = true;
+		tip.visible = true;
+		tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -422,6 +428,14 @@ class PlayState extends FlxState
 		}
 		else
 			bag.nftUi.visible = false;
+
+		// 槓桿
+		if (bag.rodInvest != 0)
+		{
+			bag.countRodWave();
+		}
+		else
+			bag.rodUi.visible = false;
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 		if (dia.saveStoneIntro)
@@ -599,9 +613,12 @@ class PlayState extends FlxState
 					tip.tipGetText(nftNews);
 				}
 			}
-			else if (combatHud.enemy.type == cloudMiner && combatHud.outcome == LOSE)
+			else if (combatHud.enemy.type == cloudMiner)
 			{
-				tip.tipGetText(fraud);
+				if (combatHud.outcome == LOSE)
+					tip.tipGetText(fraud);
+				else
+					tip.tipGetText(noFraud);
 			}
 		}
 	}
@@ -798,8 +815,8 @@ class PlayState extends FlxState
 				player.animation.frameIndex = 0;
 				bag.diamondUi.visible = true;
 				getBag = false;
-				// tip.visible = true;
-				// tip.active = true;
+				tip.visible = true;
+				tip.active = true;
 				tip.missionGetText(getLeaves);
 			}
 			// 有錢就開礦場門

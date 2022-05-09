@@ -32,6 +32,7 @@ enum TipText
 	nftNews;
 	miner;
 	minerSign;
+	minerCar;
 	streetSign;
 	loan;
 }

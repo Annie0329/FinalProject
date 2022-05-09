@@ -1,43 +1,35 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
 
 class WinState extends FlxState
 {
+	var background:FlxSprite;
 	var dia:Dia;
-	var creditText:FlxText;
-	var thankYouText:FlxText;
+	var creditText:FlxSprite;
 
 	var name:String;
 	var end:Bool = false;
 
 	override public function create()
 	{
+		background = new FlxSprite().makeGraphic(1920, 1080, 0xffB2E7FF);
+		add(background);
+
 		// 對話框
 		dia = new Dia();
 		add(dia);
 
 		// 演職員表
-		creditText = new FlxText(0, FlxG.height + 10, 600,
-			"程式設計/Annie\n美術-人物設計/味噌丸\n美術-場景製作/Penguin\n區塊鏈知識顧問/貢丸\n音樂/ https://www.bensound.com\nMusic Atelier Amacha\n音效：くらげ工匠", 60);
+		creditText = new FlxSprite(0, FlxG.height + 10).loadGraphic(AssetPaths.credit__png);
 		creditText.screenCenter(FlxAxes.X);
-		creditText.font = AssetPaths.silver__ttf;
-		creditText.alignment = CENTER;
 		add(creditText);
 		creditText.visible = false;
-
-		// 感謝你字幕
-		thankYouText = new FlxText(0, 0, FlxG.width, "感謝遊玩！", 200);
-		thankYouText.screenCenter();
-		thankYouText.font = AssetPaths.silver__ttf;
-		thankYouText.alignment = CENTER;
-		add(thankYouText);
-		thankYouText.visible = false;
 
 		// 進來就出現Doge對話
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true, function()
@@ -66,12 +58,12 @@ class WinState extends FlxState
 			creditText.moves = true;
 		}
 		// 演職員表滾完就上感謝你字幕
-		if (creditText.y < -creditText.height + 10 && !thankYouText.visible)
+		if (creditText.y < -creditText.height + 10)
 		{
-			creditText.visible = false;
-			thankYouText.visible = true;
-			creditText.velocity.y = 0;
-			FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+			{
+				FlxG.switchState(new OpeningState(false));
+			});
 		}
 	}
 
@@ -79,20 +71,12 @@ class WinState extends FlxState
 	function updateEnter()
 	{
 		var enter = FlxG.keys.anyJustReleased([ENTER, SPACE, Z]);
-		if (enter)
+		if (enter && creditText.visible)
 		{
-			if (thankYouText.visible)
-				FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
-				{
-					// FlxG.switchState(new OpeningState(false));
-					FlxG.switchState(new MenuState());
-				});
-			if (creditText.visible)
+			FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
 			{
-				creditText.visible = false;
-				thankYouText.visible = true;
-				FlxG.camera.fade(FlxColor.BLACK, .33, true);
-			}
+				FlxG.switchState(new OpeningState(false));
+			});
 		}
 	}
 }

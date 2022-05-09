@@ -11,6 +11,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxAxes;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 
 using flixel.util.FlxSpriteUtil; // drawRect需要這個
 
@@ -234,7 +235,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 				txt = false;
 			case nft:
 				enemyNameText.text = "NFT";
-				name = ":要買一張 NFT 嗎？:這些獨一無二的藝術品可以留著珍藏或是賣錢，其中，爆紅的款式還能賣出天價喔！";
+				name = ":要花5能量幣買一張NFT嗎？:這些獨一無二的藝術品可以留著珍藏或是賣錢，其中，爆紅的款式還能賣出天價喔！";
 				txt = false;
 			case rod:
 				enemyNameText.text = "槓桿";
@@ -325,12 +326,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		var right:Bool = false;
 		var fire:Bool = false;
 
-		if (FlxG.keys.anyJustReleased([SPACE, Z, ENTER]))
-			fire = true;
-		else if (FlxG.keys.anyJustReleased([A, LEFT]))
-			left = true;
-		else if (FlxG.keys.anyJustReleased([D, RIGHT]))
-			right = true;
+		fire = FlxG.keys.anyJustReleased([SPACE, Z, ENTER]);
+		left = FlxG.keys.anyJustReleased([A, LEFT]);
+		right = FlxG.keys.anyJustReleased([D, RIGHT]);
 
 		// 根據按鍵做不同反應
 		if (fire && combatText.textRunDone)
@@ -521,7 +519,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 								investNumText.visible = true;
 								lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
 
-								name = ':你現在有$bananaCoin 香蕉幣。請選擇你要投資多少？最少5香蕉幣。好了就按enter。';
+								name = ':你現在有' + bananaCoin + '香蕉幣。請選擇你要投資多少？最少5香蕉幣。好了就按enter。';
 								combatText.show(name, false);
 
 							case "NO":
@@ -581,7 +579,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 									investNumText.visible = true;
 									lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
 
-									name = ':請選擇你要投資多少？最少5能量幣。現在1能量幣可以買 $starterPrize APS幣。好了就按enter。';
+									name = ':請選擇你要投資多少？最少5能量幣。現在1能量幣可以買' + starterPrize + 'APS幣。好了就按enter。';
 									combatText.show(name, false);
 
 								case "NO":
@@ -694,11 +692,12 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					investNumText.text = Std.string(investNum);
 				}
 			}
+			// 槓桿開幾倍
 			else if (rodNumText.visible)
 			{
 				if (left && rodNum != 2)
 					rodNum--;
-				else if (right)
+				else if (right && rodNum != 100)
 					rodNum++;
 				rodNumText.text = Std.string(rodNum);
 			}
@@ -724,6 +723,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		}
 	}
 
+	// 左右箭頭出現
 	function lrPointer(spriteX:Float, spriteY:Float, spriteW:Float, spriteH:Float)
 	{
 		pointerLeft.visible = true;

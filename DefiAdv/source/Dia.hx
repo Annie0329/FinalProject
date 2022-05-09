@@ -485,6 +485,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case house4Sign:
 				name = ":N:ApeStarter";
 				txt = false;
+			case showcase:
+				name = ":N:從左至右，依序為能量幣、香蕉幣、APS幣、青蛙幣。";
+				txt = false;
 			case rod:
 				name = AssetPaths.rodTalk__txt;
 				txt = true;
@@ -551,7 +554,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			{
 				if (left && coinOut != 10)
 					coinOut -= 10;
-				if (right && coinOut / 10 != Std.int(diamond / 10))
+				if (right && coinOut / 10 != Std.int(dexCoin / 10))
 					coinOut += 10;
 				machGain = coinOut * dexPrizeSell;
 				coinText.text = '$coinOut 青蛙幣換 $machGain 能量幣';
@@ -675,7 +678,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				pointerQ = "none";
 			}
 			// 機器
-			else if (coinText.visible)
+			else if (coinText.visible && coinOut > 0)
 			{
 				next.play();
 				if (npcType == p1BaToCoMach)

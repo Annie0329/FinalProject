@@ -266,7 +266,10 @@ class MinerState extends FlxState
 				minerGateX = minerGate.x;
 
 			case "spartan":
-				npc.add(new NPC(x, y, spartan));
+				if (dia.stoneTextYes)
+					npc.add(new NPC(x + 360, y, spartan));
+				else
+					npc.add(new NPC(x, y, spartan));
 			case "minerSign":
 				npc.add(new NPC(x, y, minerSign));
 
@@ -309,6 +312,9 @@ class MinerState extends FlxState
 		save.data.nftWave = bag.nftWave;
 		save.data.nftStyle = combatHud.nftStyleNum;
 
+		save.data.rodInvest = bag.rodInvest;
+		save.data.rodWave = bag.rodWave;
+
 		save.data.bananaCoin = bag.bananaCoin;
 		save.data.appleCoin = bag.appleCoin;
 
@@ -344,11 +350,14 @@ class MinerState extends FlxState
 		bag.nftWave = save.data.nftWave;
 		combatHud.nftStyleNum = save.data.nftStyle;
 
+		bag.rodInvest = save.data.rodInvest;
+		bag.rodWave = save.data.rodWave;
+
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
-		// tip.visible = true;
-		// tip.active = true;
+		tip.visible = true;
+		tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -369,6 +378,14 @@ class MinerState extends FlxState
 		}
 		else
 			bag.nftUi.visible = false;
+
+		// 槓桿
+		if (bag.rodInvest != 0)
+		{
+			bag.countRodWave();
+		}
+		else
+			bag.rodUi.visible = false;
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 
@@ -418,7 +435,7 @@ class MinerState extends FlxState
 		{
 			bag.diamondCounter += 300;
 			bag.updateBag();
-			//ufo.visible = true;
+			// ufo.visible = true;
 		}
 
 		// 碰撞爆
@@ -435,7 +452,6 @@ class MinerState extends FlxState
 		FlxG.collide(player, streetDoor, goToStreet);
 
 		FlxG.overlap(player, stone, playerGotStone);
-		FlxG.collide(player, box, stoneInsideBox);
 		FlxG.collide(player, enemy, touchMiner);
 
 		FlxG.collide(enemy, walls);
@@ -523,7 +539,13 @@ class MinerState extends FlxState
 		stoneCounterText.text = Std.string(stoneCounter) + "/5";
 		stone.kill();
 		if (stoneCounter >= stoneGoal)
+		{
 			stoneCounterText.color = FlxColor.RED;
+			var car = Std.int(stoneCounter / stoneGoal);
+			bag.diamondCounter += Std.int(car * 50);
+			finalScore += car;
+			bag.updateBag();
+		}
 		else
 			stoneCounterText.color = FlxColor.BLACK;
 		new FlxTimer().start(3, function(timer:FlxTimer)
@@ -595,32 +617,6 @@ class MinerState extends FlxState
 			bag.dexCoin = combatHud.dexCoin;
 			bag.updateBag();
 			inCombat = false;
-		}
-	}
-
-	// 石頭放到車子裡了
-	function stoneInsideBox(player:Player, box:FlxSprite)
-	{
-		if (stoneCounter >= stoneGoal)
-		{
-			var car = Std.int(stoneCounter / stoneGoal);
-			bag.diamondCounter += Std.int(car * 50);
-			finalScore += car;
-			stoneCounter = stoneCounter % stoneGoal;
-			stoneCounterText.text = Std.string(stoneCounter) + "/5";
-			stoneCounterText.color = FlxColor.BLACK;
-			box.loadGraphic(AssetPaths.boxFull__png);
-
-			bag.updateBag();
-
-			FlxTween.tween(box, {y: roadEnd}, 2, {
-				onComplete: function(_)
-				{
-					box.y = roadStart;
-					box.loadGraphic(AssetPaths.boxEmpty__png);
-					FlxTween.tween(box, {y: boxPos}, 2);
-				}
-			});
 		}
 	}
 
@@ -733,7 +729,7 @@ class MinerState extends FlxState
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
 		{
-			// 跟布布講完話了
+			// 跟布布講完話
 			if (stoneYes)
 			{
 				tip.tipGetText(minerSign);

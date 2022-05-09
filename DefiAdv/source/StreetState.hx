@@ -242,8 +242,6 @@ class StreetState extends FlxState
 		{
 			case "signDefi":
 				npc.add(new NPC(x + 60, y, signDefi));
-			case "signApple":
-				npc.add(new NPC(x + 60, y, signApple));
 
 			case "saveStone":
 				npc.add(new NPC(x, y, saveStone));
@@ -312,6 +310,8 @@ class StreetState extends FlxState
 				npc.add(new NPC(x, y, p3Mach));
 			case "house4Sign":
 				npc.add(new NPC(x, y, house4Sign));
+			case "showcase":
+				npc.add(new NPC(x, y, showcase));
 			case "rod":
 				enemy.add(new Enemy(x, y, rod));
 			case "starter":
@@ -342,6 +342,9 @@ class StreetState extends FlxState
 		save.data.nftInvest = bag.nftInvest;
 		save.data.nftWave = bag.nftWave;
 		save.data.nftStyle = combatHud.nftStyleNum;
+
+		save.data.rodInvest = bag.rodInvest;
+		save.data.rodWave = bag.rodWave;
 
 		save.data.bananaCoin = bag.bananaCoin;
 		save.data.appleCoin = bag.appleCoin;
@@ -375,11 +378,14 @@ class StreetState extends FlxState
 		bag.nftWave = save.data.nftWave;
 		combatHud.nftStyleNum = save.data.nftStyle;
 
+		bag.rodInvest = save.data.rodInvest;
+		bag.rodWave = save.data.rodWave;
+
 		bag.bananaCoin = save.data.bananaCoin;
 		bag.appleCoin = save.data.appleCoin;
 		bag.updateBag();
-		// tip.visible = true;
-		// tip.active = true;
+		tip.visible = true;
+		tip.active = true;
 
 		// 狗狗幣
 		if (bag.shibaInvest != 0)
@@ -400,6 +406,14 @@ class StreetState extends FlxState
 		}
 		else
 			bag.nftUi.visible = false;
+
+		// 槓桿
+		if (bag.rodInvest != 0)
+		{
+			bag.countRodWave();
+		}
+		else
+			bag.rodUi.visible = false;
 
 		dia.saveStoneIntro = save.data.saveStoneIntro;
 

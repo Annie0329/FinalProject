@@ -35,6 +35,7 @@ enum NpcType
 	p3Mach;
 	dexNews;
 	house4Sign;
+	showcase;
 }
 
 class NPC extends FlxSprite
@@ -110,6 +111,8 @@ class NPC extends FlxSprite
 				loadGraphic(AssetPaths.dexNews__png);
 			case house4Sign:
 				loadGraphic(AssetPaths.house4Sign__png);
+			case showcase:
+				loadGraphic(AssetPaths.showcase__png);
 		}
 
 		immovable = true;

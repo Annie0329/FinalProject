@@ -13,7 +13,6 @@ class MenuState extends FlxState
 {
 	var menuBackground:FlxSprite;
 	var about:FlxSprite;
-	var aboutText:FlxText;
 
 	// 聲音組
 	var check:FlxSound;
@@ -57,15 +56,6 @@ class MenuState extends FlxState
 		about.screenCenter();
 		add(about);
 		about.visible = false;
-
-		// 關於的字
-		aboutText = new FlxText(0, about.y + 150, 480, "操作說明：\n方向鍵：移動\n方向鍵+按住Shift：跑步\nENTER、SPACE、Z：調查、對話換行、確定\nX、esc：取消\nF4：回主選單\nC：查看持有物品", 60);
-		aboutText.borderColor = FlxColor.BLACK;
-		aboutText.font = AssetPaths.silver__ttf;
-		aboutText.color = FlxColor.BLACK;
-		aboutText.screenCenter(FlxAxes.X);
-		add(aboutText);
-		aboutText.visible = false;
 
 		// 除錯ufo
 		ufo = new FlxText(0, 0, 0, "ufo", 60);
@@ -119,10 +109,11 @@ class MenuState extends FlxState
 		var q = FlxG.keys.anyJustReleased([Q]);
 
 		var e = FlxG.keys.anyJustReleased([E]);
-		// if (e)
-		// {
-		// 	ufo.visible = true;
-		// }
+		if (e)
+		{
+			ufo.visible = true;
+			FlxG.switchState(new WinState());
+		}
 
 		// 主選單功能
 		if (enter && !about.visible)
@@ -161,7 +152,6 @@ class MenuState extends FlxState
 				case "about":
 					check.play();
 					about.visible = true;
-					aboutText.visible = true;
 			}
 		}
 
@@ -170,7 +160,6 @@ class MenuState extends FlxState
 		{
 			cancel.play(true);
 			about.visible = false;
-			aboutText.visible = false;
 		}
 		// 離開啦
 		#if desktop
