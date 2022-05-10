@@ -247,7 +247,7 @@ class StreetState extends FlxState
 				npc.add(new NPC(x, y, saveStone));
 
 			case "minerDoor":
-				minerDoor.setPosition(x + 84, y);
+				minerDoor.setPosition(x, y);
 			case "homeDoor":
 				homeDoor.setPosition(x + 36, y);
 

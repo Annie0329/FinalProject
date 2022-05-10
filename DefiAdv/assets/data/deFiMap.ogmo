@@ -927,7 +927,7 @@
       "exportID": "06343898",
       "name": "minerDoor",
       "limit": -1,
-      "size": {"x": 480, "y": 120},
+      "size": {"x": 360, "y": 120},
       "origin": {"x": 0, "y": 0},
       "originAnchored": true,
       "shape": {
