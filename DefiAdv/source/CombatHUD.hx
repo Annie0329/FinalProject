@@ -97,6 +97,9 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	public var diamondUiText:FlxText;
 	public var diamond:Float = 0;
 
+	var bananaCoinIcon:FlxSprite;
+	var bananaCoinText:FlxText;
+
 	var alpha:Float = 0; // 淡入淡出的效果，alpha就是透明度啦
 	var wait:Bool = true; // 當我們不准玩家動時就把這個設為true
 
@@ -160,6 +163,12 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		diamondText = new FlxText(1650, 60, 0, "0", 60);
 		add(diamondText);
 
+		// 香蕉幣圖示(槓桿專用)
+		bananaCoinIcon = new FlxSprite(1520, 53, AssetPaths.combatBananaIcon__png);
+		add(bananaCoinIcon);
+		bananaCoinText = new FlxText(diamondText.x, diamondText.y, 0, "0", 60);
+		add(bananaCoinText);
+
 		// 那隻箭頭
 		pointer = new Pointer();
 		pointer.setPointer(choices[YES].x - 48, choices[YES].y + (choices[YES].height / 2) - 48, Std.int(choices[YES].height + 48), ynCho, "ud");
@@ -206,6 +215,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		this.appleCoin = appleCoin;
 		this.dexCoin = dexCoin;
 		diamondText.text = Std.string(diamond);
+		bananaCoinText.text = Std.string(bananaCoin);
 
 		enemySprite.changeType(enemy.type); // 換成普通敵人或是魔王
 
@@ -222,6 +232,17 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 
 		pointerLeft.visible = false;
 		pointerRight.visible = false;
+
+		if (enemy.type == rod)
+		{
+			bananaCoinIcon.visible = true;
+			bananaCoinText.visible = true;
+		}
+		else
+		{
+			bananaCoinIcon.visible = false;
+			bananaCoinText.visible = false;
+		}
 
 		switch (enemy.type)
 		{
@@ -519,7 +540,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 								investNumText.visible = true;
 								lrPointer(investNumText.x, investNumText.y, investNumText.width, investNumText.height);
 
-								name = ':你現在有' + bananaCoin + '香蕉幣。請選擇你要投資多少？最少5香蕉幣。好了就按enter。';
+								name = ':請選擇你要投資多少？最少5香蕉幣。好了就按enter。';
 								combatText.show(name, false);
 
 							case "NO":
@@ -535,7 +556,8 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					rodNum = 2;
 					rodNumText.text = Std.string(rodNum);
 					rodNumText.visible = true;
-
+					bananaCoin -= investNum;
+					bananaCoinText.text = Std.string(bananaCoin);
 					name = ":請選擇你槓桿多少倍？好了就按enter。";
 					combatText.show(name, false);
 				}
@@ -545,7 +567,6 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 					rodNumText.visible = false;
 					pointerLeft.visible = false;
 					pointerRight.visible = false;
-					bananaCoin -= investNum;
 					investNum *= rodNum;
 					name = ':謝謝你，你得到' + investNum + 'APS幣！如果想賣掉APS幣的話可以去交易所喔。';
 					outcome = WIN;

@@ -717,7 +717,7 @@ class StreetState extends FlxState
 			// 準備小屋交易
 			if (npcType == p1BaToCoMach || npcType == p1CoToApMach || npcType == p1ApToCoMach || npcType == p1CoToDeMach || npcType == p1DeToCoMach
 				|| npcType == p2Mach || npcType == p3Mach)
-				dia.getDiamond(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, bag.rodWave, bag.dexCoin);
+				dia.getDiamond(bag.diamondCounter, bag.diamondText, bag.bananaCoin, bag.appleCoin, bag.rodWave, bag.rodInvest, bag.dexCoin);
 
 			dia.context(npcType);
 		}
@@ -763,6 +763,7 @@ class StreetState extends FlxState
 				bag.dexCoin = FlxMath.roundDecimal(dia.dexCoin, 2);
 				bag.dexCoinText.text = Std.string(bag.dexCoin);
 				bag.rodWave = dia.rodWave;
+				bag.rodInvest = dia.rodInvest;
 				// 如果槓桿沒被賣掉那計時繼續
 				if (bag.rodUi.visible)
 				{

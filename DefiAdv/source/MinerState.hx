@@ -50,6 +50,8 @@ class MinerState extends FlxState
 	var npc:FlxTypedGroup<NPC>;
 	var npcType:NPC.NpcType;
 	var meetStarter:Bool = false;
+	var stoneYes:Bool = false;
+	var stoneNoMoney:Bool = false;
 
 	var shop:FlxSprite;
 	var monumentDoor:FlxSprite;
@@ -61,22 +63,23 @@ class MinerState extends FlxState
 
 	// 箱子
 	var box:FlxSprite;
-	var roadStart:Int = 2400;
-	var roadEnd:Int = 4320;
-	var boxPos:Float;
+	var roadStart:Int;
+	var roadEnd:Int = 2400;
 
 	// 石頭
 	var stone:FlxTypedGroup<FlxSprite> = null;
 	var stoneCounter:Int = 0;
 	var stoneCounterText:FlxText;
 	var stoneCounterIcon:FlxSprite;
-	var stoneYes:Bool = false;
+	var finalScore:Int = 0;
+	var stoneSound:FlxSound;
+
+	// 計時器
 	var minerTimerText:FlxText;
 	var minerTimerIcon:FlxSprite;
 	var timer:FlxTimer;
 	var minerTimeSet:Int = 60;
-	var stoneSound:FlxSound;
-	var finalScore:Int = 0;
+	var timeOut:Bool = false;
 
 	// 地圖組
 	var map:FlxOgmo3Loader;
@@ -258,9 +261,9 @@ class MinerState extends FlxState
 			case "shop":
 				shop.setPosition(x, y);
 			case "monumentDoor":
-				monumentDoor.setPosition(x + 84, y);
+				monumentDoor.setPosition(x + 60, y);
 			case "streetDoor":
-				streetDoor.setPosition(x + 84, y);
+				streetDoor.setPosition(x + 60, y);
 			case "minerGate":
 				minerGate.setPosition(x, y);
 				minerGateX = minerGate.x;
@@ -278,8 +281,11 @@ class MinerState extends FlxState
 				stone.add(s);
 
 			case "box":
-				box.setPosition(x - 6, y);
-				boxPos = box.y;
+				box.setPosition(x, y);
+				roadStart = Std.int(box.x);
+
+			case "talkingBox":
+				npc.add(new NPC(x, y, talkingBox));
 
 			case "spartanMiner":
 				enemy.add(new Enemy(x, y, spartanMiner));
@@ -403,14 +409,14 @@ class MinerState extends FlxState
 			}
 			else if (save.data.place == "monument")
 			{
-				// 公式：minerDoor.x + 189,minerDoor.y - 60
-				player.setPosition(429, 6060);
+				// 公式：minerDoor.x + 後面那堆,minerDoor.y - 60
+				player.setPosition(840 + (monumentDoor.width - player.width) / 2 + 60, 6060);
 				tip.missionGetText(exploreMiner);
 				saveFile();
 			}
 			else if (save.data.place == "street")
 			{
-				player.setPosition(4629, 6060);
+				player.setPosition(3960 + (streetDoor.width - player.width) / 2 + 60, 5340);
 				tip.missionGetText(minerFin);
 				saveFile();
 			}
@@ -429,13 +435,13 @@ class MinerState extends FlxState
 		updateTimer();
 
 		// 除錯大隊
-		ufo.text = Std.string(save.data.place);
+		ufo.text = Std.string(finalScore);
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
 			bag.diamondCounter += 300;
 			bag.updateBag();
-			// ufo.visible = true;
+			ufo.visible = true;
 		}
 
 		// 碰撞爆
@@ -516,14 +522,17 @@ class MinerState extends FlxState
 		}
 	}
 
-	// 離開礦場就停止計時
+	// 碰礦場門
 	function timeToStop(player:Player, minerGate:FlxSprite)
 	{
+		// 離開礦場就停止計時
 		if (player.y <= minerGate.y)
 		{
 			minerTimerText.visible = false;
+			timeOut = false;
 			FlxG.camera.fade(FlxColor.BLACK, 0.33, false, minerGameOver);
 		}
+		// 進礦場就開始遊戲
 		else if (minerGate.x == minerGateX)
 		{
 			gateSlide.play();
@@ -541,10 +550,6 @@ class MinerState extends FlxState
 		if (stoneCounter >= stoneGoal)
 		{
 			stoneCounterText.color = FlxColor.RED;
-			var car = Std.int(stoneCounter / stoneGoal);
-			bag.diamondCounter += Std.int(car * 50);
-			finalScore += car;
-			bag.updateBag();
 		}
 		else
 			stoneCounterText.color = FlxColor.BLACK;
@@ -632,9 +637,6 @@ class MinerState extends FlxState
 				minerTimerText.color = FlxColor.RED;
 			else
 				minerTimerText.color = FlxColor.BLACK;
-			// 時間到玩家就不准動
-			if (timer.finished)
-				player.active = false;
 		}
 
 		// 玩家經過門就啟動計時，用else if是為了避免重複計時(看不見計時器才開始計時)
@@ -645,6 +647,7 @@ class MinerState extends FlxState
 			timer = new FlxTimer().start(minerTimeSet, function(timer:FlxTimer)
 			{
 				minerTimerText.visible = false;
+				timeOut = true;
 				FlxG.camera.fade(FlxColor.BLACK, 0.33, false, minerGameOver);
 			});
 			minerTimerText.visible = true;
@@ -657,15 +660,47 @@ class MinerState extends FlxState
 	// 礦場遊戲結束了
 	function minerGameOver()
 	{
-		player.setPosition(minerGate.x, minerGate.y + 600);
+		player.setPosition(minerGate.x + 120, minerGate.y + 360);
+
 		minerTimerIcon.visible = false;
 		stoneCounterIcon.visible = false;
 		stoneCounterText.visible = false;
-		name = ":N:恭喜你總共打包了" + Std.string(finalScore * 5) + "顆小石頭，賺了" + Std.string(finalScore * 50) + "能量幣！";
-		playerUpDown();
-		dia.show(name, false);
+		finalScore = Std.int(stoneCounter / stoneGoal);
+		if (finalScore == 0)
+		{
+			if (timeOut)
+			{
+				name = ":S:你沒有收集到至少5顆小石頭啊。沒關係，如果你想的話再挑戰一次吧！:S:勇氣可嘉，送你5能量幣。:N:你得到了5能量幣。";
+				stoneNoMoney = true;
+			}
+			else
+				name = ":S:你沒有收集到至少5顆小石頭啊。沒關係，如果你想的話再挑戰一次吧！";
+			playerUpDown();
+			dia.show(name, false);
+		}
+		else
+		{
+			box.loadGraphic(AssetPaths.boxFull__png);
+			FlxTween.tween(box, {x: roadEnd}, 2, {
+				onComplete: function(_)
+				{
+					bag.diamondCounter += Std.int(finalScore * 50);
+					bag.updateBag();
+					box.x = 0;
+					box.loadGraphic(AssetPaths.boxEmpty__png);
+					FlxTween.tween(box, {x: roadStart}, 0.2, {
+						onComplete: function(_)
+						{
+							name = ":S:恭喜你總共打包了" + Std.string(finalScore * 5) + "顆小石頭，賺了" + Std.string(finalScore * 50) + "能量幣！";
+							playerUpDown();
+							dia.show(name, false);
+						}
+					});
+				}
+			});
+		}
+
 		stoneCounter = 0;
-		finalScore = 0;
 		stoneCounterText.text = Std.string(stoneCounter) + "/5";
 		timer.cancel();
 		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
@@ -715,7 +750,7 @@ class MinerState extends FlxState
 	function updateWhenDiaInvisible()
 	{
 		// 對話框顯示時玩家就不能動
-		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible || bag.itemUi.visible || combatHud.visible)
+		if (dia.visible || bag.shopUi.visible || bag.dealUi.visible || bag.itemUi.visible || combatHud.visible || box.x != roadStart)
 		{
 			player.active = false;
 			enemy.active = false;
@@ -735,6 +770,13 @@ class MinerState extends FlxState
 				tip.tipGetText(minerSign);
 				tip.missionGetText(minerFin);
 				stoneYes = false;
+			}
+			// 布布安慰你
+			if (stoneNoMoney)
+			{
+				bag.diamondCounter += 5;
+				bag.updateBag();
+				stoneNoMoney = false;
 			}
 			// 有錢就開迪拜街門
 			if (streetOpen)

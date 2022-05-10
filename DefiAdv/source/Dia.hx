@@ -62,6 +62,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var bananaCoin:Float;
 	public var dexCoin:Float;
 	public var rodWave:Float = 0;
+	public var rodInvest:Int = 0;
 
 	var coinText:FlxText;
 
@@ -243,7 +244,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	}
 
 	// 拿包包的參數
-	public function getDiamond(diamond, diamondUiText, bananaCoin, appleCoin, rodWave, dexCoin)
+	public function getDiamond(diamond, diamondUiText, bananaCoin, appleCoin, rodWave, rodInvest, dexCoin)
 	{
 		this.diamond = diamond;
 		this.diamondUiText = diamondUiText;
@@ -251,6 +252,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		this.appleCoin = appleCoin;
 		this.dexCoin = dexCoin;
 		this.rodWave = rodWave;
+		this.rodInvest = rodInvest;
 	}
 
 	// 存檔炫一下
@@ -384,7 +386,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				txt = false;
 				background.visible = false;
 				text.visible = false;
-
+			case talkingBox:
+				name = ":S:這是負責運送小石頭的礦車，至少要5顆小石頭它才會發動。";
+				txt = false;
 			case signDefi:
 				name = AssetPaths.streetSign__txt;
 				txt = true;
@@ -610,6 +614,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + appleCoin + rodWave)), 2);
 					appleCoin = 0;
 					rodWave = 0;
+					rodInvest = 0;
 				}
 				else if (npcType == p1BaToCoMach)
 				{
@@ -711,6 +716,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					{
 						appleCoin += rodWave;
 						rodWave = 0;
+						rodInvest = 0;
 					}
 					// 算機器的錢
 					acAppleCoinIn += coinOut;

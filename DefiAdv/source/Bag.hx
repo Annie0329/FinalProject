@@ -416,12 +416,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			rodWave = FlxMath.roundDecimal(rodWave, 2);
 			// 70%機率漲
 			if (FlxG.random.bool(70))
-				rodWave *= (1 + 0.01 * (FlxG.random.int(20, 50)));
+				rodWave *= (1 + 0.01 * (FlxG.random.int(20, 80)));
 			// 30%機率跌
 			else
 			{
 				if (rodWave - rodInvest >= 0.01)
-					rodWave *= 0.01 * (FlxG.random.int(20, 50));
+					rodWave *= 0.01 * (FlxG.random.int(50, 100));
 				// 防止跌到底
 				else
 					rodWave = rodInvest / 4;
@@ -462,7 +462,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			if (wave - invest < 0)
 				wave = invest * 2;
 			else
-				wave *= (1 + 0.01 * (FlxG.random.int(20, 100)));
+				wave *= (1 + 0.01 * (FlxG.random.int(80, 100)));
 		}
 
 		// 其他時間隨機
@@ -470,12 +470,12 @@ class Bag extends FlxTypedGroup<FlxBasic>
 		{
 			// 70%機率漲
 			if (FlxG.random.bool(70))
-				wave *= (1 + 0.01 * (FlxG.random.int(1, 50)));
+				wave *= (1 + 0.01 * (FlxG.random.int(30, 90)));
 			// 30%機率跌
 			else
 			{
 				if (wave - invest >= 0.01)
-					wave *= 0.01 * (FlxG.random.int(20, 50));
+					wave *= 0.01 * (FlxG.random.int(20, 100));
 				// 防止跌到底
 				else
 					wave = invest / 4;

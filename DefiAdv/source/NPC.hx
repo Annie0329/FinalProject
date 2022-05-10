@@ -17,6 +17,7 @@ enum NpcType
 
 	spartan;
 	minerSign;
+	talkingBox;
 	signDefi;
 	signApple;
 	house1Sign;
@@ -73,6 +74,8 @@ class NPC extends FlxSprite
 				loadGraphic(AssetPaths.spartan__png);
 			case minerSign:
 				loadGraphic(AssetPaths.mineSign__png);
+			case talkingBox:
+				makeGraphic(240, 240, FlxColor.TRANSPARENT);
 
 			case signDefi:
 				makeGraphic(120, 240, FlxColor.TRANSPARENT);

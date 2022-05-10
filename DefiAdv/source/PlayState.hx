@@ -336,7 +336,7 @@ class PlayState extends FlxState
 				stoneYes.setPosition(x + 60, y);
 
 			case "minerDoor":
-				minerDoor.setPosition(x + 84, y);
+				minerDoor.setPosition(x + 60, y);
 
 			case "shop":
 				shop.setPosition(x, y);
