@@ -467,7 +467,7 @@ class PlayState extends FlxState
 						tip.missionGetText(getLeaves);
 				}
 				// 還沒跟島民聊完天
-				else if (!dia.talkDone)
+				if (!dia.talkDone)
 				{
 					tip.missionGetText(talk);
 					srYes.visible = true;
@@ -493,6 +493,7 @@ class PlayState extends FlxState
 		// 除錯大隊
 		ufo.text = Std.string(save.data.place); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
+		var f = FlxG.keys.anyJustReleased([F]);
 		if (e)
 		{
 			// ufo.visible = true;
@@ -500,6 +501,14 @@ class PlayState extends FlxState
 			bag.diamondCounter += 100;
 			bag.updateBag();
 			// FlxG.mouse.visible = true;
+		}
+		if (f)
+		{
+			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, function()
+			{
+				saveFile();
+				FlxG.switchState(new StreetState());
+			});
 		}
 
 		updateInCombat();
@@ -551,12 +560,12 @@ class PlayState extends FlxState
 
 			tip.missionGetText(talk);
 		}
+		// 賣葉子的提示
 		if (bag.bananaCounter >= 20 && !twentyBanana)
 		{
 			twentyBanana = true;
 			tip.tipGetText(sellLeaves);
 		}
-
 		// 跟島民講完話了
 		if (dia.talkMiss && !srYes.visible && !sgYes.visible && !sbYes.visible && !mingYes.visible && !dia.talkDone && !dia.visible)
 		{
@@ -564,10 +573,24 @@ class PlayState extends FlxState
 			sblackYes.visible = true;
 			tip.missionGetText(talkFin);
 		}
+		// 賺滿200金剛頭上會有驚嘆號
+		if (bag.diamondCounter >= 20 && !dia.twentyDiamond && !dia.visible && dia.talkDone)
+		{
+			dia.twentyDiamond = true;
+			sblackYes.visible = true;
+			tip.missionGetText(talkFin);
+		}
 		if (dia.talkDone && !sblackYes.visible && !dia.visible)
 		{
-			treeBar.kill();
-			tip.missionGetText(monuFin);
+			// 金剛砍樹
+			if (dia.twentyDiamond)
+			{
+				treeBar.kill();
+				tip.missionGetText(monuFin);
+			}
+			// 金剛逼你賣葉子
+			else
+				tip.missionGetText(sellLeaves);
 		}
 	}
 

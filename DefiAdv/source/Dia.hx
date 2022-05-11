@@ -27,44 +27,49 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	var check:FlxSound;
 	var cancel:FlxSound;
 
+	// 礦場海報
 	var minerPoster:FlxSprite;
-
-	var i:Int = 2;
 
 	var profile:Int = 1;
 	var profilePic:String;
 	var npcType:NPC.NpcType;
-
-	public var name:String;
-
+	var name:String;
+	var i:Int = 2;
 	var dilog_boxes:Array<String>;
 	var txt:Bool = true;
+	var textRunDone:Bool = false;
 
-	public var textRunDone:Bool = false;
-
+	// 存檔的字
 	var saveShow:String = ":N:oui";
 
 	public var diaUpDown:String;
 
+	// 選擇箭頭
 	var pointer:Pointer;
 	var pointerQ:String = "none";
 
+	// 誰說過了什麼
 	public var saveStoneIntro:Bool = false;
 	public var stoneTextYes:Bool = false;
 	public var leafYes:Bool = false;
 	public var talkMiss:Bool = false;
 	public var talkDone:Bool = false;
-	public var readDaSign:Bool = false;
 	public var lakeTalking:Bool = false;
 	public var saveStoneYes:Bool = false;
+	public var readDaSign:Bool = false;
+	public var twentyDiamond:Bool = false;
 
+	// 各種錢的數值
 	public var appleCoin:Float;
 	public var bananaCoin:Float;
 	public var dexCoin:Float;
 	public var rodWave:Float = 0;
 	public var rodInvest:Int = 0;
 
-	var coinText:FlxText;
+	// 機器介面
+	var coinOutText:FlxText;
+	var machGainText:FlxText;
+	var coinHaveText:FlxText;
 
 	// 香蕉換能量
 	var bck = 10000000;
@@ -96,12 +101,15 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public var loanGain:Float = 0;
 	public var loan:Bool = false;
 
+	// 能量幣
 	public var diamond:Float;
 
 	var diamondUiText:FlxText;
 
+	// 更新包包
 	public var updateDiamond:Bool = false;
 
+	// 存檔元件
 	var save:FlxSave;
 
 	public function new()
@@ -135,12 +143,29 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		cancel = FlxG.sound.load(AssetPaths.cancel__ogg);
 		check = FlxG.sound.load(AssetPaths.check__ogg);
 
-		coinText = new FlxText(background.x, background.y + 60, background.width, "1", 84);
-		coinText.color = FlxColor.BLACK;
-		coinText.alignment = CENTER;
-		coinText.font = AssetPaths.silver__ttf;
-		add(coinText);
-		coinText.visible = false;
+		// 玩家有多少要賣掉的幣
+		coinHaveText = new FlxText(880, 290, 200, "1", 72);
+		coinHaveText.color = 0xff704927;
+		coinHaveText.alignment = CENTER;
+		coinHaveText.font = AssetPaths.silver__ttf;
+		add(coinHaveText);
+		coinHaveText.visible = false;
+
+		// 玩家要放多少錢
+		coinOutText = new FlxText(720, 505, 260, "1", 84);
+		coinOutText.color = 0xff704927;
+		coinOutText.alignment = CENTER;
+		coinOutText.font = AssetPaths.silver__ttf;
+		add(coinOutText);
+		coinOutText.visible = false;
+
+		// 玩家可以從機器得到多少錢
+		machGainText = new FlxText(coinOutText.x, 770, 260, "1", 84);
+		machGainText.color = 0xff704927;
+		machGainText.alignment = CENTER;
+		machGainText.font = AssetPaths.silver__ttf;
+		add(machGainText);
+		machGainText.visible = false;
 
 		// 箭頭
 		pointer = new Pointer();
@@ -185,8 +210,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 
 		text.start(false, false, function()
 		{
-			enterCur.visible = true;
-			enterCur.flicker(0, 0.5);
+			// 如果不是機器介面就讓對話箭頭出現
+			if (!coinOutText.visible)
+			{
+				enterCur.visible = true;
+				enterCur.flicker(0, 0.5);
+			}
+
 			textRunDone = true;
 			if (pointerQ != "none")
 				pointer.visible = true;
@@ -224,6 +254,21 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				profilePic = AssetPaths.diaP2__png;
 			case "P3":
 				profilePic = AssetPaths.diaP3__png;
+
+			case "AC":
+				profilePic = AssetPaths.diaP1ApToCoMach__png;
+			case "CA":
+				profilePic = AssetPaths.diaP1CoToApMach__png;
+			case "BC":
+				profilePic = AssetPaths.diaP1BaToCoMach__png;
+			case "DC":
+				profilePic = AssetPaths.diaP1DeToCoMach__png;
+			case "CD":
+				profilePic = AssetPaths.diaP1CoToDeMach__png;
+			case "CB":
+				profilePic = AssetPaths.diaP2Mach__png;
+			case "LOAN":
+				profilePic = AssetPaths.diaP3Mach__png;
 		}
 
 		background.loadGraphic(profilePic);
@@ -233,14 +278,26 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	public function diaPosition(diaUpDown)
 	{
 		this.diaUpDown = diaUpDown;
-		if (diaUpDown == "up")
-			background.y = 30;
+		// 機器介面位置要特別調
+		if (coinOutText.visible)
+		{
+			text.visible = false;
+			background.x = 0;
+			background.y = 0;
+		}
+		// 其他的就要看上下
 		else
-			background.y = FlxG.height - background.height - 30;
-		pointer.y = background.y + 225;
-		text.y = background.y + 45;
-		coinText.y = background.y + 240;
-		enterCur.y = background.y + 310;
+		{
+			text.visible = true;
+			background.x = 255;
+			if (diaUpDown == "up")
+				background.y = 30;
+			else if (diaUpDown == "down")
+				background.y = 660;
+			pointer.y = background.y + 225;
+			text.y = background.y + 45;
+			enterCur.y = background.y + 310;
+		}
 	}
 
 	// 拿包包的參數
@@ -330,7 +387,10 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case sbBlack:
 				if (talkDone)
 				{
-					name = AssetPaths.kingTalk__txt;
+					if (twentyDiamond)
+						name = AssetPaths.kingTalk__txt;
+					else
+						name = AssetPaths.kingSellTalk__txt;
 					txt = true;
 				}
 				else
@@ -401,16 +461,19 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				name = ":N:交易所";
 				txt = false;
 			case p1:
-				name = AssetPaths.house1Talk__txt;
-				txt = true;
+				name = ":P1:還想再聽我說一次嗎？\n  好啊\n  別了謝謝";
+				txt = false;
 			case mathChart:
 				name = ":N:是很難的數學。";
 				txt = false;
 			case p1BaToCoMach:
 				if (bananaCoin >= 10)
 				{
-					name = ':N:你想用多少香蕉幣買能量幣？你目前有 $bananaCoin 香蕉幣。按X退出，按R全數兌換。';
-					coinText.visible = true;
+					name = ':BC:香蕉幣買能量幣';
+					coinHaveText.text = Std.string(bananaCoin);
+					coinHaveText.visible = true;
+					coinOutText.visible = true;
+					machGainText.visible = true;
 				}
 				else
 					name = ":N:你沒有足夠的香蕉幣，至少要10香蕉幣。";
@@ -418,8 +481,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1ApToCoMach:
 				if (appleCoin + rodWave >= 10)
 				{
-					name = ":N:你想用多少APS幣買能量幣？你目前有" + Std.string(FlxMath.roundDecimal(appleCoin + rodWave, 2)) + "APS幣。按X退出，按R全數兌換。";
-					coinText.visible = true;
+					name = ":AC:APS幣買能量幣";
+					coinHaveText.text = Std.string(FlxMath.roundDecimal(appleCoin + rodWave, 2));
+					coinHaveText.visible = true;
+					coinOutText.visible = true;
+					machGainText.visible = true;
 				}
 				else
 					name = ":N:你沒有足夠的APS幣，至少要10APS幣。";
@@ -427,8 +493,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1CoToApMach:
 				if (diamond >= 10)
 				{
-					name = ':N:你想用多少能量幣買APS幣？你目前有 $diamond 能量幣。按X退出。';
-					coinText.visible = true;
+					name = ':CA:能量幣買APS幣';
+					coinHaveText.text = Std.string(diamond);
+					coinHaveText.visible = true;
+					coinOutText.visible = true;
+					machGainText.visible = true;
 				}
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
@@ -436,8 +505,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1DeToCoMach:
 				if (dexCoin >= 10)
 				{
-					name = ':N:你想用多少青蛙幣換成能量幣？你現在有$dexCoin 青蛙幣。按X退出，按R全數兌換。';
-					coinText.visible = true;
+					name = ':DC:青蛙幣買能量幣';
+					coinHaveText.text = Std.string(dexCoin);
+					coinHaveText.visible = true;
+					coinOutText.visible = true;
+					machGainText.visible = true;
 				}
 				else
 					name = ":N:你沒有足夠的青蛙幣，至少要10青蛙幣。";
@@ -445,8 +517,11 @@ class Dia extends FlxTypedGroup<FlxSprite>
 			case p1CoToDeMach:
 				if (diamond >= 10)
 				{
-					name = ':N:你想用多少能量幣買青蛙幣？你目前有 $diamond 能量幣。按X退出。'; // ， 1 能量幣可買 $p1Prize APS幣。';
-					coinText.visible = true;
+					name = ':CD:能量幣買青蛙幣';
+					coinHaveText.text = Std.string(diamond);
+					coinHaveText.visible = true;
+					coinOutText.visible = true;
+					machGainText.visible = true;
 				}
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
@@ -456,13 +531,16 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				name = ":N:穩定幣鑄造所";
 				txt = false;
 			case p2:
-				name = AssetPaths.house2Talk__txt;
-				txt = true;
+				name = ":P2:想再聽一次解說嗎？\n  當然好\n  不用了";
+				txt = false;
 			case p2Mach:
 				if (diamond >= 10)
 				{
-					name = ':N:你想用多少能量幣買香蕉幣？ 你目前有 $diamond 能量幣。按X退出。';
-					coinText.visible = true;
+					name = ':CB:能量幣買香蕉幣';
+					coinHaveText.text = Std.string(diamond);
+					coinHaveText.visible = true;
+					coinOutText.visible = true;
+					machGainText.visible = true;
 				}
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
@@ -471,16 +549,20 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				name = ":N:借貸所";
 				txt = false;
 			case p3:
-				name = AssetPaths.house3Talk__txt;
-				txt = true;
+				name = ":P3:要再聽一次解說嗎？\n  好呀\n  不用了謝謝";
+				txt = false;
+
 			case dexNews:
 				name = AssetPaths.dexNews__txt;
 				txt = true;
 			case p3Mach:
 				if (diamond >= 10)
 				{
-					name = ':N:你想放多少能量幣借貸？ 你目前有 $diamond 能量幣。按X退出。';
-					coinText.visible = true;
+					name = ':LOAN:借貸';
+					coinHaveText.text = Std.string(diamond);
+					coinHaveText.visible = true;
+					coinOutText.visible = true;
+					machGainText.visible = true;
 				}
 				else
 					name = ":N:你沒有足夠的能量幣，至少要10能量幣。";
@@ -497,6 +579,13 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				txt = true;
 		}
 		show(name, txt);
+
+		if (npcType == p1)
+			getPointer("p1Talk");
+		else if (npcType == p2)
+			getPointer("p2Talk");
+		else if (npcType == p3)
+			getPointer("p3Talk");
 	}
 
 	// 呼叫箭頭
@@ -507,6 +596,12 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		{
 			case "winGame":
 				pointer.setPointer(text.x, text.y + 90, 90, ["yes", "no"], "ud");
+			case "p1Talk":
+				pointer.setPointer(text.x, text.y + 90, 90, ["yes", "no"], "ud");
+			case "p2Talk":
+				pointer.setPointer(text.x, text.y + 90, 90, ["yes", "no"], "ud");
+			case "p3Talk":
+				pointer.setPointer(text.x, text.y + 90, 90, ["yes", "no"], "ud");
 		}
 	}
 
@@ -515,7 +610,7 @@ class Dia extends FlxTypedGroup<FlxSprite>
 	{
 		var left = FlxG.keys.anyJustReleased([LEFT, A]);
 		var right = FlxG.keys.anyJustReleased([RIGHT, D]);
-		if (coinText.visible)
+		if (coinOutText.visible)
 		{
 			if (npcType == p1BaToCoMach)
 			{
@@ -524,7 +619,8 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				if (right && coinOut / 10 != Std.int(bananaCoin / 10))
 					coinOut += 10;
 				machGain = FlxMath.roundDecimal(bcCoinIn - (bck / (bcBananaCoinIn + coinOut)), 2);
-				coinText.text = '$coinOut  香蕉幣換 $machGain 能量幣';
+				coinOutText.text = Std.string(coinOut);
+				machGainText.text = Std.string(machGain);
 			}
 			else if (npcType == p1ApToCoMach)
 			{
@@ -534,7 +630,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 					coinOut += 10;
 				machGain = FlxMath.roundDecimal(acCoinIn - (ack / (acAppleCoinIn + coinOut)), 2);
 				// FlxMath.roundDecimal(coinOut * (acCoinIn / acAppleCoinIn),2);
-				coinText.text = '$coinOut  APS幣換 $machGain 能量幣';
 			}
 			else if (npcType == p1CoToApMach)
 			{
@@ -543,7 +638,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				if (right && coinOut / 10 != Std.int(diamond / 10))
 					coinOut += 10;
 				machGain = FlxMath.roundDecimal(caAppleCoinIn - (cak / (caCoinIn + coinOut)), 2);
-				coinText.text = '$coinOut  能量幣換 $machGain APS幣';
 			}
 			else if (npcType == p1CoToDeMach)
 			{
@@ -552,7 +646,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				if (right && coinOut / 10 != Std.int(diamond / 10))
 					coinOut += 10;
 				machGain = coinOut * dexPrizeBuy;
-				coinText.text = '$coinOut 能量幣換 $machGain 青蛙幣';
 			}
 			else if (npcType == p1DeToCoMach)
 			{
@@ -561,7 +654,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				if (right && coinOut / 10 != Std.int(dexCoin / 10))
 					coinOut += 10;
 				machGain = coinOut * dexPrizeSell;
-				coinText.text = '$coinOut 青蛙幣換 $machGain 能量幣';
 			}
 			else if (npcType == p2Mach)
 			{
@@ -570,7 +662,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				if (right && coinOut / 10 != Std.int(diamond / 10))
 					coinOut += 10;
 				machGain = coinOut * bananaPrize;
-				coinText.text = '$coinOut 能量幣換 $machGain 香蕉幣';
 			}
 			else if (npcType == p3Mach)
 			{
@@ -579,8 +670,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				if (right && coinOut / 10 != Std.int(diamond / 10))
 					coinOut += 10;
 				machGain = FlxMath.roundDecimal((loanGain + coinOut) * interest, 2);
-				coinText.text = '已投資' + (loanGain + coinOut) + '能量幣 利息10秒 $machGain 能量幣';
 			}
+			coinOutText.text = Std.string(coinOut);
+			machGainText.text = Std.string(machGain);
 		}
 	}
 
@@ -594,20 +686,23 @@ class Dia extends FlxTypedGroup<FlxSprite>
 		var r = FlxG.keys.anyJustReleased([R]);
 
 		// 退出機器
-		if (coinText.visible)
+		if (coinOutText.visible)
 		{
 			if (x)
 			{
 				cancel.play();
 				coinOut = 10;
-				coinText.text = Std.string(coinOut);
-				coinText.visible = false;
+				coinOutText.text = Std.string(coinOut);
+				coinOutText.visible = false;
+				machGainText.visible = false;
+				coinHaveText.visible = false;
 				visible = false;
 				active = false;
 			}
 			// 全數賣掉的功能
 			if (r)
 			{
+				text.visible = true;
 				check.play();
 				if (npcType == p1ApToCoMach)
 				{
@@ -629,11 +724,15 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				diamond += machGain;
 				name = ':N:你得到了 $machGain 能量幣。';
 				txt = false;
+
 				show(name, txt);
+				diaPosition("down");
 
 				coinOut = 10;
-				coinText.text = Std.string(coinOut);
-				coinText.visible = false;
+				coinOutText.text = Std.string(coinOut);
+				coinOutText.visible = false;
+				machGainText.visible = false;
+				coinHaveText.visible = false;
 				updateDiamond = true;
 			}
 		}
@@ -678,19 +777,56 @@ class Dia extends FlxTypedGroup<FlxSprite>
 								txt = false;
 								show(name, txt);
 						}
+					case "p1Talk":
+						switch (pointer.selected)
+						{
+							case "yes":
+								name = AssetPaths.house1Talk__txt;
+								txt = true;
+							case "no":
+								name = ":P1:好吧。";
+								txt = false;
+						}
+						show(name, txt);
+					case "p2Talk":
+						switch (pointer.selected)
+						{
+							case "yes":
+								name = AssetPaths.house2Talk__txt;
+								txt = true;
+							case "no":
+								name = ":P2:沒問題。";
+								txt = false;
+						}
+						show(name, txt);
+					case "p3Talk":
+						switch (pointer.selected)
+						{
+							case "yes":
+								name = AssetPaths.house3Talk__txt;
+								txt = true;
+							case "no":
+								name = ":P3:如果你想再聽一次的話可以來找我喔。";
+								txt = false;
+						}
+						show(name, txt);
 				}
 				pointer.visible = false;
 				pointerQ = "none";
 			}
 			// 機器
-			else if (coinText.visible && coinOut > 0)
+			else if (coinOutText.visible && coinOut > 0)
 			{
 				next.play();
+				coinOut = 10;
+				coinOutText.text = Std.string(coinOut);
+				coinOutText.visible = false;
+				machGainText.visible = false;
+				coinHaveText.visible = false;
+				updateDiamond = true;
 				if (npcType == p1BaToCoMach)
 				{
 					name = ':N:你得到了 $machGain 能量幣。';
-					txt = false;
-					show(name, txt);
 
 					// 算玩家的錢
 					diamond += machGain;
@@ -704,8 +840,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else if (npcType == p1ApToCoMach)
 				{
 					name = ':N:你得到了 $machGain 能量幣。';
-					txt = false;
-					show(name, txt);
 
 					// 算玩家的錢
 					diamond += machGain;
@@ -725,8 +859,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else if (npcType == p1CoToApMach)
 				{
 					name = ':N:你得到了 $machGain APS幣。';
-					txt = false;
-					show(name, txt);
 
 					diamond -= coinOut;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
@@ -739,8 +871,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else if (npcType == p1CoToDeMach)
 				{
 					name = ':N:你得到 $machGain 青蛙幣。';
-					txt = false;
-					show(name, txt);
 					diamond -= coinOut;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
 					dexCoin += machGain;
@@ -748,8 +878,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else if (npcType == p1DeToCoMach)
 				{
 					name = ':N:你得到 $machGain 能量幣。';
-					txt = false;
-					show(name, txt);
 					diamond += machGain;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
 					dexCoin -= coinOut;
@@ -758,8 +886,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else if (npcType == p2Mach)
 				{
 					name = ':N:你得到 $machGain 香蕉幣。';
-					txt = false;
-					show(name, txt);
 					diamond -= coinOut;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
 					bananaCoin += machGain;
@@ -767,8 +893,6 @@ class Dia extends FlxTypedGroup<FlxSprite>
 				else if (npcType == p3Mach)
 				{
 					name = ':N:你共投資了' + (coinOut + loanGain) + '能量幣。';
-					txt = false;
-					show(name, txt);
 					diamond -= coinOut;
 					loanGain += coinOut;
 					diamondUiText.text = Std.string(FlxMath.roundDecimal(diamond, 2));
@@ -777,10 +901,9 @@ class Dia extends FlxTypedGroup<FlxSprite>
 						loan = true;
 					}
 				}
-				coinOut = 10;
-				coinText.text = Std.string(coinOut);
-				coinText.visible = false;
-				updateDiamond = true;
+
+				diaPosition("down");
+				show(name, false);
 			}
 			// 對話換行
 			else

@@ -12,6 +12,7 @@ enum MissionText
 	leavesFin;
 	talk;
 	talkFin;
+	sellLeaves;
 	monuFin;
 	exploreMiner;
 	minerFin;
