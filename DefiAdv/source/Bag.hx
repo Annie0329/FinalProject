@@ -159,7 +159,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 
 		// 聲音組
 		check = FlxG.sound.load(AssetPaths.check__ogg);
-		move = FlxG.sound.load(AssetPaths.movePointer__ogg, 0.8);
+		move = FlxG.sound.load(AssetPaths.movePointer__ogg);
 		cancel = FlxG.sound.load(AssetPaths.cancel__ogg);
 		noNoise = FlxG.sound.load(AssetPaths.no__ogg);
 
@@ -555,7 +555,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			// 所有物品
 			if (l)
 			{
-				move.play();
+				move.play(true);
 				background.loadGraphic(AssetPaths.bagItem__png);
 				itemUi.visible = true;
 				dealUi.visible = false;
@@ -563,7 +563,7 @@ class Bag extends FlxTypedGroup<FlxBasic>
 			// 交易紀錄
 			if (r)
 			{
-				move.play();
+				move.play(true);
 				background.loadGraphic(AssetPaths.bagDeal__png);
 				itemUi.visible = false;
 				dealUi.visible = true;

@@ -41,6 +41,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 	// 聲音組
 	var check:FlxSound;
 	var next:FlxSound;
+	var move:FlxSound;
 
 	var pointer:Pointer; // 那個選擇打或逃的箭頭
 	var choices:Map<Choice, FlxText>; // 這個地圖把打或逃的選項變成文字(應該吧)
@@ -178,6 +179,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		// 聲音組
 		check = FlxG.sound.load(AssetPaths.check__ogg);
 		next = FlxG.sound.load(AssetPaths.next__ogg);
+		move = FlxG.sound.load(AssetPaths.movePointer__ogg);
 
 		// 左右箭頭
 		pointerLeft = new FlxSprite(0, 0, AssetPaths.pointer__png);
@@ -356,7 +358,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 		{
 			// 如果箭頭出現按enter代表選擇，就撥確認的聲音，不然就撥換下一句的聲音
 			if (pointer.visible || pointerLeft.visible)
-				check.play();
+				check.play(true);
 			else
 			{
 				next.play();
@@ -690,10 +692,12 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			diamondText.text = Std.string(diamond);
 			diamondUiText.text = Std.string(diamond);
 		}
+		// 左右選擇
 		else if (left || right)
 		{
 			if (investNumText.visible)
 			{
+				move.play(true);
 				// 槓桿用的是香蕉幣投資
 				if (enemy.type == rod)
 				{
@@ -716,6 +720,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// 槓桿開幾倍
 			else if (rodNumText.visible)
 			{
+				move.play(true);
 				if (left && rodNum != 2)
 					rodNum--;
 				else if (right && rodNum != 100)
@@ -725,6 +730,7 @@ class CombatHUD extends FlxTypedGroup<FlxSprite>
 			// nft花樣選擇
 			else if (nftStyle.visible)
 			{
+				move.play(true);
 				if (left)
 				{
 					if (nftStyleNum == 0)

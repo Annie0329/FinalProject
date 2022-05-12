@@ -378,6 +378,7 @@ class PlayState extends FlxState
 		save.data.talkMiss = dia.talkMiss;
 		save.data.talkDone = dia.talkDone;
 		save.data.twentyBanana = twentyBanana;
+		save.data.twentyDiamond = dia.twentyDiamond;
 		save.data.lakeTalking = dia.lakeTalking;
 
 		save.flush();
@@ -448,6 +449,7 @@ class PlayState extends FlxState
 		dia.talkDone = save.data.talkDone;
 		twentyBanana = save.data.twentyBanana;
 		dia.lakeTalking = save.data.lakeTalking;
+		dia.twentyDiamond = save.data.twentyDiamond;
 
 		if (save.data.playerPos != null && save.data.place != null)
 		{

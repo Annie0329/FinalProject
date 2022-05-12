@@ -79,7 +79,8 @@ class StreetState extends FlxState
 	var ufo:FlxText;
 	var save:FlxSave;
 
-	var firstLoan:Bool = false;
+	var firstLoan:Bool = false; // 要不要開始借貸的計時器
+	var loanTimer:FlxTimer;
 
 	// 加好加滿
 	override public function create()
@@ -358,6 +359,10 @@ class StreetState extends FlxState
 		// 不一樣的
 		save.data.place = "street";
 		save.data.buyStarter = combatHud.buyStarter;
+		save.data.p1Talk = p1Talk;
+		save.data.p2Talk = p2Talk;
+		save.data.p3Talk = p3Talk;
+		save.data.loanGain = dia.loanGain;
 
 		save.flush();
 	}
@@ -419,6 +424,13 @@ class StreetState extends FlxState
 
 		// 不一樣的
 		combatHud.buyStarter = save.data.buyStarter;
+		p1Talk = save.data.p1Talk;
+		p2Talk = save.data.p2Talk;
+		p3Talk = save.data.p3Talk;
+		if (save.data.loanGain != null)
+			dia.loanGain = save.data.loanGain;
+		if (dia.loanGain > 0)
+			loanGo();
 		if (save.data.playerPos != null && save.data.place != null)
 		{
 			if (save.data.place == "street")
@@ -457,22 +469,11 @@ class StreetState extends FlxState
 			bag.updateBag();
 		}
 
+		// 逼你看布告欄
 		if (dia.readDaSign && !dia.visible && !getDaMis)
 		{
 			getDaMis = true;
 			tip.missionGetText(streetFin);
-		}
-		// 開始借貸算利息
-		if (dia.loan && !firstLoan && !dia.visible)
-		{
-			firstLoan = true;
-			dia.loan = false;
-			new FlxTimer().start(10, function(timer:FlxTimer)
-			{
-				bag.diamondCounter += dia.loanGain * dia.interest;
-				bag.diamondText.text = Std.string(FlxMath.roundDecimal(bag.diamondCounter, 2));
-				bag.updateBag();
-			}, 0);
 		}
 
 		// 碰撞爆
@@ -738,6 +739,14 @@ class StreetState extends FlxState
 			player.active = true;
 			enemy.active = true;
 		}
+		// 在用借貸機器時借貸不會跑
+		if (dia.loanGain > 0 && firstLoan)
+		{
+			if (dia.visible)
+				loanTimer.active = false;
+			else
+				loanTimer.active = true;
+		}
 
 		// 對話結束時要做什麼合集
 		if (!dia.visible)
@@ -751,6 +760,10 @@ class StreetState extends FlxState
 					FlxG.switchState(new WinState());
 				});
 			}
+			// 開始借貸算利息
+			if (dia.loan && !firstLoan)
+				loanGo();
+
 			// 更新包包
 			if (dia.updateDiamond)
 			{
@@ -796,6 +809,18 @@ class StreetState extends FlxState
 				dia.show(name, false);
 			}
 		}
+	}
+
+	function loanGo()
+	{
+		firstLoan = true;
+		dia.loan = false;
+		loanTimer = new FlxTimer().start(1, function(timer:FlxTimer)
+		{
+			bag.diamondCounter += dia.loanGain * dia.interest;
+			bag.diamondText.text = Std.string(FlxMath.roundDecimal(bag.diamondCounter, 2));
+			bag.updateBag();
+		}, 0);
 	}
 
 	// 如果玩家在螢幕上方，對話框就放到下方
