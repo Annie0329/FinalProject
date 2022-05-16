@@ -495,7 +495,6 @@ class PlayState extends FlxState
 		// 除錯大隊
 		ufo.text = Std.string(save.data.place); // Std.string(FlxG.mouse.screenX) + "," + Std.string(FlxG.mouse.screenY);
 		var e = FlxG.keys.anyJustReleased([E]);
-		var f = FlxG.keys.anyJustReleased([F]);
 		if (e)
 		{
 			// ufo.visible = true;
@@ -503,14 +502,6 @@ class PlayState extends FlxState
 			bag.diamondCounter += 100;
 			bag.updateBag();
 			// FlxG.mouse.visible = true;
-		}
-		if (f)
-		{
-			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, function()
-			{
-				saveFile();
-				FlxG.switchState(new StreetState());
-			});
 		}
 
 		updateInCombat();

@@ -648,13 +648,14 @@ class Bag extends FlxTypedGroup<FlxBasic>
 								FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
 								if (save.data.place != null)
 								{
-									if (save.data.place == "monument")
-										FlxG.sound.playMusic(AssetPaths.monumentTheme__ogg, 0.3, true);
 									if (save.data.place == "miner")
 										FlxG.sound.playMusic(AssetPaths.minerTheme__ogg, 0.3, true);
 									if (save.data.place == "street")
 										FlxG.sound.playMusic(AssetPaths.streetTheme__ogg, 0.3, true);
 								}
+								// 機智問答：如果你沒有存檔並進了商店，你在哪裡？答案是紀念碑。因為你必須存檔才會進到後面的地圖
+								else
+									FlxG.sound.playMusic(AssetPaths.monumentTheme__ogg, 0.3, true);
 							});
 					}
 					shopText.start(false, false);

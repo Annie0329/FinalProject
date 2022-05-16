@@ -441,7 +441,7 @@ class MinerState extends FlxState
 		{
 			bag.diamondCounter += 300;
 			bag.updateBag();
-			ufo.visible = true;
+			// ufo.visible = true;
 		}
 
 		// 碰撞爆

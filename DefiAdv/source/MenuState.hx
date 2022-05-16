@@ -111,7 +111,7 @@ class MenuState extends FlxState
 		var e = FlxG.keys.anyJustReleased([E]);
 		if (e)
 		{
-			ufo.visible = true;
+			//ufo.visible = true;
 			FlxG.switchState(new WinState());
 		}
 
